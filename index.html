@@ -6,6 +6,9 @@
     <title>Subway Dash 3D - Multi-Map Edition</title>
     <script src="https://sdk.crazygames.com/crazygames-sdk-v2.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-user-select: none; }
         body, html { width: 100%; height: 100%; overflow: hidden; background-color: #0b0e14; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; touch-action: none; }
@@ -328,6 +331,26 @@
     </div>
 
     <script>
+    // ============ FIREBASE CONFIG ============
+    // ⚠️ این دو خط را با اطلاعات فایربیس خودتان جایگزین کنید
+    const FIREBASE_API_KEY = "AIzaSyC9Q5tOOlG7E2d_wBAlGHCed79QQlQQLhw"; // apiKey خود را اینجا بگذارید
+    const FIREBASE_DB_URL = "https://cyber-dash-457a0-default-rtdb.firebaseio.com"; // databaseURL خود را اینجا بگذارید
+
+    let firebaseReady = false;
+    let firebaseDB = null;
+
+    try {
+        if (typeof firebase !== 'undefined' && FIREBASE_API_KEY.length > 10 && !FIREBASE_API_KEY.includes('...')) {
+            firebase.initializeApp({
+                apiKey: FIREBASE_API_KEY,
+                databaseURL: FIREBASE_DB_URL
+            });
+            firebaseDB = firebase.database();
+            firebaseReady = true;
+            console.log('✅ Firebase Connected');
+        }
+    } catch(e) { console.warn('Firebase init failed', e); }
+
     // ============ AUTH SYSTEM ============
     const Auth = {
         currentUser: null,
@@ -347,6 +370,7 @@
             }
             console.log('Auth initialized. User:', this.currentUser);
             console.log('Leaderboard:', this.leaderboard);
+            if (firebaseReady) this.fetchOnlineLeaderboard();
         },
         
         saveSession() {
@@ -386,7 +410,22 @@
         
         isLoggedIn() { return this.currentUser !== null; },
         
-        updateLeaderboard(username, score) {
+        async fetchOnlineLeaderboard() {
+            if (!firebaseReady) return;
+            try {
+                const snapshot = await firebaseDB.ref('leaderboard').once('value');
+                const data = snapshot.val();
+                if (data) {
+                    this.leaderboard = Object.values(data);
+                    this.leaderboard.sort((a, b) => b.score - a.score);
+                    this.leaderboard = this.leaderboard.slice(0, 10);
+                    localStorage.setItem('metro_leaderboard', JSON.stringify(this.leaderboard));
+                    renderLeaderboard();
+                }
+            } catch(e) { console.warn('Fetch LB error', e); }
+        },
+
+        async updateLeaderboard(username, score) {
             console.log('Updating leaderboard for:', username, 'with score:', score);
             let entry = this.leaderboard.find(e => e.username.toLowerCase() === username.toLowerCase());
             if (entry) {
@@ -403,7 +442,22 @@
             this.leaderboard.sort((a, b) => b.score - a.score);
             this.leaderboard = this.leaderboard.slice(0, 10);
             localStorage.setItem('metro_leaderboard', JSON.stringify(this.leaderboard));
-            console.log('Leaderboard saved:', this.leaderboard);
+            renderLeaderboard(); // Update UI immediately
+
+            // Save to Firebase
+            if (firebaseReady) {
+                try {
+                    const safeUsername = username.replace(/[.#$\[\]]/g, '_');
+                    await firebaseDB.ref('leaderboard/' + safeUsername).set({
+                        username: username,
+                        score: score,
+                        date: new Date().toISOString()
+                    });
+                    console.log('✅ Saved to online DB');
+                } catch(e) {
+                    console.error('❌ Firebase save error:', e);
+                }
+            }
         },
         
         getLeaderboard() { return this.leaderboard; }
