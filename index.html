@@ -849,8 +849,8 @@
     const SPAWN_DISTANCE = 170.0;
     const REMOVE_DISTANCE = 16.0;
     const STATE = { MENU: 0, PLAYING: 1, GAMEOVER: 2, CUSTOMIZE: 3, AD_PAUSED: 4, PAUSED: 5, COUNTDOWN: 6 };
-    // 🤖 سر دقیقاً روی بدنه می‌نشیند: چسبیده، بدون فاصله، بدون گردن/یقه، بدون فرو رفتن
-    // (بدنه از 0.4- تا 0.4 + سر از 0.40- تا 0.98 نسبت به مرکز تنور → تماس کامل در 0.4)
+    // 🤖 تنظیمات ربات
+    const PLAYER_SCALE = 0.8;  // 👈 اندازه‌ی کل ربات (قبلاً 1 بود — حالا ۸۰٪)
     const HEAD_Y = 0.69;
     const SHOULDER_X = 0.72;
     const ARM_TILT = 0.12;
@@ -1207,6 +1207,8 @@
 
         createPlayer() {
             this.playerGroup = new THREE.Group();
+            // 👇 کوچک‌سازی کل ربات (پاها روی زمین می‌مانند چون مقیاس از نقطه‌ی زمین اعمال می‌شود)
+            this.playerGroup.scale.setScalar(PLAYER_SCALE);
             const toy = (hex) => new THREE.MeshStandardMaterial({ color: hex, roughness: 0.3, metalness: 0.05 });
             this.playerMaterials = {
                 skin: toy(this.customColors.skin),
@@ -1218,15 +1220,14 @@
             const faceMat = new THREE.MeshStandardMaterial({ color: 0x05070a, roughness: 0.12, metalness: 0.55 });
             const whiteMat = new THREE.MeshStandardMaterial({ color: 0xf5f7fa, roughness: 0.45 });
 
-            // تنور: هودی پفکی (از 0.4- تا 0.4+ نسبت به مرکز خودش)
+            // تنور: هودی پفکی
             const torsoGeo = createRoundedBox(0.84, 0.8, 0.52, 0.24, 3);
             this.torso = new THREE.Mesh(torsoGeo, this.playerMaterials.suit);
             this.torso.position.y = 1.15;
             this.torso.castShadow = true;
             this.playerGroup.add(this.torso);
-            // ✂️ یقه‌ی هودی هم حذف شد — هیچ چیزی بین سر و بدن نیست
 
-            // سر: کف سر دقیقاً روی شانه‌های بدنه می‌نشیند
+            // سر مکعبی گرد با صفحه‌ی صورت — چسبیده روی بدنه
             const headGeo = createRoundedBox(0.6, 0.58, 0.55, 0.2, 3);
             this.head = new THREE.Mesh(headGeo, this.playerMaterials.skin);
             this.head.position.set(0, HEAD_Y, 0);
@@ -2221,9 +2222,14 @@
 
         updateObstacles(moveDist) {
             const playerMinY = this.playerY;
-            const playerHeight = this.isSliding ? 0.85 : 1.85;
-            this.playerBox.min.set(this.playerGroup.position.x - 0.32, playerMinY, this.playerGroup.position.z - 0.32);
-            this.playerBox.max.set(this.playerGroup.position.x + 0.32, playerMinY + playerHeight, this.playerGroup.position.z + 0.32);
+            // 🔧 جعبه‌ی برخورد هم متناسب با مقیاس ربات کوچک می‌شود تا بازی منصفانه بماند
+            const s = PLAYER_SCALE;
+            const halfW = 0.32 * s;
+            const standH = 1.85 * s;
+            const slideH = 0.85 * s;
+            const playerHeight = this.isSliding ? slideH : standH;
+            this.playerBox.min.set(this.playerGroup.position.x - halfW, playerMinY, this.playerGroup.position.z - halfW);
+            this.playerBox.max.set(this.playerGroup.position.x + halfW, playerMinY + playerHeight, this.playerGroup.position.z + halfW);
             for (let i = this.obstacles.length - 1; i >= 0; i--) {
                 const obs = this.obstacles[i];
                 obs.mesh.position.z += moveDist;
