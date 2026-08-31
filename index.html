@@ -74,6 +74,7 @@
         #speed-bar-container { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); width: 200px; height: 6px; background: rgba(255,255,255,0.12); border-radius: 6px; overflow: hidden; opacity: 0; transition: opacity 0.3s ease; }
         #speed-bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #00f0ff, #ff007f); border-radius: 6px; }
         #invincible-badge { position: absolute; top: 86px; left: 50%; transform: translateX(-50%); background: rgba(0, 240, 255, 0.2); border: 1px solid #00f0ff; border-radius: 50px; padding: 6px 18px; color: #00f0ff; font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; box-shadow: 0 0 16px rgba(0, 240, 255, 0.4); opacity: 0; transition: opacity 0.2s ease; }
+        #level-badge { position: absolute; top: 52px; left: 50%; transform: translateX(-50%); background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 170, 0, 0.45); border-radius: 50px; padding: 4px 14px; color: #ffd700; font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; box-shadow: 0 6px 16px rgba(0,0,0,0.4); opacity: 0; transition: opacity 0.3s ease; }
         #hud-controls { position: absolute; top: 24px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; transition: opacity 0.3s ease; }
         #hud-controls.off { opacity: 0; visibility: hidden; }
         .round-ctrl { width: 42px; height: 42px; border-radius: 50%; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(0, 240, 255, 0.3); color: #fff; font-size: 15px; cursor: pointer; pointer-events: auto; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 18px rgba(0,0,0,0.5); transition: transform 0.15s ease; }
@@ -92,6 +93,7 @@
         #toast-wrap { position: absolute; top: 195px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 8px; align-items: center; z-index: 12; pointer-events: none; }
         .toast-item { background: rgba(15, 23, 42, 0.92); border: 1px solid rgba(0, 240, 255, 0.35); color: #f1f5f9; padding: 8px 18px; border-radius: 50px; font-size: 13px; font-weight: 700; box-shadow: 0 8px 24px rgba(0,0,0,0.5); opacity: 0; transform: translateY(-8px); transition: all 0.3s ease; white-space: nowrap; }
         .toast-item.show { opacity: 1; transform: translateY(0); }
+        .toast-item.hot { border-color: rgba(255, 170, 0, 0.6); color: #ffd700; }
         #countdown-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; align-items: center; justify-content: center; z-index: 18; pointer-events: none; }
         #countdown-overlay.active { display: flex; }
         #countdown-num { font-size: 110px; font-weight: 900; color: #00f0ff; text-shadow: 0 0 40px rgba(0, 240, 255, 0.7); }
@@ -100,6 +102,7 @@
         #new-record-badge { display: none; margin: 0 auto 12px; width: max-content; background: linear-gradient(135deg, #ffd700, #ff8800); color: #000; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; font-size: 12px; padding: 7px 18px; border-radius: 50px; box-shadow: 0 6px 20px rgba(255, 170, 0, 0.5); animation: recPulse 1.2s ease infinite; }
         @keyframes recPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
         #final-bank-note { color: #ffd700; font-size: 12px; margin: -10px 0 14px; font-weight: 600; }
+        #final-level { color: #ff8800; font-size: 12px; margin: -6px 0 12px; font-weight: 700; }
         #engine-status { font-size: 11px; color: rgba(255,255,255,0.55); margin: -8px 0 12px; font-weight: 600; }
         .modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, rgba(15, 23, 42, 0.8) 0%, rgba(3, 7, 18, 0.96) 100%); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 20; pointer-events: auto; transition: opacity 0.35s ease, visibility 0.35s ease; }
         .modal.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
@@ -199,6 +202,7 @@
             .hud-label { font-size: 9.5px; }
             #hud-controls { top: 14px; }
             .round-ctrl { width: 38px; height: 38px; font-size: 13px; }
+            #level-badge { top: 46px; font-size: 10px; padding: 3px 10px; }
             #powerup-bar { top: 118px; }
             #toast-wrap { top: 172px; }
             #countdown-num { font-size: 80px; }
@@ -231,6 +235,7 @@
             </div>
         </div>
         <div id="invincible-badge">🛡️ Shield Active</div>
+        <div id="level-badge">🔥 Lv.1</div>
         <div id="powerup-bar">
             <div class="pu-badge" id="pu-magnet"><div class="pu-icon">🧲 MAGNET</div><div class="pu-track"><div class="pu-fill"></div></div></div>
             <div class="pu-badge" id="pu-mult"><div class="pu-icon">✨ 2× SCORE</div><div class="pu-track"><div class="pu-fill"></div></div></div>
@@ -382,6 +387,7 @@
                 <div class="stat-box"><div class="title">Distance</div><div id="final-dist" class="val">0m</div></div>
             </div>
             <div id="final-bank-note"></div>
+            <div id="final-level"></div>
             <div class="btn-stack">
                 <button id="btn-revive" class="btn-action btn-rewarded" style="width:100%;"><span>🎬 Revive & Continue (Ad)</span></button>
                 <button id="btn-restart" class="btn-action" style="width:100%;">🔄 Run Again</button>
@@ -761,6 +767,19 @@
             gain.gain.setValueAtTime(0.14, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
             osc.connect(gain); gain.connect(this.masterGain); osc.start(now); osc.stop(now + 0.08);
         }
+        playLevelUp() {
+            if (!this.ctx || this.muted) return;
+            const base = this.ctx.currentTime;
+            [659.25, 830.61, 987.77, 1318.51].forEach((freq, i) => {
+                const t = base + i * 0.09;
+                const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(freq, t);
+                gain.gain.setValueAtTime(0.0001, t);
+                gain.gain.linearRampToValueAtTime(0.25, t + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+                osc.connect(gain); gain.connect(this.masterGain); osc.start(t); osc.stop(t + 0.19);
+            });
+        }
     }
     const sound = new SoundFX();
 
@@ -832,9 +851,9 @@
     };
     const DEFAULT_COLORS = { skin: '#56d8f2', suit: '#2bb8dd', pants: '#3d4455', shoe: '#b515d6', visor: '#00f0ff' };
     const DIFFICULTY_CONFIG = {
-        easy: { baseSpeed: 16.0, maxSpeed: 48.0, speedAccel: 0.35, spawnMinGap: 28, spawnMaxGap: 42, doubleObstacleChance: 0.08, hint: ' Relaxed pace, fewer obstacles' },
-        normal: { baseSpeed: 22.0, maxSpeed: 68.0, speedAccel: 0.55, spawnMinGap: 20, spawnMaxGap: 36, doubleObstacleChance: 0.20, hint: '🟡 Balanced speed & obstacles' },
-        hard: { baseSpeed: 28.0, maxSpeed: 85.0, speedAccel: 0.75, spawnMinGap: 14, spawnMaxGap: 26, doubleObstacleChance: 0.30, hint: '🔴 Fast & furious, always an escape!' }
+        easy: { baseSpeed: 16.0, maxSpeed: 48.0, speedAccel: 0.35, doubleObstacleChance: 0.06, hint: ' Relaxed pace, fewer obstacles' },
+        normal: { baseSpeed: 22.0, maxSpeed: 68.0, speedAccel: 0.55, doubleObstacleChance: 0.18, hint: '🟡 Balanced speed & obstacles' },
+        hard: { baseSpeed: 28.0, maxSpeed: 85.0, speedAccel: 0.75, doubleObstacleChance: 0.28, hint: '🔴 Fast & furious, always an escape!' }
     };
     const THEMES = {
         city:   { bg: 0x0a0f1d, fog: 0x0a0f1d, fogD: 0.012, road: 0x1e293b, roadRough: 0.8, curb: 0x334155, laneOp: 0.75, neonL: 0x00f0ff, neonR: 0xff007f, side: 'city',   gantry: 0x334155 },
@@ -846,14 +865,23 @@
     const GRAVITY = 46.0;
     const JUMP_VELOCITY = 14.5;
     const SLIDE_DURATION = 0.68;
-    const SPAWN_DISTANCE = 170.0;
+    // ⏱️ مدت زمان کامل یک پرش (بالا + پایین) — برای محاسبه‌ی فاصله‌ی امن بین دو پرش
+    const JUMP_AIR_TIME = (2 * JUMP_VELOCITY) / GRAVITY;
+    const SPAWN_DISTANCE = 190.0;
     const REMOVE_DISTANCE = 16.0;
     const STATE = { MENU: 0, PLAYING: 1, GAMEOVER: 2, CUSTOMIZE: 3, AD_PAUSED: 4, PAUSED: 5, COUNTDOWN: 6 };
-    // 🤖 تنظیمات ربات
-    const PLAYER_SCALE = 0.8;  // 👈 اندازه‌ی کل ربات (قبلاً 1 بود — حالا ۸۰٪)
+    const PLAYER_SCALE = 0.8;
     const HEAD_Y = 0.69;
     const SHOULDER_X = 0.72;
     const ARM_TILT = 0.12;
+    const REACTION_START = 0.55;
+    const REACTION_END = 0.35;
+    const RAMP_DISTANCE = 2800;
+    const LEVEL_STEP = 1000;
+    const COIN_VALUE_CAP = 5;
+    // 🔧 حافظه‌ی فاصله بین دو مانع پرشی روی مسیر امن:
+    // بعد از فرود، بازیکن باید زمان کافی برای پریدن دوباره داشته باشد
+    const REJUMP_BUFFER = 0.3; // ثانیه اضافه بعد از فرود برای پرش دوباره
 
     class GameEngine {
         constructor() {
@@ -875,9 +903,12 @@
             this.multTimer = 0;
             this.shieldActive = false;
             this.nextMilestone = 500;
+            this.diffLevel = 1;
             this.gameOverShownAt = 0;
             this._cdTimer = null;
             this.eyes = [];
+            this.safeLane = 1;
+            this.lastSafeHurdleZ = null; // 🧠 محل آخرین مانع پرشی روی مسیر امن
             this.crazyGamesSDK = null;
             this.initCrazyGamesSDK();
             this.customColors = Object.assign({}, DEFAULT_COLORS);
@@ -915,6 +946,7 @@
             this.hudContainer = document.getElementById('hud');
             this.speedBarContainer = document.getElementById('speed-bar-container');
             this.invincibleBadge = document.getElementById('invincible-badge');
+            this.levelBadge = document.getElementById('level-badge');
             this.hudControls = document.getElementById('hud-controls');
             this.btnPause = document.getElementById('btn-pause');
             this.btnMute = document.getElementById('btn-mute');
@@ -928,6 +960,7 @@
             this.pauseModal = document.getElementById('pause-modal');
             this.newRecordBadge = document.getElementById('new-record-badge');
             this.finalBankNote = document.getElementById('final-bank-note');
+            this.finalLevel = document.getElementById('final-level');
             this.startModal = document.getElementById('start-modal');
             this.gameoverModal = document.getElementById('gameover-modal');
             this.customizeModal = document.getElementById('customize-modal');
@@ -968,26 +1001,33 @@
             if (c) c.innerText = this.bank.toLocaleString();
             if (d) d.innerText = this.bestDist + 'm';
         }
-        showToast(msg) {
+        showToast(msg, hot = false) {
             if (!this.toastWrap) return;
             const el = document.createElement('div');
-            el.className = 'toast-item';
+            el.className = 'toast-item' + (hot ? ' hot' : '');
             el.textContent = msg;
             this.toastWrap.appendChild(el);
             while (this.toastWrap.children.length > 3) this.toastWrap.firstChild.remove();
             requestAnimationFrame(() => el.classList.add('show'));
-            setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 320); }, 1500);
+            setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 320); }, hot ? 1900 : 1500);
         }
         setHudVisible(visible) {
             const o = visible ? '1' : '0';
             if (this.hudContainer) this.hudContainer.style.opacity = o;
             if (this.speedBarContainer) this.speedBarContainer.style.opacity = o;
             if (this.powerupBar) this.powerupBar.style.opacity = o;
+            if (this.levelBadge) this.levelBadge.style.opacity = o;
             if (this.hudControls) {
                 if (visible) this.hudControls.classList.remove('off');
                 else this.hudControls.classList.add('off');
             }
             if (!visible && this.invincibleBadge) this.invincibleBadge.style.opacity = '0';
+        }
+        updateLevelBadge() {
+            if (this.levelBadge) this.levelBadge.textContent = '🔥 Lv.' + this.diffLevel;
+        }
+        coinValue() {
+            return Math.min(COIN_VALUE_CAP, 1 + Math.floor((this.diffLevel - 1) / 2));
         }
         clearCountdown() {
             if (this._cdTimer) { clearTimeout(this._cdTimer); this._cdTimer = null; }
@@ -1207,7 +1247,6 @@
 
         createPlayer() {
             this.playerGroup = new THREE.Group();
-            // 👇 کوچک‌سازی کل ربات (پاها روی زمین می‌مانند چون مقیاس از نقطه‌ی زمین اعمال می‌شود)
             this.playerGroup.scale.setScalar(PLAYER_SCALE);
             const toy = (hex) => new THREE.MeshStandardMaterial({ color: hex, roughness: 0.3, metalness: 0.05 });
             this.playerMaterials = {
@@ -1220,14 +1259,12 @@
             const faceMat = new THREE.MeshStandardMaterial({ color: 0x05070a, roughness: 0.12, metalness: 0.55 });
             const whiteMat = new THREE.MeshStandardMaterial({ color: 0xf5f7fa, roughness: 0.45 });
 
-            // تنور: هودی پفکی
             const torsoGeo = createRoundedBox(0.84, 0.8, 0.52, 0.24, 3);
             this.torso = new THREE.Mesh(torsoGeo, this.playerMaterials.suit);
             this.torso.position.y = 1.15;
             this.torso.castShadow = true;
             this.playerGroup.add(this.torso);
 
-            // سر مکعبی گرد با صفحه‌ی صورت — چسبیده روی بدنه
             const headGeo = createRoundedBox(0.6, 0.58, 0.55, 0.2, 3);
             this.head = new THREE.Mesh(headGeo, this.playerMaterials.skin);
             this.head.position.set(0, HEAD_Y, 0);
@@ -1245,7 +1282,6 @@
                 this.eyes.push(eye);
             });
 
-            // دست‌ها: شونه‌ها بیرون از بدنه
             const shoulderGeo = new THREE.SphereGeometry(0.135, 16, 16);
             const sleeveGeo = new THREE.CylinderGeometry(0.115, 0.1, 0.5, 16);
             sleeveGeo.translate(0, -0.25, 0);
@@ -1271,7 +1307,6 @@
             this.torso.add(this.leftArmPivot);
             this.torso.add(this.rightArmPivot);
 
-            // پاها + کتونی
             const legGeo = new THREE.CylinderGeometry(0.125, 0.115, 0.72, 16);
             legGeo.translate(0, -0.36, 0);
             const shoeGeo = createRoundedBox(0.3, 0.2, 0.46, 0.09, 2);
@@ -1373,7 +1408,6 @@
             this.startModal.classList.add('hidden');
             this.gameoverModal.classList.add('hidden');
             this.customizeModal.classList.remove('hidden');
-            // ربات ثابت و رو به دوربین
             this.playerGroup.rotation.set(0, Math.PI, 0);
             this.torso.position.set(0, 1.15, 0); this.torso.rotation.set(0, 0, 0);
             this.head.position.set(0, HEAD_Y, 0); this.head.rotation.set(0, 0, 0);
@@ -1944,6 +1978,8 @@
             this.obstacles.forEach(o => { if (o.mesh.position.z > -50 && o.mesh.position.z < 30) this.scene.remove(o.mesh); });
             this.obstacles = this.obstacles.filter(o => !(o.mesh.position.z > -50 && o.mesh.position.z < 30));
             this.currentLane = 1; this.targetX = LANES[1];
+            this.safeLane = 1;
+            this.lastSafeHurdleZ = null;
             this.playerGroup.position.set(0, 0, 0);
             this.playerY = 0; this.playerVelY = 0;
             this.isGrounded = true; this.isSliding = false; this.slideTimer = 0;
@@ -1966,11 +2002,15 @@
             this.score = 0; this.coins = 0; this.distance = 0;
             this.speed = this.baseSpeed;
             this.currentLane = 1; this.targetX = LANES[1];
+            this.safeLane = 1;
+            this.lastSafeHurdleZ = null;
             this.hasRevivedThisRun = false;
             this.invincibleTimer = 0;
             this.magnetTimer = 0; this.multTimer = 0;
             if (this.shieldActive) { this.shieldActive = false; this.shieldMesh.visible = false; }
             this.nextMilestone = 500;
+            this.diffLevel = 1;
+            this.updateLevelBadge();
             this.badgeMagnet.classList.remove('on'); this.badgeMult.classList.remove('on'); this.badgeShield.classList.remove('on');
             this.invincibleBadge.style.opacity = '0';
             this.btnRevive.style.display = 'inline-flex';
@@ -1986,8 +2026,8 @@
             this.rightLegPivot.rotation.set(0, 0, 0);
             this.playerY = 0; this.playerVelY = 0;
             this.isGrounded = true; this.isSliding = false; this.slideTimer = 0;
-            this.nextSpawnZ = -36;
-            for (let i = 0; i < 6; i++) this.spawnPattern();
+            this.nextSpawnZ = -40;
+            for (let i = 0; i < 5; i++) this.spawnPattern();
             this.camera.fov = 55;
             this.camera.updateProjectionMatrix();
             this.state = STATE.PLAYING;
@@ -2033,6 +2073,7 @@
             this.finalBankNote.textContent = runCoins > 0
                 ? `🪙 +${runCoins} coins banked — Total: ${this.bank.toLocaleString()}`
                 : `🪙 Bank total: ${this.bank.toLocaleString()}`;
+            if (this.finalLevel) this.finalLevel.textContent = `🔥 Reached Level ${this.diffLevel} — ${runDist}m`;
             if (Auth.currentUser && Auth.currentUser.username) {
                 Auth.updateLeaderboard(Auth.currentUser.username, totalScore);
             }
@@ -2052,36 +2093,89 @@
             }, 600);
         }
 
+        getIntensity() {
+            return Math.min(1, this.distance / RAMP_DISTANCE);
+        }
+
+        // ============ 🎯 اسپاون منصفانه + محافظت از پرش‌های پشت‌سرهم ============
         spawnPattern() {
             const z = this.nextSpawnZ;
-            const lanes = [0, 1, 2].sort(() => Math.random() - 0.5);
             const diffConfig = DIFFICULTY_CONFIG[this.selectedDifficulty];
+            if (this.safeLane === undefined) this.safeLane = 1;
+            if (this.lastSafeHurdleZ === undefined) this.lastSafeHurdleZ = null;
+            const intensity = this.getIntensity();
+
+            const neighbors = [this.safeLane - 1, this.safeLane + 1].filter(l => l >= 0 && l <= 2);
+            const free = (neighbors.length && Math.random() < 0.65)
+                ? neighbors[Math.floor(Math.random() * neighbors.length)]
+                : this.safeLane;
+            const others = [0, 1, 2].filter(l => l !== free);
             const rand = Math.random();
-            let puLane = -1;
-            if (this.selectedDifficulty === 'hard' && rand < 0.18) {
-                this.spawnObstacle(lanes[0], z, 'TRAIN');
-                this.spawnObstacle(lanes[1], z, 'TRAIN');
-                this.spawnObstacle(lanes[2], z, 'HURDLE_LOW');
-                this.spawnCoinArc(lanes[2], z + 4.5, 5, true);
-            } else if (rand < diffConfig.doubleObstacleChance) {
-                this.spawnObstacle(lanes[0], z, 'TRAIN');
-                this.spawnObstacle(lanes[1], z, 'TRAIN');
-                this.spawnCoinArc(lanes[2], z, 5, false);
+
+            const doubleChance = diffConfig.doubleObstacleChance + intensity * 0.26;
+            const hardHurdleChance = (this.selectedDifficulty === 'hard' ? 0.1 : 0) + intensity * 0.14;
+
+            // 🦘 حداقل فاصله بین دو مانع پرشی روی مسیر امن:
+            // طول کامل یک پرش (بالا+پایین) + بافر فرود و پریدن دوباره
+            const minJumpGap = this.speed * (JUMP_AIR_TIME + REJUMP_BUFFER);
+            const gapFromLastHurdle = (this.lastSafeHurdleZ !== null)
+                ? (this.lastSafeHurdleZ - z)
+                : Infinity;
+            const canPlaceHurdle = gapFromLastHurdle >= minJumpGap;
+
+            const doubleChanceEff = doubleChance;
+            const hardHurdleEff = canPlaceHurdle ? hardHurdleChance : 0;
+
+            let coinLane = free, coinZ = z, coinArc = false, coinCount = 5;
+            if (rand < doubleChanceEff) {
+                this.spawnObstacle(others[0], z, 'TRAIN');
+                this.spawnObstacle(others[1], z, 'TRAIN');
+                coinCount = 5;
+            } else if (rand < doubleChanceEff + hardHurdleEff) {
+                // مسیر امن یک مانع پرشی دارد — فقط اگر فاصله از پرش قبلی کافی باشد
+                this.spawnObstacle(others[0], z, 'TRAIN');
+                this.spawnObstacle(others[1], z, 'TRAIN');
+                this.spawnObstacle(free, z, 'HURDLE_LOW');
+                coinLane = free; coinZ = z + 4.5; coinArc = true; coinCount = 5;
+                this.lastSafeHurdleZ = z;
             } else {
-                const patternIndex = Math.floor(Math.random() * 5);
-                switch (patternIndex) {
-                    case 0: this.spawnObstacle(lanes[0], z, 'TRAIN'); this.spawnCoinArc(lanes[1], z, 5, false); puLane = lanes[2]; break;
-                    case 1: this.spawnObstacle(lanes[0], z, 'HURDLE_LOW'); this.spawnObstacle(lanes[1], z, 'BARRIER_HIGH'); this.spawnCoinArc(lanes[2], z, 4, false); break;
-                    case 2: this.spawnObstacle(lanes[0], z, 'TRAIN'); this.spawnObstacle(lanes[1], z, 'HURDLE_LOW'); this.spawnCoinArc(lanes[2], z, 5, false); break;
-                    case 3: this.spawnObstacle(lanes[0], z, 'HURDLE_LOW'); this.spawnCoinArc(lanes[0], z + 4.5, 5, true); puLane = lanes[1]; break;
-                    case 4: this.spawnObstacle(0, z, 'HURDLE_LOW'); this.spawnObstacle(1, z, 'HURDLE_LOW'); this.spawnCoinArc(2, z + 4.5, 5, true); break;
+                const p = Math.floor(Math.random() * 5);
+                switch (p) {
+                    case 0:
+                        this.spawnObstacle(others[0], z, 'TRAIN');
+                        coinCount = 5;
+                        break;
+                    case 1:
+                        this.spawnObstacle(others[0], z, 'HURDLE_LOW');
+                        this.spawnObstacle(others[1], z, 'BARRIER_HIGH');
+                        coinCount = 4;
+                        break;
+                    case 2:
+                        this.spawnObstacle(others[0], z, 'TRAIN');
+                        this.spawnObstacle(others[1], z, 'HURDLE_LOW');
+                        coinCount = 5;
+                        break;
+                    case 3:
+                        this.spawnObstacle(others[0], z, 'HURDLE_LOW');
+                        this.spawnObstacle(others[1], z, 'HURDLE_LOW');
+                        coinLane = free; coinZ = z + 4.5; coinArc = true; coinCount = 5;
+                        break;
+                    case 4:
+                        this.spawnObstacle(others[0], z, 'HURDLE_LOW');
+                        coinCount = 4;
+                        break;
                 }
             }
-            if (puLane >= 0 && Math.random() < 0.13) this.spawnPowerup(puLane, z);
-            const minGap = diffConfig.spawnMinGap;
-            const maxGap = diffConfig.spawnMaxGap;
-            const dynamicSpacing = minGap + Math.random() * (maxGap - minGap) - (this.speed - this.baseSpeed) * 0.2;
-            this.nextSpawnZ -= Math.max(minGap * 0.7, dynamicSpacing);
+            this.spawnCoinArc(coinLane, coinZ, coinCount, coinArc);
+            if (Math.random() < 0.3 + intensity * 0.3) {
+                this.spawnCoinArc(free, z - 14, 4 + Math.min(3, this.diffLevel), false);
+            }
+            if (Math.random() < 0.13) this.spawnPowerup(free, z + 9);
+            this.safeLane = free;
+
+            const reaction = REACTION_START - intensity * (REACTION_START - REACTION_END);
+            const spacing = 9 + this.speed * (reaction + Math.random() * 0.25) + 3;
+            this.nextSpawnZ -= spacing;
         }
 
         animate() {
@@ -2111,7 +2205,6 @@
             const isMobile = this.isMobileCustomizer();
             if (isMobile) { this.camera.position.set(0, 3.5, 10.5); this.camera.lookAt(0, 2.2, 0); }
             else { this.camera.position.set(0.6, 2.0, 4.6); this.camera.lookAt(-0.25, 1.1, 0); }
-            // ربات کاملاً ثابت — بدون چرخش
             this.playerGroup.rotation.y += (Math.PI - this.playerGroup.rotation.y) * 5 * dt;
             this.playerGroup.rotation.x = 0;
             this.playerGroup.rotation.z = 0;
@@ -2132,7 +2225,8 @@
             }
             if (this.magnetTimer > 0) this.magnetTimer = Math.max(0, this.magnetTimer - dt);
             if (this.multTimer > 0) this.multTimer = Math.max(0, this.multTimer - dt);
-            if (this.speed < this.maxSpeed) this.speed += this.speedAccel * dt;
+            const intensity = this.getIntensity();
+            if (this.speed < this.maxSpeed) this.speed += this.speedAccel * (1 + intensity * 1.1) * dt;
             const moveDist = this.speed * dt;
             this.distance += moveDist;
             const scoreMult = this.multTimer > 0 ? 2 : 1;
@@ -2143,6 +2237,15 @@
                 this.showToast(`🏁 ${this.nextMilestone}m   +${bonus}`);
                 sound.playCoin();
                 this.nextMilestone += 500;
+            }
+            const newLevel = 1 + Math.floor(this.distance / LEVEL_STEP);
+            if (newLevel > this.diffLevel) {
+                this.diffLevel = newLevel;
+                this.updateLevelBadge();
+                const bonusCoins = Math.min(COIN_VALUE_CAP, newLevel) * 2;
+                this.coins += bonusCoins;
+                this.showToast(`🔥 Level ${newLevel}! +${bonusCoins} 🪙`, true);
+                sound.playLevelUp();
             }
             this.uiScore.innerText = Math.floor(this.score).toLocaleString();
             const sm = (1 + (this.speed - this.baseSpeed) * 0.08) * scoreMult;
@@ -2222,7 +2325,6 @@
 
         updateObstacles(moveDist) {
             const playerMinY = this.playerY;
-            // 🔧 جعبه‌ی برخورد هم متناسب با مقیاس ربات کوچک می‌شود تا بازی منصفانه بماند
             const s = PLAYER_SCALE;
             const halfW = 0.32 * s;
             const standH = 1.85 * s;
@@ -2263,6 +2365,7 @@
 
         updateCoins(moveDist, dt) {
             const rotSpeed = 3.2 * dt;
+            const coinValue = this.coinValue();
             for (let i = this.coinsList.length - 1; i >= 0; i--) {
                 const c = this.coinsList[i];
                 c.mesh.position.z += moveDist;
@@ -2273,7 +2376,7 @@
                 }
                 c.box.setFromCenterAndSize(c.mesh.position, this._coinSize);
                 if (this.playerBox.intersectsBox(c.box)) {
-                    this.coins++;
+                    this.coins += coinValue;
                     this.score += 50 * (this.multTimer > 0 ? 2 : 1);
                     sound.playCoin();
                     this.createSparks(c.mesh.position, 0x00f0ff);
