@@ -3,15 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
-    <title>Subway Dash 3D - Multi-Map Edition</title>
+    <title>Metro Dash - Enhanced Edition</title>
     <script src="https://sdk.crazygames.com/crazygames-sdk-v2.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <!-- Firebase SDKs -->
+    <script>
+    function __showFatal(msg){
+        var el = document.getElementById('fatal-error');
+        if (!el) return;
+        el.style.display = 'block';
+        el.textContent = '⚠️ ' + msg;
+    }
+    function __showNotice(msg){
+        var el = document.getElementById('sandbox-note');
+        if (!el) return;
+        el.style.display = 'block';
+        el.textContent = msg;
+    }
+    window.addEventListener('error', function(e){
+        var m = (e && e.message) ? e.message : '';
+        if (m === 'Script error.' || (e && e.lineno === 0)) return;
+        __showFatal(m + (e && e.lineno ? ' (line ' + e.lineno + ')' : ''));
+    });
+    window.addEventListener('unhandledrejection', function(e){
+        var r = e.reason;
+        var m = (r && r.message) ? r.message : String(r);
+        if (m.indexOf('Script error') !== -1) return;
+        __showFatal(m);
+    });
+    </script>
+    <script>
+    window.__threeCallbacks = [];
+    window.__threeStatus = '';
+    function __loadFirst(list, done) {
+        if (!list.length) return done(false);
+        var s = document.createElement('script');
+        s.src = list[0];
+        s.onload = function(){ done(true); };
+        s.onerror = function(){ s.remove(); __loadFirst(list.slice(1), done); };
+        document.head.appendChild(s);
+    }
+    __loadFirst([
+        'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js',
+        'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js',
+        'https://unpkg.com/three@0.128.0/build/three.min.js'
+    ], function(ok){
+        window.__threeStatus = ok ? 'ok' : 'fail';
+        var cbs = window.__threeCallbacks; window.__threeCallbacks = [];
+        cbs.forEach(function(cb){ try { cb(ok); } catch(e){ console.error(e); } });
+    });
+    window.__whenThree = function(cb){
+        if (window.__threeStatus) cb(window.__threeStatus === 'ok');
+        else window.__threeCallbacks.push(cb);
+    };
+    </script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-user-select: none; }
         body, html { width: 100%; height: 100%; overflow: hidden; background-color: #0b0e14; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; touch-action: none; }
+        #fatal-error { position: fixed; top: 0; left: 0; right: 0; z-index: 9999; background: #7f1d1d; color: #fecaca; font: 13px/1.7 Tahoma, Consolas, monospace; padding: 10px 14px; display: none; white-space: pre-wrap; max-height: 50vh; overflow: auto; direction: rtl; text-align: right; }
+        #sandbox-note { position: fixed; bottom: 0; left: 0; right: 0; z-index: 9998; background: #78350f; color: #fde68a; font: 12px/1.7 Tahoma, sans-serif; padding: 8px 14px; display: none; white-space: pre-wrap; direction: rtl; text-align: right; }
         #game-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; z-index: 1; touch-action: none; }
         .ui-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; display: flex; flex-direction: column; justify-content: space-between; padding: 24px; }
         #hud { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; opacity: 0; transition: opacity 0.3s ease; }
@@ -24,11 +74,43 @@
         #speed-bar-container { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); width: 200px; height: 6px; background: rgba(255,255,255,0.12); border-radius: 6px; overflow: hidden; opacity: 0; transition: opacity 0.3s ease; }
         #speed-bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #00f0ff, #ff007f); border-radius: 6px; }
         #invincible-badge { position: absolute; top: 86px; left: 50%; transform: translateX(-50%); background: rgba(0, 240, 255, 0.2); border: 1px solid #00f0ff; border-radius: 50px; padding: 6px 18px; color: #00f0ff; font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; box-shadow: 0 0 16px rgba(0, 240, 255, 0.4); opacity: 0; transition: opacity 0.2s ease; }
+        #hud-controls { position: absolute; top: 24px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; transition: opacity 0.3s ease; }
+        #hud-controls.off { opacity: 0; visibility: hidden; }
+        .round-ctrl { width: 42px; height: 42px; border-radius: 50%; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(0, 240, 255, 0.3); color: #fff; font-size: 15px; cursor: pointer; pointer-events: auto; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 18px rgba(0,0,0,0.5); transition: transform 0.15s ease; }
+        .round-ctrl:hover { transform: scale(1.1); }
+        .round-ctrl:active { transform: scale(0.94); }
+        #btn-pause { font-size: 11px; font-weight: 900; letter-spacing: 1px; }
+        #powerup-bar { position: absolute; top: 130px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; }
+        .pu-badge { display: none; flex-direction: column; align-items: center; gap: 5px; background: rgba(15, 23, 42, 0.85); border: 1px solid; border-radius: 12px; padding: 7px 11px; min-width: 74px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .pu-badge.on { display: flex; }
+        .pu-badge .pu-icon { font-size: 11px; font-weight: 900; letter-spacing: 0.5px; white-space: nowrap; }
+        .pu-track { width: 100%; height: 4px; background: rgba(255,255,255,0.12); border-radius: 4px; overflow: hidden; }
+        .pu-fill { height: 100%; width: 100%; border-radius: 4px; transition: width 0.15s linear; }
+        #pu-magnet { border-color: rgba(255, 51, 85, 0.6); } #pu-magnet .pu-icon { color: #ff3355; } #pu-magnet .pu-fill { background: #ff3355; }
+        #pu-mult { border-color: rgba(255, 215, 0, 0.6); } #pu-mult .pu-icon { color: #ffd700; } #pu-mult .pu-fill { background: #ffd700; }
+        #pu-shield { border-color: rgba(0, 240, 255, 0.6); } #pu-shield .pu-icon { color: #00f0ff; } #pu-shield .pu-fill { background: #00f0ff; }
+        #toast-wrap { position: absolute; top: 195px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 8px; align-items: center; z-index: 12; pointer-events: none; }
+        .toast-item { background: rgba(15, 23, 42, 0.92); border: 1px solid rgba(0, 240, 255, 0.35); color: #f1f5f9; padding: 8px 18px; border-radius: 50px; font-size: 13px; font-weight: 700; box-shadow: 0 8px 24px rgba(0,0,0,0.5); opacity: 0; transform: translateY(-8px); transition: all 0.3s ease; white-space: nowrap; }
+        .toast-item.show { opacity: 1; transform: translateY(0); }
+        #countdown-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; align-items: center; justify-content: center; z-index: 18; pointer-events: none; }
+        #countdown-overlay.active { display: flex; }
+        #countdown-num { font-size: 110px; font-weight: 900; color: #00f0ff; text-shadow: 0 0 40px rgba(0, 240, 255, 0.7); }
+        #countdown-num.pop { animation: cdPop 0.55s ease; }
+        @keyframes cdPop { 0% { transform: scale(1.9); opacity: 0; } 40% { opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+        #new-record-badge { display: none; margin: 0 auto 12px; width: max-content; background: linear-gradient(135deg, #ffd700, #ff8800); color: #000; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; font-size: 12px; padding: 7px 18px; border-radius: 50px; box-shadow: 0 6px 20px rgba(255, 170, 0, 0.5); animation: recPulse 1.2s ease infinite; }
+        @keyframes recPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+        #final-bank-note { color: #ffd700; font-size: 12px; margin: -10px 0 14px; font-weight: 600; }
+        #engine-status { font-size: 11px; color: rgba(255,255,255,0.55); margin: -8px 0 12px; font-weight: 600; }
         .modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, rgba(15, 23, 42, 0.8) 0%, rgba(3, 7, 18, 0.96) 100%); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 20; pointer-events: auto; transition: opacity 0.35s ease, visibility 0.35s ease; }
         .modal.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         .modal-content { text-align: center; max-width: 480px; width: 92%; padding: 28px 22px; background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 28px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 50px rgba(0, 240, 255, 0.2); max-height: 92vh; overflow-y: auto; }
         h1.game-title { font-size: 32px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 4px; background: linear-gradient(135deg, #00f0ff 0%, #7000ff 50%, #ff007f 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 4px 12px rgba(0, 240, 255, 0.4)); }
         .subtitle { color: #38bdf8; font-size: 13px; margin-bottom: 16px; font-weight: 500; }
+        .menu-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
+        .menu-stat { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 8px 6px; }
+        .menu-stat .t { font-size: 9px; color: #38bdf8; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; }
+        .menu-stat .v { font-size: 15px; font-weight: 900; color: #fff; }
+        #menu-best { color: #00f0ff !important; } #menu-bank { color: #ffd700 !important; }
         .map-selector, .difficulty-selector { margin-bottom: 16px; text-align: left; }
         .map-selector-label, .difficulty-selector-label { font-size: 11px; font-weight: 800; color: #38bdf8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
         .map-options, .difficulty-options { display: flex; gap: 10px; }
@@ -73,71 +155,30 @@
         #ad-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 7, 18, 0.94); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #00f0ff; font-size: 17px; font-weight: 800; letter-spacing: 1px; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.2s ease; }
         #ad-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
         .difficulty-hint { font-size: 9px; color: rgba(255,255,255,0.5); margin-top: 4px; text-align: center; }
-        
-        /* ============ AUTH & USER SECTION ============ */
-        .user-section { 
-            background: rgba(0, 240, 255, 0.06); 
-            border: 1px solid rgba(0, 240, 255, 0.2); 
-            border-radius: 16px; 
-            padding: 14px; 
-            margin-bottom: 16px; 
-        }
-        .auth-tabs-row { display: flex; gap: 8px; margin-bottom: 12px; }
-        .auth-tab-btn { 
-            flex: 1; padding: 10px; background: rgba(255,255,255,0.05); 
-            border: 2px solid rgba(255,255,255,0.15); border-radius: 10px; 
-            color: #fff; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.3s;
-        }
-        .auth-tab-btn.active { background: rgba(0, 240, 255, 0.15); border-color: #00f0ff; color: #00f0ff; }
+        .user-section { background: rgba(0, 240, 255, 0.06); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 16px; padding: 14px; margin-bottom: 16px; }
         .auth-form-inline { display: none; flex-direction: column; gap: 10px; }
         .auth-form-inline.active { display: flex; }
         .auth-input-row { display: flex; flex-direction: column; gap: 4px; text-align: left; }
         .auth-input-label { font-size: 10px; color: #38bdf8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-        .auth-input-field { 
-            padding: 10px 14px; background: rgba(255,255,255,0.08); 
-            border: 2px solid rgba(255,255,255,0.15); border-radius: 10px; 
-            color: #fff; font-size: 13px; outline: none; transition: all 0.3s;
-        }
+        .auth-input-field { padding: 10px 14px; background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.15); border-radius: 10px; color: #fff; font-size: 13px; outline: none; transition: all 0.3s; }
         .auth-input-field:focus { border-color: #00f0ff; background: rgba(255,255,255,0.12); }
         .auth-error-msg { color: #ff6b6b; font-size: 11px; margin-top: 2px; display: none; padding: 6px 10px; background: rgba(255, 107, 107, 0.1); border-radius: 8px; }
-        .auth-submit-btn { 
-            background: linear-gradient(135deg, #00f0ff, #7000ff); 
-            border: none; color: #fff; font-weight: 900; padding: 11px; 
-            border-radius: 50px; cursor: pointer; font-size: 13px;
-            text-transform: uppercase; transition: all 0.3s;
-        }
+        .auth-submit-btn { background: linear-gradient(135deg, #00f0ff, #7000ff); border: none; color: #fff; font-weight: 900; padding: 11px; border-radius: 50px; cursor: pointer; font-size: 13px; text-transform: uppercase; transition: all 0.3s; }
         .auth-submit-btn:hover { transform: scale(1.03); }
-        
+        .auth-submit-btn:disabled { opacity: 0.6; cursor: wait; }
         .auth-quick-btns { display: flex; gap: 8px; }
-        .auth-quick-btn { 
-            flex: 1; padding: 10px; border-radius: 10px; border: none; 
-            cursor: pointer; font-size: 12px; font-weight: 700; transition: all 0.3s;
-        }
+        .auth-quick-btn { flex: 1; padding: 10px; border-radius: 10px; border: none; cursor: pointer; font-size: 12px; font-weight: 700; transition: all 0.3s; }
         .auth-quick-btn.login-q { background: linear-gradient(135deg, #00f0ff, #00b8ff); color: #000; }
         .auth-quick-btn.signup-q { background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); color: #fff; }
         .auth-quick-btn:hover { transform: scale(1.04); }
-        
         .user-profile-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .user-avatar-circle { 
-            width: 42px; height: 42px; background: linear-gradient(135deg, #00f0ff, #7000ff); 
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-weight: 900; color: #fff; font-size: 17px; flex-shrink: 0;
-            box-shadow: 0 4px 12px rgba(0, 240, 255, 0.4);
-        }
+        .user-avatar-circle { width: 42px; height: 42px; background: linear-gradient(135deg, #00f0ff, #7000ff); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #fff; font-size: 17px; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0, 240, 255, 0.4); }
         .user-profile-info { flex: 1; text-align: left; min-width: 0; }
         .user-profile-name { color: #fff; font-weight: 700; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .user-profile-status { color: #38bdf8; font-size: 10px; }
-        .user-logout-btn { 
-            background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4);
-            color: #ff6b6b; padding: 7px 12px; border-radius: 8px; cursor: pointer; font-size: 11px; font-weight: 700;
-            flex-shrink: 0; transition: all 0.3s;
-        }
+        .user-logout-btn { background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); color: #ff6b6b; padding: 7px 12px; border-radius: 8px; cursor: pointer; font-size: 11px; font-weight: 700; flex-shrink: 0; transition: all 0.3s; }
         .user-logout-btn:hover { background: rgba(239, 68, 68, 0.3); }
-        
-        .leaderboard-box { 
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); 
-            border-radius: 12px; padding: 12px; max-height: 180px; overflow-y: auto;
-        }
+        .leaderboard-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px; max-height: 180px; overflow-y: auto; }
         .leaderboard-header { color: #ffd700; font-size: 13px; font-weight: 900; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
         .lb-entry { display: flex; align-items: center; gap: 8px; padding: 7px; background: rgba(255,255,255,0.03); border-radius: 8px; margin-bottom: 5px; transition: all 0.3s; }
         .lb-entry:hover { background: rgba(255,255,255,0.06); }
@@ -151,12 +192,16 @@
         .lb-username { color: #fff; font-weight: 700; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .lb-date { color: #38bdf8; font-size: 9px; }
         .lb-score { color: #ffd700; font-weight: 900; font-size: 12px; flex-shrink: 0; }
-        
         @media (max-width: 768px), (orientation: portrait) {
             .ui-layer { padding: 14px; }
             .hud-card { padding: 8px 14px; }
             .hud-value { font-size: 20px; }
             .hud-label { font-size: 9.5px; }
+            #hud-controls { top: 14px; }
+            .round-ctrl { width: 38px; height: 38px; font-size: 13px; }
+            #powerup-bar { top: 118px; }
+            #toast-wrap { top: 172px; }
+            #countdown-num { font-size: 80px; }
             .style-studio-panel { top: auto !important; bottom: 0 !important; left: 0 !important; right: 0 !important; transform: none !important; width: 100% !important; max-width: 100% !important; height: 38vh !important; max-height: 38vh !important; border-radius: 20px 20px 0 0 !important; padding: 12px 14px !important; gap: 9px !important; background: rgba(15, 23, 42, 0.98) !important; }
             .customizer-badge { top: 14px; left: 50%; transform: translateX(-50%); font-size: 10.5px; padding: 5px 12px; white-space: nowrap; }
             .swatch-btn { width: 29px; height: 29px; }
@@ -165,10 +210,13 @@
             .modal-content { padding: 20px 16px; }
             h1.game-title { font-size: 26px; }
             .user-section { padding: 10px; }
+            .menu-stat .v { font-size: 13px; }
         }
     </style>
 </head>
 <body>
+    <div id="fatal-error"></div>
+    <div id="sandbox-note"></div>
     <canvas id="game-canvas"></canvas>
 
     <div class="ui-layer">
@@ -182,21 +230,30 @@
                 <div class="hud-value"><span id="hud-coins" class="coin-val">0</span></div>
             </div>
         </div>
-        <div id="invincible-badge">️ Shield Active</div>
+        <div id="invincible-badge">🛡️ Shield Active</div>
+        <div id="powerup-bar">
+            <div class="pu-badge" id="pu-magnet"><div class="pu-icon">🧲 MAGNET</div><div class="pu-track"><div class="pu-fill"></div></div></div>
+            <div class="pu-badge" id="pu-mult"><div class="pu-icon">✨ 2× SCORE</div><div class="pu-track"><div class="pu-fill"></div></div></div>
+            <div class="pu-badge" id="pu-shield"><div class="pu-icon">🛡️ SHIELD</div><div class="pu-track"><div class="pu-fill" style="width:100%"></div></div></div>
+        </div>
+        <div id="hud-controls" class="off">
+            <button id="btn-mute" class="round-ctrl" title="Sound On/Off">🔊</button>
+            <button id="btn-pause" class="round-ctrl" title="Pause (P)">❚❚</button>
+        </div>
+        <div id="toast-wrap"></div>
         <div id="speed-bar-container"><div id="speed-bar-fill"></div></div>
     </div>
 
+    <div id="countdown-overlay"><div id="countdown-num">3</div></div>
     <div id="ad-overlay"><div>Loading Advertisement...</div></div>
 
-    <!-- Start Modal (Main Menu with Auth) -->
     <div id="start-modal" class="modal">
         <div class="modal-content">
             <h1 class="game-title">Metro Dash</h1>
             <p class="subtitle">Runner Edition</p>
-            
-            <!-- ============ USER / AUTH SECTION ============ -->
+            <div id="engine-status">⏳ Loading 3D engine…</div>
+
             <div class="user-section">
-                <!-- When NOT logged in -->
                 <div id="auth-guest-view">
                     <div style="color: rgba(255,255,255,0.7); font-size: 12px; margin-bottom: 10px;">Login to save your score & compete on the leaderboard!</div>
                     <div class="auth-quick-btns">
@@ -204,8 +261,6 @@
                         <button class="auth-quick-btn signup-q" id="show-signup-btn">Sign Up</button>
                     </div>
                 </div>
-                
-                <!-- Login Form (inline) -->
                 <div id="auth-login-view" class="auth-form-inline">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                         <div style="color: #00f0ff; font-weight: 700; font-size: 13px;">Login to your account</div>
@@ -222,8 +277,6 @@
                     <div class="auth-error-msg" id="login-error-msg"></div>
                     <button class="auth-submit-btn" id="do-login-btn">Login</button>
                 </div>
-                
-                <!-- Signup Form (inline) -->
                 <div id="auth-signup-view" class="auth-form-inline">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                         <div style="color: #00f0ff; font-weight: 700; font-size: 13px;">Create new account</div>
@@ -244,8 +297,6 @@
                     <div class="auth-error-msg" id="signup-error-msg"></div>
                     <button class="auth-submit-btn" id="do-signup-btn">Sign Up</button>
                 </div>
-                
-                <!-- When logged in -->
                 <div id="auth-logged-view" style="display: none;">
                     <div class="user-profile-row">
                         <div class="user-avatar-circle" id="user-avatar-circle">U</div>
@@ -261,16 +312,22 @@
                     </div>
                 </div>
             </div>
-            <!-- ============ END USER / AUTH SECTION ============ -->
+
+            <div class="menu-stats">
+                <div class="menu-stat"><div class="t">Best Score</div><div class="v" id="menu-best">0</div></div>
+                <div class="menu-stat"><div class="t">🪙 Coin Bank</div><div class="v" id="menu-bank">0</div></div>
+                <div class="menu-stat"><div class="t">Best Distance</div><div class="v" id="menu-dist">0m</div></div>
+            </div>
 
             <div class="map-selector">
                 <div class="map-selector-label">Select Map</div>
                 <div class="map-options">
                     <button class="map-btn active" data-map="city">🏙️ Neon City</button>
                     <button class="map-btn" data-map="desert">🏜️ Desert Oasis</button>
+                    <button class="map-btn" data-map="snow">❄️ Frost Peak</button>
                 </div>
             </div>
-            
+
             <div class="difficulty-selector">
                 <div class="difficulty-selector-label"> Difficulty Level</div>
                 <div class="difficulty-options">
@@ -285,7 +342,9 @@
                 <div class="ctrl-item"><span class="key-badge">A / D / ← →</span><span class="ctrl-desc">Switch Lane</span></div>
                 <div class="ctrl-item"><span class="key-badge">W / SPACE / ↑</span><span class="ctrl-desc">Jump Over</span></div>
                 <div class="ctrl-item"><span class="key-badge">S / ↓</span><span class="ctrl-desc">Slide Under</span></div>
+                <div class="ctrl-item"><span class="key-badge">P / ESC</span><span class="ctrl-desc">Pause Game</span></div>
                 <div class="ctrl-item"><span class="key-badge">SWIPE</span><span class="ctrl-desc">Touch Gestures</span></div>
+                <div class="ctrl-item"><span class="key-badge">PICKUPS</span><span class="ctrl-desc">🧲 🛡️ ✨ Power-ups</span></div>
             </div>
 
             <div class="btn-stack">
@@ -315,12 +374,14 @@
         <div class="modal-content">
             <h1 class="game-title" style="background: linear-gradient(135deg, #ff007f 0%, #ff0055 100%); -webkit-background-clip: text;">Busted!</h1>
             <p class="subtitle">React faster next time!</p>
+            <div id="new-record-badge">🏆 New Record!</div>
             <div class="stats-grid">
                 <div class="stat-box"><div class="title">Final Score</div><div id="final-score" class="val score-val">0</div></div>
                 <div class="stat-box"><div class="title">High Score</div><div id="best-score" class="val">0</div></div>
                 <div class="stat-box"><div class="title">Coins Picked</div><div id="final-coins" class="val coin-val">0</div></div>
                 <div class="stat-box"><div class="title">Distance</div><div id="final-dist" class="val">0m</div></div>
             </div>
+            <div id="final-bank-note"></div>
             <div class="btn-stack">
                 <button id="btn-revive" class="btn-action btn-rewarded" style="width:100%;"><span>🎬 Revive & Continue (Ad)</span></button>
                 <button id="btn-restart" class="btn-action" style="width:100%;">🔄 Run Again</button>
@@ -330,150 +391,182 @@
         </div>
     </div>
 
+    <div id="pause-modal" class="modal hidden">
+        <div class="modal-content" style="max-width: 360px;">
+            <h1 class="game-title">Paused</h1>
+            <p class="subtitle">Take a breath, runner 🏙️</p>
+            <div class="stats-grid" style="margin-bottom: 16px;">
+                <div class="stat-box"><div class="title">Score</div><div id="pause-score" class="val score-val">0</div></div>
+                <div class="stat-box"><div class="title">Coins</div><div id="pause-coins" class="val coin-val">0</div></div>
+            </div>
+            <div class="btn-stack">
+                <button id="btn-resume" class="btn-action" style="width:100%;">▶ Resume</button>
+                <button id="btn-pause-restart" class="btn-action btn-secondary" style="width:100%;">🔄 Restart</button>
+                <button id="btn-pause-menu" class="btn-action btn-secondary" style="width:100%;">🏠 Main Menu</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-    // ============ FIREBASE CONFIG ============
-    // ⚠️ این دو خط را با اطلاعات فایربیس خودتان جایگزین کنید
-    const FIREBASE_API_KEY = "AIzaSyC9Q5tOOlG7E2d_wBAlGHCed79QQlQQLhw"; // apiKey خود را اینجا بگذارید
-    const FIREBASE_DB_URL = "https://cyber-dash-457a0-default-rtdb.firebaseio.com"; // databaseURL خود را اینجا بگذارید
+    const Store = (function () {
+        const mem = {};
+        let ok = false;
+        try {
+            localStorage.setItem('__md_test__', '1');
+            localStorage.removeItem('__md_test__');
+            ok = true;
+        } catch (e) { ok = false; }
+        return {
+            ok: ok,
+            get(key, def) {
+                try {
+                    const v = ok ? localStorage.getItem(key) : (Object.prototype.hasOwnProperty.call(mem, key) ? mem[key] : null);
+                    return (v === null || v === undefined) ? def : v;
+                } catch (e) { return def; }
+            },
+            set(key, val) {
+                try { if (ok) localStorage.setItem(key, val); else mem[key] = String(val); } catch (e) {}
+            },
+            remove(key) {
+                try { if (ok) localStorage.removeItem(key); else delete mem[key]; } catch (e) {}
+            }
+        };
+    })();
+    if (!Store.ok) {
+        __showNotice('⚠️ حالت پیش‌نمایش محدود: ذخیره‌سازی دائمی و موتور سه‌بعدی ممکن است کار نکند.\n✅ برای بازی کامل: این کد را در فایل MetroDash.html ذخیره کن و مستقیم با کروم/اج باز کن.');
+    }
+
+    function bindBtn(id, fn) {
+        const el = document.getElementById(id);
+        if (!el) { console.warn('⚠️ Element not found: #' + id); return; }
+        el.addEventListener('click', fn);
+    }
+
+    const FIREBASE_API_KEY = "AIzaSyC9Q5tOOlG7E2d_wBAlGHCed79QQlQQLhw";
+    const FIREBASE_DB_URL = "https://cyber-dash-457a0-default-rtdb.firebaseio.com";
 
     let firebaseReady = false;
     let firebaseDB = null;
-
     try {
-        if (typeof firebase !== 'undefined' && FIREBASE_API_KEY.length > 10 && !FIREBASE_API_KEY.includes('...')) {
-            firebase.initializeApp({
-                apiKey: FIREBASE_API_KEY,
-                databaseURL: FIREBASE_DB_URL
-            });
+        if (typeof firebase !== 'undefined' && FIREBASE_API_KEY.length > 10) {
+            firebase.initializeApp({ apiKey: FIREBASE_API_KEY, databaseURL: FIREBASE_DB_URL });
             firebaseDB = firebase.database();
             firebaseReady = true;
-            console.log('✅ Firebase Connected');
         }
     } catch(e) { console.warn('Firebase init failed', e); }
 
-    // ============ AUTH SYSTEM ============
+    async function hashPassword(pw) {
+        try {
+            if (window.crypto && crypto.subtle) {
+                const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('metrodash::' + pw));
+                return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+            }
+        } catch(e) {}
+        let h = 5381;
+        for (let i = 0; i < pw.length; i++) { h = ((h << 5) + h + pw.charCodeAt(i)) >>> 0; }
+        return 'x' + h.toString(16);
+    }
+
     const Auth = {
         currentUser: null,
         users: [],
         leaderboard: [],
-        
         init() {
             try {
-                this.users = JSON.parse(localStorage.getItem('metro_users') || '[]');
-                this.leaderboard = JSON.parse(localStorage.getItem('metro_leaderboard') || '[]');
-                const session = localStorage.getItem('metro_session');
+                this.users = JSON.parse(Store.get('metro_users', '[]'));
+                this.leaderboard = JSON.parse(Store.get('metro_leaderboard', '[]'));
+                if (!Array.isArray(this.users)) this.users = [];
+                if (!Array.isArray(this.leaderboard)) this.leaderboard = [];
+                const session = Store.get('metro_session', null);
                 if (session) this.currentUser = JSON.parse(session);
             } catch (e) {
-                console.warn('Auth init error:', e);
-                this.users = [];
-                this.leaderboard = [];
+                this.users = []; this.leaderboard = [];
             }
-            console.log('Auth initialized. User:', this.currentUser);
-            console.log('Leaderboard:', this.leaderboard);
             if (firebaseReady) this.fetchOnlineLeaderboard();
         },
-        
         saveSession() {
-            if (this.currentUser) localStorage.setItem('metro_session', JSON.stringify(this.currentUser));
-            else localStorage.removeItem('metro_session');
+            if (this.currentUser) Store.set('metro_session', JSON.stringify(this.currentUser));
+            else Store.remove('metro_session');
         },
-        
-        signup(username, password) {
+        async signup(username, password) {
             const u = username.trim();
             if (u.length < 3) return { success: false, error: 'Username must be at least 3 characters' };
             if (password.length < 4) return { success: false, error: 'Password must be at least 4 characters' };
-            if (this.users.find(x => x.username.toLowerCase() === u.toLowerCase())) 
+            if (this.users.find(x => x.username && x.username.toLowerCase() === u.toLowerCase()))
                 return { success: false, error: 'Username already exists' };
-            this.users.push({ username: u, password: password, createdAt: new Date().toISOString() });
-            localStorage.setItem('metro_users', JSON.stringify(this.users));
+            this.users.push({ username: u, pass: await hashPassword(password), createdAt: new Date().toISOString() });
+            Store.set('metro_users', JSON.stringify(this.users));
             this.currentUser = { username: u };
             this.saveSession();
-            console.log('User signed up:', u);
             return { success: true };
         },
-        
-        login(username, password) {
+        async login(username, password) {
             const u = username.trim();
-            const user = this.users.find(x => x.username.toLowerCase() === u.toLowerCase() && x.password === password);
+            const user = this.users.find(x => x.username && x.username.toLowerCase() === u.toLowerCase());
             if (!user) return { success: false, error: 'Invalid username or password' };
+            const h = await hashPassword(password);
+            if (user.pass && user.pass === h) {
+                // ✅ هش معتبر
+            } else if (user.password && user.password === password) {
+                user.pass = h; delete user.password;
+                Store.set('metro_users', JSON.stringify(this.users));
+            } else {
+                return { success: false, error: 'Invalid username or password' };
+            }
             this.currentUser = { username: user.username };
             this.saveSession();
-            console.log('User logged in:', user.username);
             return { success: true };
         },
-        
-        logout() {
-            console.log('User logged out:', this.currentUser);
-            this.currentUser = null;
-            this.saveSession();
-        },
-        
+        logout() { this.currentUser = null; this.saveSession(); },
         isLoggedIn() { return this.currentUser !== null; },
-        
         async fetchOnlineLeaderboard() {
             if (!firebaseReady) return;
             try {
                 const snapshot = await firebaseDB.ref('leaderboard').once('value');
                 const data = snapshot.val();
                 if (data) {
-                    this.leaderboard = Object.values(data);
+                    this.leaderboard = Object.values(data).filter(e => e && e.username && typeof e.score === 'number');
                     this.leaderboard.sort((a, b) => b.score - a.score);
                     this.leaderboard = this.leaderboard.slice(0, 10);
-                    localStorage.setItem('metro_leaderboard', JSON.stringify(this.leaderboard));
+                    Store.set('metro_leaderboard', JSON.stringify(this.leaderboard));
                     renderLeaderboard();
                 }
             } catch(e) { console.warn('Fetch LB error', e); }
         },
-
         async updateLeaderboard(username, score) {
-            console.log('Updating leaderboard for:', username, 'with score:', score);
+            let improved = false;
             let entry = this.leaderboard.find(e => e.username.toLowerCase() === username.toLowerCase());
             if (entry) {
-                if (score > entry.score) { 
-                    entry.score = score; 
-                    entry.date = new Date().toISOString();
-                    console.log('Updated existing entry:', entry);
-                }
+                if (score > entry.score) { entry.score = score; entry.date = new Date().toISOString(); improved = true; }
             } else {
-                const newEntry = { username: username, score: score, date: new Date().toISOString() };
-                this.leaderboard.push(newEntry);
-                console.log('Added new entry:', newEntry);
+                entry = { username: username, score: score, date: new Date().toISOString() };
+                this.leaderboard.push(entry);
+                improved = true;
             }
-            this.leaderboard.sort((a, b) => b.score - a.score);
-            this.leaderboard = this.leaderboard.slice(0, 10);
-            localStorage.setItem('metro_leaderboard', JSON.stringify(this.leaderboard));
-            renderLeaderboard(); // Update UI immediately
-
-            // Save to Firebase
-            if (firebaseReady) {
+            if (improved) {
+                this.leaderboard.sort((a, b) => b.score - a.score);
+                this.leaderboard = this.leaderboard.slice(0, 10);
+                Store.set('metro_leaderboard', JSON.stringify(this.leaderboard));
+            }
+            renderLeaderboard();
+            if (firebaseReady && improved) {
                 try {
                     const safeUsername = username.replace(/[.#$\[\]]/g, '_');
                     await firebaseDB.ref('leaderboard/' + safeUsername).set({
-                        username: username,
-                        score: score,
-                        date: new Date().toISOString()
+                        username: username, score: entry.score, date: entry.date
                     });
-                    console.log('✅ Saved to online DB');
-                } catch(e) {
-                    console.error('❌ Firebase save error:', e);
-                }
+                    this.fetchOnlineLeaderboard();
+                } catch(e) { console.warn('Firebase save error:', e); }
             }
         },
-        
         getLeaderboard() { return this.leaderboard; }
     };
     Auth.init();
 
-    // ============ LEADERBOARD UI ============
     function renderLeaderboard() {
-        console.log('Rendering leaderboard...');
         const list = document.getElementById('leaderboard-list');
-        if (!list) {
-            console.error('Leaderboard list element not found!');
-            return;
-        }
-        const lb = Auth.getLeaderboard();
-        console.log('Leaderboard data:', lb);
+        if (!list) return;
+        const lb = Auth.getLeaderboard().filter(e => e && e.username && typeof e.score === 'number');
         if (lb.length === 0) {
             list.innerHTML = '<div style="color: rgba(255,255,255,0.5); text-align: center; padding: 15px; font-size: 11px;">No scores yet. Be the first! 🏆</div>';
             return;
@@ -482,30 +575,33 @@
             const rank = i + 1;
             const rankClass = rank === 1 ? 'r1' : rank === 2 ? 'r2' : rank === 3 ? 'r3' : 'rother';
             const isMe = Auth.currentUser && Auth.currentUser.username.toLowerCase() === entry.username.toLowerCase();
+            const dateStr = entry.date ? new Date(entry.date).toLocaleDateString() : '';
             return `<div class="lb-entry ${isMe ? 'is-me' : ''}">
                 <div class="lb-rank ${rankClass}">${rank}</div>
                 <div class="lb-user-info">
                     <div class="lb-username">${entry.username}${isMe ? ' (You)' : ''}</div>
-                    <div class="lb-date">${new Date(entry.date).toLocaleDateString()}</div>
+                    <div class="lb-date">${dateStr}</div>
                 </div>
                 <div class="lb-score">${entry.score.toLocaleString()}</div>
             </div>`;
         }).join('');
-        console.log('Leaderboard rendered successfully');
     }
 
     function showAuthView(viewName) {
-        document.getElementById('auth-guest-view').style.display = viewName === 'guest' ? 'block' : 'none';
-        document.getElementById('auth-login-view').style.display = viewName === 'login' ? 'flex' : 'none';
-        document.getElementById('auth-signup-view').style.display = viewName === 'signup' ? 'flex' : 'none';
-        document.getElementById('auth-logged-view').style.display = viewName === 'logged' ? 'block' : 'none';
+        const map = { 'guest': 'auth-guest-view', 'login': 'auth-login-view', 'signup': 'auth-signup-view', 'logged': 'auth-logged-view' };
+        Object.keys(map).forEach(k => {
+            const el = document.getElementById(map[k]);
+            if (el) el.style.display = (k === viewName) ? (k === 'guest' || k === 'logged' ? 'block' : 'flex') : 'none';
+        });
         document.querySelectorAll('.auth-error-msg').forEach(e => { e.style.display = 'none'; e.textContent = ''; });
     }
 
     function refreshAuthUI() {
-        if (Auth.isLoggedIn() && Auth.currentUser) {
-            document.getElementById('user-profile-name').textContent = Auth.currentUser.username;
-            document.getElementById('user-avatar-circle').textContent = Auth.currentUser.username.charAt(0).toUpperCase();
+        const nameEl = document.getElementById('user-profile-name');
+        const avEl = document.getElementById('user-avatar-circle');
+        if (Auth.isLoggedIn() && Auth.currentUser && nameEl && avEl) {
+            nameEl.textContent = Auth.currentUser.username;
+            avEl.textContent = Auth.currentUser.username.charAt(0).toUpperCase();
             renderLeaderboard();
             showAuthView('logged');
         } else {
@@ -513,16 +609,17 @@
         }
     }
 
-    // Setup auth buttons
-    document.getElementById('show-login-btn').addEventListener('click', () => { showAuthView('login'); });
-    document.getElementById('show-signup-btn').addEventListener('click', () => { showAuthView('signup'); });
-    document.getElementById('cancel-login-btn').addEventListener('click', () => { showAuthView('guest'); });
-    document.getElementById('cancel-signup-btn').addEventListener('click', () => { showAuthView('guest'); });
-    
-    document.getElementById('do-login-btn').addEventListener('click', () => {
+    bindBtn('show-login-btn', () => showAuthView('login'));
+    bindBtn('show-signup-btn', () => showAuthView('signup'));
+    bindBtn('cancel-login-btn', () => showAuthView('guest'));
+    bindBtn('cancel-signup-btn', () => showAuthView('guest'));
+    bindBtn('do-login-btn', async () => {
         const username = document.getElementById('login-username').value;
         const password = document.getElementById('login-password').value;
-        const result = Auth.login(username, password);
+        const btn = document.getElementById('do-login-btn');
+        btn.disabled = true;
+        const result = await Auth.login(username, password);
+        btn.disabled = false;
         if (result.success) {
             refreshAuthUI();
             document.getElementById('login-username').value = '';
@@ -533,50 +630,46 @@
             errEl.style.display = 'block';
         }
     });
-    
-    document.getElementById('do-signup-btn').addEventListener('click', () => {
+    bindBtn('do-signup-btn', async () => {
         const username = document.getElementById('signup-username').value;
         const password = document.getElementById('signup-password').value;
         const confirm = document.getElementById('signup-confirm').value;
+        const errEl = document.getElementById('signup-error-msg');
         if (password !== confirm) {
-            const errEl = document.getElementById('signup-error-msg');
             errEl.textContent = 'Passwords do not match';
             errEl.style.display = 'block';
             return;
         }
-        const result = Auth.signup(username, password);
+        const btn = document.getElementById('do-signup-btn');
+        btn.disabled = true;
+        const result = await Auth.signup(username, password);
+        btn.disabled = false;
         if (result.success) {
             refreshAuthUI();
             document.getElementById('signup-username').value = '';
             document.getElementById('signup-password').value = '';
             document.getElementById('signup-confirm').value = '';
         } else {
-            const errEl = document.getElementById('signup-error-msg');
             errEl.textContent = result.error;
             errEl.style.display = 'block';
         }
     });
-    
-    document.getElementById('do-logout-btn').addEventListener('click', () => {
-        Auth.logout();
-        refreshAuthUI();
-    });
-
-    // Initial auth UI
+    bindBtn('do-logout-btn', () => { Auth.logout(); refreshAuthUI(); });
     refreshAuthUI();
 
-    // ============ SOUND SYSTEM ============
     class SoundFX {
         constructor() { this.ctx = null; this.masterGain = null; this.muted = false; }
         init() {
-            if (!this.ctx) {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                this.ctx = new AudioContext();
-                this.masterGain = this.ctx.createGain();
-                this.masterGain.gain.setValueAtTime(1.0, this.ctx.currentTime);
-                this.masterGain.connect(this.ctx.destination);
-            }
-            if (this.ctx.state === 'suspended') this.ctx.resume();
+            try {
+                if (!this.ctx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioContext();
+                    this.masterGain = this.ctx.createGain();
+                    this.masterGain.gain.setValueAtTime(this.muted ? 0 : 1.0, this.ctx.currentTime);
+                    this.masterGain.connect(this.ctx.destination);
+                }
+                if (this.ctx.state === 'suspended') this.ctx.resume();
+            } catch(e) {}
         }
         mute() { this.muted = true; if (this.masterGain && this.ctx) this.masterGain.gain.setValueAtTime(0, this.ctx.currentTime); }
         unmute() { this.muted = false; if (this.masterGain && this.ctx) this.masterGain.gain.setValueAtTime(1.0, this.ctx.currentTime); }
@@ -639,6 +732,36 @@
             gain.gain.setValueAtTime(0.3, now); gain.gain.linearRampToValueAtTime(0.001, now + 0.35);
             osc.connect(gain); gain.connect(this.masterGain); osc.start(now); osc.stop(now + 0.36);
         }
+        playPowerup() {
+            if (!this.ctx || this.muted) return;
+            const base = this.ctx.currentTime;
+            [523.25, 783.99, 1174.66].forEach((freq, i) => {
+                const t = base + i * 0.07;
+                const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(freq, t);
+                gain.gain.setValueAtTime(0.0001, t);
+                gain.gain.linearRampToValueAtTime(0.22, t + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+                osc.connect(gain); gain.connect(this.masterGain); osc.start(t); osc.stop(t + 0.15);
+            });
+        }
+        playShield() {
+            if (!this.ctx || this.muted) return;
+            const now = this.ctx.currentTime;
+            const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
+            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(680, now);
+            osc.frequency.exponentialRampToValueAtTime(140, now + 0.28);
+            gain.gain.setValueAtTime(0.18, now); gain.gain.linearRampToValueAtTime(0.001, now + 0.3);
+            osc.connect(gain); gain.connect(this.masterGain); osc.start(now); osc.stop(now + 0.31);
+        }
+        playTick() {
+            if (!this.ctx || this.muted) return;
+            const now = this.ctx.currentTime;
+            const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
+            osc.type = 'sine'; osc.frequency.setValueAtTime(920, now);
+            gain.gain.setValueAtTime(0.14, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+            osc.connect(gain); gain.connect(this.masterGain); osc.start(now); osc.stop(now + 0.08);
+        }
     }
     const sound = new SoundFX();
 
@@ -679,6 +802,11 @@
         normal: { baseSpeed: 22.0, maxSpeed: 68.0, speedAccel: 0.55, spawnMinGap: 20, spawnMaxGap: 36, doubleObstacleChance: 0.20, hint: '🟡 Balanced speed & obstacles' },
         hard: { baseSpeed: 28.0, maxSpeed: 85.0, speedAccel: 0.75, spawnMinGap: 14, spawnMaxGap: 26, doubleObstacleChance: 0.30, hint: '🔴 Fast & furious, always an escape!' }
     };
+    const THEMES = {
+        city:   { bg: 0x0a0f1d, fog: 0x0a0f1d, fogD: 0.012, road: 0x1e293b, roadRough: 0.8, curb: 0x334155, laneOp: 0.75, neonL: 0x00f0ff, neonR: 0xff007f, side: 'city',   gantry: 0x334155 },
+        desert: { bg: 0xf4a261, fog: 0xf4a261, fogD: 0.010, road: 0xe9c46a, roadRough: 0.9, curb: 0xd4a373, laneOp: 0.4,  neonL: 0xe76f51, neonR: 0xf4a261, side: 'desert', gantry: 0x8d99ae },
+        snow:   { bg: 0xa9c9e8, fog: 0xa9c9e8, fogD: 0.011, road: 0x9db4cc, roadRough: 0.7, curb: 0xe8f1f8, laneOp: 0.85, neonL: 0x38bdf8, neonR: 0xf0abfc, side: 'snow',   gantry: 0x64748b }
+    };
     const LANE_WIDTH = 2.4;
     const LANES = [-LANE_WIDTH, 0, LANE_WIDTH];
     const GRAVITY = 46.0;
@@ -686,30 +814,37 @@
     const SLIDE_DURATION = 0.68;
     const SPAWN_DISTANCE = 170.0;
     const REMOVE_DISTANCE = 16.0;
-    const STATE = { MENU: 0, PLAYING: 1, GAMEOVER: 2, CUSTOMIZE: 3, AD_PAUSED: 4 };
+    const STATE = { MENU: 0, PLAYING: 1, GAMEOVER: 2, CUSTOMIZE: 3, AD_PAUSED: 4, PAUSED: 5, COUNTDOWN: 6 };
 
-    // ============ GAME ENGINE ============
     class GameEngine {
         constructor() {
             this.state = STATE.MENU;
             this.previousState = STATE.MENU;
             this.selectedMap = 'city';
-            this.selectedDifficulty = localStorage.getItem('subway_dash_difficulty') || 'normal';
+            const savedDiff = Store.get('subway_dash_difficulty', 'normal');
+            this.selectedDifficulty = DIFFICULTY_CONFIG[savedDiff] ? savedDiff : 'normal';
             this.score = 0;
             this.coins = 0;
             this.distance = 0;
-            this.highScore = parseInt(localStorage.getItem('subway_dash_hi') || '0', 10);
+            this.highScore = parseInt(Store.get('subway_dash_hi', '0'), 10) || 0;
+            this.bank = parseInt(Store.get('subway_dash_bank', '0'), 10) || 0;
+            this.bestDist = parseInt(Store.get('subway_dash_bestdist', '0'), 10) || 0;
+            this.mutedPref = Store.get('subway_dash_muted', '0') === '1';
             this.hasRevivedThisRun = false;
             this.invincibleTimer = 0;
+            this.magnetTimer = 0;
+            this.multTimer = 0;
+            this.shieldActive = false;
+            this.nextMilestone = 500;
+            this.elapsed = 0;
+            this.gameOverShownAt = 0;
+            this._cdTimer = null;
             this.crazyGamesSDK = null;
             this.initCrazyGamesSDK();
             this.customColors = Object.assign({}, DEFAULT_COLORS);
             this.savedColorsBackup = Object.assign({}, DEFAULT_COLORS);
             this.loadSavedColors();
             this.canvas = document.getElementById('game-canvas');
-            this.scene = null;
-            this.camera = null;
-            this.renderer = null;
             this.clock = new THREE.Clock();
             this.currentLane = 1;
             this.targetX = 0;
@@ -721,8 +856,19 @@
             this.trackSegments = [];
             this.obstacles = [];
             this.coinsList = [];
+            this.powerups = [];
             this.particles = [];
             this.nextSpawnZ = 30;
+            this.tpl = {};
+            this.coinGeo = new THREE.CylinderGeometry(0.32, 0.32, 0.08, 20);
+            this.coinMat = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.95, roughness: 0.15, emissive: 0xffaa00, emissiveIntensity: 0.35 });
+            this.puGeo = new THREE.OctahedronGeometry(0.45);
+            this.puRingGeo = new THREE.TorusGeometry(0.68, 0.05, 10, 36);
+            const puMat = (c) => new THREE.MeshStandardMaterial({ color: c, emissive: c, emissiveIntensity: 0.8, metalness: 0.35, roughness: 0.25 });
+            this.puMats = { MAGNET: puMat(0xff3355), MULT: puMat(0xffd700), SHIELD: puMat(0x00f0ff) };
+            this._coinSize = new THREE.Vector3(0.85, 0.85, 0.85);
+            this._puSize = new THREE.Vector3(1.6, 1.6, 1.6);
+            this._magnetTmp = new THREE.Vector3();
             this.uiScore = document.getElementById('hud-score');
             this.uiMult = document.getElementById('hud-mult');
             this.uiCoins = document.getElementById('hud-coins');
@@ -730,28 +876,90 @@
             this.hudContainer = document.getElementById('hud');
             this.speedBarContainer = document.getElementById('speed-bar-container');
             this.invincibleBadge = document.getElementById('invincible-badge');
+            this.hudControls = document.getElementById('hud-controls');
+            this.btnPause = document.getElementById('btn-pause');
+            this.btnMute = document.getElementById('btn-mute');
+            this.powerupBar = document.getElementById('powerup-bar');
+            this.badgeMagnet = document.getElementById('pu-magnet');
+            this.badgeMult = document.getElementById('pu-mult');
+            this.badgeShield = document.getElementById('pu-shield');
+            this.toastWrap = document.getElementById('toast-wrap');
+            this.countdownOverlay = document.getElementById('countdown-overlay');
+            this.countdownNum = document.getElementById('countdown-num');
+            this.pauseModal = document.getElementById('pause-modal');
+            this.newRecordBadge = document.getElementById('new-record-badge');
+            this.finalBankNote = document.getElementById('final-bank-note');
             this.startModal = document.getElementById('start-modal');
             this.gameoverModal = document.getElementById('gameover-modal');
             this.customizeModal = document.getElementById('customize-modal');
             this.adOverlay = document.getElementById('ad-overlay');
             this.btnRevive = document.getElementById('btn-revive');
             this.difficultyHint = document.getElementById('difficulty-hint');
-            this.baseSpeed = DIFFICULTY_CONFIG[this.selectedDifficulty].baseSpeed;
-            this.maxSpeed = DIFFICULTY_CONFIG[this.selectedDifficulty].maxSpeed;
-            this.speedAccel = DIFFICULTY_CONFIG[this.selectedDifficulty].speedAccel;
+            const diffCfg = DIFFICULTY_CONFIG[this.selectedDifficulty];
+            this.baseSpeed = diffCfg.baseSpeed;
+            this.maxSpeed = diffCfg.maxSpeed;
+            this.speedAccel = diffCfg.speedAccel;
             this.speed = this.baseSpeed;
             this.initThree();
             this.initLights();
             this.createEnvironment();
             this.createPlayer();
             this.createPedestal();
+            this.createShieldMesh();
             this.setupCustomizerUI();
             this.setupControls();
             this.setupEvents();
             this.setupVisibilityHandler();
             this.applyDifficultyUI();
+            this.applyMuteIcon();
+            this.refreshMenuStats();
             this.animate = this.animate.bind(this);
             requestAnimationFrame(this.animate);
+        }
+
+        blurUI() { try { if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); } catch(e) {} }
+        restoreSound() { if (!this.mutedPref) sound.unmute(); }
+        applyMuteIcon() {
+            if (this.btnMute) this.btnMute.textContent = this.mutedPref ? '🔇' : '🔊';
+            if (this.mutedPref) sound.mute();
+        }
+        refreshMenuStats() {
+            const b = document.getElementById('menu-best'), c = document.getElementById('menu-bank'), d = document.getElementById('menu-dist');
+            if (b) b.innerText = this.highScore.toLocaleString();
+            if (c) c.innerText = this.bank.toLocaleString();
+            if (d) d.innerText = this.bestDist + 'm';
+        }
+        showToast(msg) {
+            if (!this.toastWrap) return;
+            const el = document.createElement('div');
+            el.className = 'toast-item';
+            el.textContent = msg;
+            this.toastWrap.appendChild(el);
+            while (this.toastWrap.children.length > 3) this.toastWrap.firstChild.remove();
+            requestAnimationFrame(() => el.classList.add('show'));
+            setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 320); }, 1500);
+        }
+        setHudVisible(visible) {
+            const o = visible ? '1' : '0';
+            if (this.hudContainer) this.hudContainer.style.opacity = o;
+            if (this.speedBarContainer) this.speedBarContainer.style.opacity = o;
+            if (this.powerupBar) this.powerupBar.style.opacity = o;
+            if (this.hudControls) {
+                if (visible) this.hudControls.classList.remove('off');
+                else this.hudControls.classList.add('off');
+            }
+            if (!visible && this.invincibleBadge) this.invincibleBadge.style.opacity = '0';
+        }
+        clearCountdown() {
+            if (this._cdTimer) { clearTimeout(this._cdTimer); this._cdTimer = null; }
+            if (this.countdownOverlay) this.countdownOverlay.classList.remove('active');
+        }
+        clearEntities() {
+            this.obstacles.forEach(o => this.scene.remove(o.mesh));
+            this.coinsList.forEach(c => this.scene.remove(c.mesh));
+            this.powerups.forEach(p => this.scene.remove(p.mesh));
+            this.particles.forEach(p => this.scene.remove(p.system));
+            this.obstacles = []; this.coinsList = []; this.powerups = []; this.particles = [];
         }
 
         applyDifficultyUI() {
@@ -762,8 +970,9 @@
         }
 
         saveDifficulty(diff) {
+            if (!DIFFICULTY_CONFIG[diff]) return;
             this.selectedDifficulty = diff;
-            localStorage.setItem('subway_dash_difficulty', diff);
+            Store.set('subway_dash_difficulty', diff);
             const config = DIFFICULTY_CONFIG[diff];
             this.baseSpeed = config.baseSpeed;
             this.maxSpeed = config.maxSpeed;
@@ -782,7 +991,7 @@
 
         loadSavedColors() {
             try {
-                const saved = localStorage.getItem('subway_dash_colors');
+                const saved = Store.get('subway_dash_colors', null);
                 if (saved) this.customColors = Object.assign(this.customColors, JSON.parse(saved));
             } catch (e) { console.warn('Could not load custom colors:', e); }
             this.savedColorsBackup = Object.assign({}, this.customColors);
@@ -790,7 +999,7 @@
 
         saveColors() {
             try {
-                localStorage.setItem('subway_dash_colors', JSON.stringify(this.customColors));
+                Store.set('subway_dash_colors', JSON.stringify(this.customColors));
                 this.savedColorsBackup = Object.assign({}, this.customColors);
             } catch (e) { console.warn('Could not save custom colors:', e); }
         }
@@ -809,14 +1018,11 @@
         }
 
         applyMapTheme(mapType) {
+            if (!THEMES[mapType]) mapType = 'city';
             this.selectedMap = mapType;
-            if (mapType === 'desert') {
-                this.scene.background = new THREE.Color(0xf4a261);
-                this.scene.fog = new THREE.FogExp2(0xf4a261, 0.01);
-            } else {
-                this.scene.background = new THREE.Color(0x0a0f1d);
-                this.scene.fog = new THREE.FogExp2(0x0a0f1d, 0.012);
-            }
+            const t = THEMES[mapType];
+            this.scene.background = new THREE.Color(t.bg);
+            this.scene.fog = new THREE.FogExp2(t.fog, t.fogD);
         }
 
         initLights() {
@@ -851,18 +1057,16 @@
 
         buildTrackSegment(length) {
             const group = new THREE.Group();
-            const isDesert = this.selectedMap === 'desert';
-            const roadColor = isDesert ? 0xe9c46a : 0x1e293b;
-            const curbColor = isDesert ? 0xd4a373 : 0x334155;
+            const theme = THEMES[this.selectedMap];
             const roadGeo = createRoundedBox(LANE_WIDTH * 3.4, 0.4, length, 0.08, 2);
-            const roadMat = new THREE.MeshStandardMaterial({ color: roadColor, roughness: isDesert ? 0.9 : 0.8, metalness: isDesert ? 0.05 : 0.1 });
+            const roadMat = new THREE.MeshStandardMaterial({ color: theme.road, roughness: theme.roadRough, metalness: 0.08 });
             const road = new THREE.Mesh(roadGeo, roadMat);
             road.position.y = -0.2;
             road.receiveShadow = true;
             group.add(road);
             [-LANE_WIDTH * 0.5, LANE_WIDTH * 0.5].forEach(x => {
                 const lineGeo = new THREE.PlaneGeometry(0.12, length);
-                const lineMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: isDesert ? 0.4 : 0.75 });
+                const lineMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: theme.laneOp });
                 const line = new THREE.Mesh(lineGeo, lineMat);
                 line.rotation.x = -Math.PI / 2;
                 line.position.set(x, 0.015, 0);
@@ -870,13 +1074,13 @@
             });
             [-1, 1].forEach(side => {
                 const curbGeo = createRoundedBox(0.6, 0.5, length, 0.1, 2);
-                const curbMat = new THREE.MeshStandardMaterial({ color: curbColor, roughness: 0.8 });
+                const curbMat = new THREE.MeshStandardMaterial({ color: theme.curb, roughness: 0.85 });
                 const curb = new THREE.Mesh(curbGeo, curbMat);
                 curb.position.set(side * (LANE_WIDTH * 1.7 + 0.3), 0.1, 0);
                 curb.receiveShadow = true;
                 group.add(curb);
                 const neonStripGeo = new THREE.CylinderGeometry(0.06, 0.06, length, 12);
-                const stripColor = isDesert ? (side === -1 ? 0xe76f51 : 0xf4a261) : (side === -1 ? 0x00f0ff : 0xff007f);
+                const stripColor = side === -1 ? theme.neonL : theme.neonR;
                 const neonStripMat = new THREE.MeshBasicMaterial({ color: stripColor });
                 const neonStrip = new THREE.Mesh(neonStripGeo, neonStripMat);
                 neonStrip.rotation.x = Math.PI / 2;
@@ -887,17 +1091,7 @@
             for (let i = 0; i < objCount; i++) {
                 const bZ = -length / 2 + (i / objCount) * length;
                 [-1, 1].forEach(side => {
-                    if (isDesert) {
-                        const height = 6 + Math.random() * 8;
-                        const width = 6.0 + Math.random() * 4.0;
-                        const duneGeo = new THREE.ConeGeometry(width, height, 5);
-                        const duneMat = new THREE.MeshStandardMaterial({ color: 0x2a9d8f, roughness: 0.9 });
-                        const dune = new THREE.Mesh(duneGeo, duneMat);
-                        dune.position.set(side * (9.0 + width / 2 + Math.random() * 3), height / 2, bZ);
-                        dune.castShadow = true;
-                        dune.receiveShadow = true;
-                        group.add(dune);
-                    } else {
+                    if (theme.side === 'city') {
                         const height = 22 + Math.random() * 25;
                         const width = 5.0 + Math.random() * 3.0;
                         const depth = 5.0 + Math.random() * 3.0;
@@ -914,11 +1108,34 @@
                         win.position.set(wall.position.x - (side * (width / 2 + 0.02)), height / 2, bZ);
                         win.rotation.y = side * Math.PI / 2;
                         group.add(win);
+                    } else if (theme.side === 'desert') {
+                        const height = 6 + Math.random() * 8;
+                        const width = 6.0 + Math.random() * 4.0;
+                        const duneGeo = new THREE.ConeGeometry(width, height, 5);
+                        const duneMat = new THREE.MeshStandardMaterial({ color: 0x2a9d8f, roughness: 0.9 });
+                        const dune = new THREE.Mesh(duneGeo, duneMat);
+                        dune.position.set(side * (9.0 + width / 2 + Math.random() * 3), height / 2, bZ);
+                        dune.castShadow = true;
+                        dune.receiveShadow = true;
+                        group.add(dune);
+                    } else {
+                        if (Math.random() < 0.65) {
+                            const pine = this.createPine();
+                            pine.position.set(side * (9.5 + Math.random() * 2.5), 0, bZ);
+                            pine.scale.setScalar(0.9 + Math.random() * 0.7);
+                            group.add(pine);
+                        }
+                        const mR = 1.4 + Math.random() * 1.6;
+                        const mound = new THREE.Mesh(new THREE.SphereGeometry(mR, 10, 8), new THREE.MeshStandardMaterial({ color: 0xf4f9ff, roughness: 0.95 }));
+                        mound.scale.y = 0.38;
+                        mound.position.set(side * (8.2 + Math.random() * 5), 0.05, bZ + (Math.random() * 6 - 3));
+                        mound.receiveShadow = true;
+                        group.add(mound);
                     }
                 });
             }
             const gantryGeo = createRoundedBox(LANE_WIDTH * 3.8, 0.3, 0.4, 0.1, 2);
-            const gantryMat = new THREE.MeshStandardMaterial({ color: isDesert ? 0x8d99ae : 0x334155, metalness: 0.8 });
+            const gantryMat = new THREE.MeshStandardMaterial({ color: theme.gantry, metalness: 0.8 });
             const gantry = new THREE.Mesh(gantryGeo, gantryMat);
             gantry.position.set(0, 4.8, 0);
             gantry.castShadow = true;
@@ -937,6 +1154,16 @@
             this.pedestalGroup = new THREE.Group();
             this.pedestalGroup.visible = false;
             this.playerGroup.add(this.pedestalGroup);
+        }
+
+        createShieldMesh() {
+            this.shieldMesh = new THREE.Mesh(
+                new THREE.SphereGeometry(1.15, 24, 18),
+                new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.16, side: THREE.BackSide, depthWrite: false })
+            );
+            this.shieldMesh.position.y = 1.0;
+            this.shieldMesh.visible = false;
+            this.playerGroup.add(this.shieldMesh);
         }
 
         createPlayer() {
@@ -1080,6 +1307,7 @@
 
         openCustomizer(fromState = STATE.MENU) {
             sound.init(); sound.playClick();
+            this.blurUI();
             this.previousState = fromState;
             this.state = STATE.CUSTOMIZE;
             this.savedColorsBackup = Object.assign({}, this.customColors);
@@ -1120,10 +1348,161 @@
                 this.startModal.classList.remove('hidden');
             }
             this.camera.position.set(0, 4.2, 6.2);
+            this.camera.fov = 55;
+            this.camera.updateProjectionMatrix();
             this.camera.lookAt(0, 1.4, -5);
             this.playerGroup.rotation.set(0, 0, 0);
             this.leftArmPivot.rotation.set(0, 0, 0.14);
             this.rightArmPivot.rotation.set(0, 0, -0.14);
+        }
+
+        getTemplates() {
+            const m = this.selectedMap;
+            if (!this.tpl[m]) this.tpl[m] = this.buildTemplates(m);
+            return this.tpl[m];
+        }
+
+        buildTemplates(map) {
+            const t = {};
+            if (map === 'desert') {
+                t.trains = [this.createCactus(), this.createCactus()];
+                t.trainBounds = { width: 1.4, height: 3.0, depth: 1.4 };
+            } else if (map === 'snow') {
+                t.trains = [this.createPine(), this.createPine(), this.createPine()];
+                t.trainBounds = { width: 1.6, height: 3.2, depth: 1.6 };
+            } else {
+                t.trains = [this.buildBus(), this.buildBus(), this.buildBus(), this.buildBus(), this.buildBus()];
+                t.trainBounds = { width: 2.2, height: 3.0, depth: 9.0 };
+            }
+            t.barrier = this.buildBarrier(map);
+            t.hurdle = this.buildHurdle(map);
+            return t;
+        }
+
+        buildBus() {
+            const mesh = new THREE.Group();
+            const busColors = [
+                { top: 0xff8fab, bottom: 0xe63946 },
+                { top: 0xffb4a2, bottom: 0xe76f51 },
+                { top: 0xa8dadc, bottom: 0x457b9d },
+                { top: 0xd8f3dc, bottom: 0x40916c },
+                { top: 0xffe5d9, bottom: 0xff6b6b }
+            ];
+            const colorSet = busColors[Math.floor(Math.random() * busColors.length)];
+            const topMat = new THREE.MeshStandardMaterial({ color: colorSet.top, roughness: 0.4, metalness: 0.1 });
+            const bottomMat = new THREE.MeshStandardMaterial({ color: colorSet.bottom, roughness: 0.4, metalness: 0.1 });
+            const windowMat = new THREE.MeshStandardMaterial({ color: 0xa8d8ea, emissive: 0x4a90d9, emissiveIntensity: 0.2, transparent: true, opacity: 0.75, roughness: 0.1, metalness: 0.8 });
+            const frameMat = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.5 });
+            const wheelMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.9 });
+            const rimMat = new THREE.MeshStandardMaterial({ color: colorSet.bottom, roughness: 0.3, metalness: 0.6 });
+            const lightMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 0.8 });
+            const tailLightMat = new THREE.MeshStandardMaterial({ color: 0xff0000, emissive: 0xff0000, emissiveIntensity: 0.6 });
+            const bumperMat = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.7 });
+            const bottomGeo = createRoundedBox(2.2, 1.2, 9.0, 0.15, 2);
+            const bottom = new THREE.Mesh(bottomGeo, bottomMat);
+            bottom.position.y = 0.9; bottom.castShadow = true; bottom.receiveShadow = true; mesh.add(bottom);
+            const topGeo = createRoundedBox(2.0, 1.3, 8.8, 0.15, 2);
+            const top = new THREE.Mesh(topGeo, topMat);
+            top.position.y = 2.15; top.castShadow = true; top.receiveShadow = true; mesh.add(top);
+            const roofGeo = new THREE.BoxGeometry(2.1, 0.15, 8.9);
+            const roof = new THREE.Mesh(roofGeo, topMat);
+            roof.position.y = 2.87; mesh.add(roof);
+            const wsGeo = new THREE.PlaneGeometry(0.8, 0.8);
+            const wsFrameL = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.9, 0.08), frameMat);
+            wsFrameL.position.set(-0.5, 2.1, 4.46); mesh.add(wsFrameL);
+            const wsL = new THREE.Mesh(wsGeo, windowMat);
+            wsL.position.set(-0.5, 2.1, 4.51); mesh.add(wsL);
+            const wsFrameR = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.9, 0.08), frameMat);
+            wsFrameR.position.set(0.5, 2.1, 4.46); mesh.add(wsFrameR);
+            const wsR = new THREE.Mesh(wsGeo, windowMat);
+            wsR.position.set(0.5, 2.1, 4.51); mesh.add(wsR);
+            const sideWsGeo = new THREE.PlaneGeometry(0.6, 0.6);
+            for (let i = 0; i < 5; i++) {
+                const zPos_win = 1.8 - i * 1.3;
+                const swFrameL = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.7, 0.7), frameMat);
+                swFrameL.position.set(-1.01, 2.1, zPos_win); mesh.add(swFrameL);
+                const swL = new THREE.Mesh(sideWsGeo, windowMat);
+                swL.position.set(-1.06, 2.1, zPos_win); swL.rotation.y = Math.PI / 2; mesh.add(swL);
+                const swFrameR = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.7, 0.7), frameMat);
+                swFrameR.position.set(1.01, 2.1, zPos_win); mesh.add(swFrameR);
+                const swR = new THREE.Mesh(sideWsGeo, windowMat);
+                swR.position.set(1.06, 2.1, zPos_win); swR.rotation.y = -Math.PI / 2; mesh.add(swR);
+            }
+            const hlGeo = new THREE.CylinderGeometry(0.18, 0.18, 0.1, 16);
+            const hlLeft = new THREE.Mesh(hlGeo, lightMat);
+            hlLeft.position.set(-0.7, 1.0, 4.51); hlLeft.rotation.x = Math.PI / 2; mesh.add(hlLeft);
+            const hlRight = new THREE.Mesh(hlGeo, lightMat);
+            hlRight.position.set(0.7, 1.0, 4.51); hlRight.rotation.x = Math.PI / 2; mesh.add(hlRight);
+            const tlGeo = new THREE.CylinderGeometry(0.15, 0.15, 0.1, 16);
+            const tlLeft = new THREE.Mesh(tlGeo, tailLightMat);
+            tlLeft.position.set(-0.7, 1.1, -4.51); tlLeft.rotation.x = Math.PI / 2; mesh.add(tlLeft);
+            const tlRight = new THREE.Mesh(tlGeo, tailLightMat);
+            tlRight.position.set(0.7, 1.1, -4.51); tlRight.rotation.x = Math.PI / 2; mesh.add(tlRight);
+            const bumperGeo = new THREE.BoxGeometry(2.0, 0.3, 0.2);
+            const frontBumper = new THREE.Mesh(bumperGeo, bumperMat);
+            frontBumper.position.set(0, 0.45, 4.55); mesh.add(frontBumper);
+            const rearBumper = new THREE.Mesh(bumperGeo, bumperMat);
+            rearBumper.position.set(0, 0.45, -4.55); mesh.add(rearBumper);
+            const wheelGeo = new THREE.CylinderGeometry(0.35, 0.35, 0.25, 20);
+            const rimGeo = new THREE.CylinderGeometry(0.2, 0.2, 0.27, 12);
+            const wheelPositions = [[-1.1, 0.35, 2.8], [1.1, 0.35, 2.8], [-1.1, 0.35, -2.8], [1.1, 0.35, -2.8]];
+            wheelPositions.forEach(pos => {
+                const wheel = new THREE.Mesh(wheelGeo, wheelMat);
+                wheel.position.set(...pos); wheel.rotation.z = Math.PI / 2; wheel.castShadow = true; mesh.add(wheel);
+                const rim = new THREE.Mesh(rimGeo, rimMat);
+                rim.position.set(...pos); rim.rotation.z = Math.PI / 2; mesh.add(rim);
+            });
+            const stripeGeo = new THREE.BoxGeometry(0.08, 0.15, 7.5);
+            const stripeMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 0.2 });
+            const stripeL = new THREE.Mesh(stripeGeo, stripeMat);
+            stripeL.position.set(-1.01, 1.5, 0); mesh.add(stripeL);
+            const stripeR = new THREE.Mesh(stripeGeo, stripeMat);
+            stripeR.position.set(1.01, 1.5, 0); mesh.add(stripeR);
+            return mesh;
+        }
+
+        buildBarrier(map) {
+            const mesh = new THREE.Group();
+            const barMat = new THREE.MeshStandardMaterial({ color: map === 'desert' ? 0xb91c1c : 0xe11d48, roughness: 0.4 });
+            const bar = new THREE.Mesh(createRoundedBox(LANE_WIDTH * 0.94, 0.8, 0.3, 0.1, 2), barMat);
+            bar.position.y = 1.85; bar.castShadow = true; mesh.add(bar);
+            const stripe = new THREE.Mesh(createRoundedBox(LANE_WIDTH * 0.92, 0.2, 0.32, 0.04, 2), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+            stripe.position.y = 1.85; mesh.add(stripe);
+            const poleGeo = new THREE.CylinderGeometry(0.08, 0.08, 2.4, 16);
+            const poleMat = new THREE.MeshStandardMaterial({ color: 0x475569, metalness: 0.8 });
+            [-LANE_WIDTH * 0.42, LANE_WIDTH * 0.42].forEach(px => {
+                const pole = new THREE.Mesh(poleGeo, poleMat);
+                pole.position.set(px, 1.2, 0); mesh.add(pole);
+            });
+            return mesh;
+        }
+
+        buildHurdle(map) {
+            const mesh = new THREE.Group();
+            const colors = { desert: [0x78350f, 0xfef3c7], snow: [0x93c5fd, 0x0f172a] };
+            const c = colors[map] || [0xf59e0b, 0x0f172a];
+            const log = new THREE.Mesh(createRoundedBox(LANE_WIDTH * 0.92, 0.7, 0.3, 0.08, 2), new THREE.MeshStandardMaterial({ color: c[0], roughness: 0.5 }));
+            log.position.y = 0.35; log.castShadow = true; mesh.add(log);
+            const stripe = new THREE.Mesh(createRoundedBox(LANE_WIDTH * 0.9, 0.2, 0.32, 0.04, 2), new THREE.MeshBasicMaterial({ color: c[1] }));
+            stripe.position.y = 0.35; mesh.add(stripe);
+            return mesh;
+        }
+
+        createPine() {
+            const g = new THREE.Group();
+            const trunkMat = new THREE.MeshStandardMaterial({ color: 0x6b4423, roughness: 0.9 });
+            const leafMats = [0x1b4332, 0x2d6a4f, 0x40916c].map(c => new THREE.MeshStandardMaterial({ color: c, roughness: 0.85 }));
+            const snowMat = new THREE.MeshStandardMaterial({ color: 0xf8fbff, roughness: 0.6 });
+            const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.22, 1.0, 10), trunkMat);
+            trunk.position.y = 0.5; trunk.castShadow = true; g.add(trunk);
+            const layers = [{ r: 1.05, h: 1.5, y: 1.5 }, { r: 0.85, h: 1.3, y: 2.35 }, { r: 0.62, h: 1.15, y: 3.1 }];
+            layers.forEach((L, i) => {
+                const c = new THREE.Mesh(new THREE.ConeGeometry(L.r, L.h, 10), leafMats[i % 3]);
+                c.position.y = L.y; c.castShadow = true; g.add(c);
+                const cap = new THREE.Mesh(new THREE.ConeGeometry(L.r * 0.55, L.h * 0.35, 10), snowMat);
+                cap.position.y = L.y + L.h * 0.32; g.add(cap);
+            });
+            return g;
         }
 
         createCactus() {
@@ -1196,122 +1575,16 @@
 
         spawnObstacle(lane, zPos, type) {
             const x = LANES[lane];
-            let mesh;
-            let bounds = { width: 1.8, height: 2, depth: 1.8 };
-            const isDesert = this.selectedMap === 'desert';
+            const T = this.getTemplates();
+            let mesh, bounds;
             if (type === 'TRAIN') {
-                mesh = new THREE.Group();
-                if (isDesert) {
-                    const cactus = this.createCactus();
-                    mesh.add(cactus);
-                    bounds = { width: 1.4, height: 3.0, depth: 1.4 };
-                } else {
-                    const busColors = [
-                        { top: 0xff8fab, bottom: 0xe63946 },
-                        { top: 0xffb4a2, bottom: 0xe76f51 },
-                        { top: 0xa8dadc, bottom: 0x457b9d },
-                        { top: 0xd8f3dc, bottom: 0x40916c },
-                        { top: 0xffe5d9, bottom: 0xff6b6b }
-                    ];
-                    const colorSet = busColors[Math.floor(Math.random() * busColors.length)];
-                    const topMat = new THREE.MeshStandardMaterial({ color: colorSet.top, roughness: 0.4, metalness: 0.1 });
-                    const bottomMat = new THREE.MeshStandardMaterial({ color: colorSet.bottom, roughness: 0.4, metalness: 0.1 });
-                    const windowMat = new THREE.MeshStandardMaterial({ color: 0xa8d8ea, emissive: 0x4a90d9, emissiveIntensity: 0.2, transparent: true, opacity: 0.75, roughness: 0.1, metalness: 0.8 });
-                    const frameMat = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.5 });
-                    const wheelMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.9 });
-                    const rimMat = new THREE.MeshStandardMaterial({ color: colorSet.bottom, roughness: 0.3, metalness: 0.6 });
-                    const lightMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 0.8 });
-                    const tailLightMat = new THREE.MeshStandardMaterial({ color: 0xff0000, emissive: 0xff0000, emissiveIntensity: 0.6 });
-                    const bumperMat = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.7 });
-                    const bottomGeo = createRoundedBox(2.2, 1.2, 9.0, 0.15, 2);
-                    const bottom = new THREE.Mesh(bottomGeo, bottomMat);
-                    bottom.position.y = 0.9; bottom.castShadow = true; bottom.receiveShadow = true; mesh.add(bottom);
-                    const topGeo = createRoundedBox(2.0, 1.3, 8.8, 0.15, 2);
-                    const top = new THREE.Mesh(topGeo, topMat);
-                    top.position.y = 2.15; top.castShadow = true; top.receiveShadow = true; mesh.add(top);
-                    const roofGeo = new THREE.BoxGeometry(2.1, 0.15, 8.9);
-                    const roof = new THREE.Mesh(roofGeo, topMat);
-                    roof.position.y = 2.87; mesh.add(roof);
-                    const wsGeo = new THREE.PlaneGeometry(0.8, 0.8);
-                    const wsFrameL = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.9, 0.08), frameMat);
-                    wsFrameL.position.set(-0.5, 2.1, 4.46); mesh.add(wsFrameL);
-                    const wsL = new THREE.Mesh(wsGeo, windowMat);
-                    wsL.position.set(-0.5, 2.1, 4.51); mesh.add(wsL);
-                    const wsFrameR = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.9, 0.08), frameMat);
-                    wsFrameR.position.set(0.5, 2.1, 4.46); mesh.add(wsFrameR);
-                    const wsR = new THREE.Mesh(wsGeo, windowMat);
-                    wsR.position.set(0.5, 2.1, 4.51); mesh.add(wsR);
-                    const sideWsGeo = new THREE.PlaneGeometry(0.6, 0.6);
-                    for (let i = 0; i < 5; i++) {
-                        const zPos_win = 1.8 - i * 1.3;
-                        const swFrameL = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.7, 0.7), frameMat);
-                        swFrameL.position.set(-1.01, 2.1, zPos_win); mesh.add(swFrameL);
-                        const swL = new THREE.Mesh(sideWsGeo, windowMat);
-                        swL.position.set(-1.06, 2.1, zPos_win); swL.rotation.y = Math.PI / 2; mesh.add(swL);
-                        const swFrameR = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.7, 0.7), frameMat);
-                        swFrameR.position.set(1.01, 2.1, zPos_win); mesh.add(swFrameR);
-                        const swR = new THREE.Mesh(sideWsGeo, windowMat);
-                        swR.position.set(1.06, 2.1, zPos_win); swR.rotation.y = -Math.PI / 2; mesh.add(swR);
-                    }
-                    const hlGeo = new THREE.CylinderGeometry(0.18, 0.18, 0.1, 16);
-                    const hlLeft = new THREE.Mesh(hlGeo, lightMat);
-                    hlLeft.position.set(-0.7, 1.0, 4.51); hlLeft.rotation.x = Math.PI / 2; mesh.add(hlLeft);
-                    const hlRight = new THREE.Mesh(hlGeo, lightMat);
-                    hlRight.position.set(0.7, 1.0, 4.51); hlRight.rotation.x = Math.PI / 2; mesh.add(hlRight);
-                    const tlGeo = new THREE.CylinderGeometry(0.15, 0.15, 0.1, 16);
-                    const tlLeft = new THREE.Mesh(tlGeo, tailLightMat);
-                    tlLeft.position.set(-0.7, 1.1, -4.51); tlLeft.rotation.x = Math.PI / 2; mesh.add(tlLeft);
-                    const tlRight = new THREE.Mesh(tlGeo, tailLightMat);
-                    tlRight.position.set(0.7, 1.1, -4.51); tlRight.rotation.x = Math.PI / 2; mesh.add(tlRight);
-                    const bumperGeo = new THREE.BoxGeometry(2.0, 0.3, 0.2);
-                    const frontBumper = new THREE.Mesh(bumperGeo, bumperMat);
-                    frontBumper.position.set(0, 0.45, 4.55); mesh.add(frontBumper);
-                    const rearBumper = new THREE.Mesh(bumperGeo, bumperMat);
-                    rearBumper.position.set(0, 0.45, -4.55); mesh.add(rearBumper);
-                    const wheelGeo = new THREE.CylinderGeometry(0.35, 0.35, 0.25, 20);
-                    const rimGeo = new THREE.CylinderGeometry(0.2, 0.2, 0.27, 12);
-                    const wheelPositions = [[-1.1, 0.35, 2.8], [1.1, 0.35, 2.8], [-1.1, 0.35, -2.8], [1.1, 0.35, -2.8]];
-                    wheelPositions.forEach(pos => {
-                        const wheel = new THREE.Mesh(wheelGeo, wheelMat);
-                        wheel.position.set(...pos); wheel.rotation.z = Math.PI / 2; wheel.castShadow = true; mesh.add(wheel);
-                        const rim = new THREE.Mesh(rimGeo, rimMat);
-                        rim.position.set(...pos); rim.rotation.z = Math.PI / 2; mesh.add(rim);
-                    });
-                    const stripeGeo = new THREE.BoxGeometry(0.08, 0.15, 7.5);
-                    const stripeMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 0.2 });
-                    const stripeL = new THREE.Mesh(stripeGeo, stripeMat);
-                    stripeL.position.set(-1.01, 1.5, 0); mesh.add(stripeL);
-                    const stripeR = new THREE.Mesh(stripeGeo, stripeMat);
-                    stripeR.position.set(1.01, 1.5, 0); mesh.add(stripeR);
-                    bounds = { width: 2.2, height: 3.0, depth: 9.0 };
-                }
+                mesh = T.trains[Math.floor(Math.random() * T.trains.length)].clone();
+                bounds = T.trainBounds;
             } else if (type === 'BARRIER_HIGH') {
-                mesh = new THREE.Group();
-                const barGeo = createRoundedBox(LANE_WIDTH * 0.94, 0.8, 0.3, 0.1, 2);
-                const barMat = new THREE.MeshStandardMaterial({ color: isDesert ? 0xb91c1c : 0xe11d48, roughness: 0.4 });
-                const bar = new THREE.Mesh(barGeo, barMat);
-                bar.position.y = 1.85; bar.castShadow = true; mesh.add(bar);
-                const stripeGeo = createRoundedBox(LANE_WIDTH * 0.92, 0.2, 0.32, 0.04, 2);
-                const stripeMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-                const stripe = new THREE.Mesh(stripeGeo, stripeMat);
-                stripe.position.y = 1.85; mesh.add(stripe);
-                const poleGeo = new THREE.CylinderGeometry(0.08, 0.08, 2.4, 16);
-                const poleMat = new THREE.MeshStandardMaterial({ color: 0x475569, metalness: 0.8 });
-                [-LANE_WIDTH * 0.42, LANE_WIDTH * 0.42].forEach(px => {
-                    const pole = new THREE.Mesh(poleGeo, poleMat);
-                    pole.position.set(px, 1.2, 0); mesh.add(pole);
-                });
+                mesh = T.barrier.clone();
                 bounds = { width: LANE_WIDTH * 0.94, height: 1.2, depth: 0.3, minY: 1.25 };
             } else {
-                mesh = new THREE.Group();
-                const logGeo = createRoundedBox(LANE_WIDTH * 0.92, 0.7, 0.3, 0.08, 2);
-                const logMat = new THREE.MeshStandardMaterial({ color: isDesert ? 0x78350f : 0xf59e0b, roughness: 0.5 });
-                const log = new THREE.Mesh(logGeo, logMat);
-                log.position.y = 0.35; log.castShadow = true; mesh.add(log);
-                const stripeGeo = createRoundedBox(LANE_WIDTH * 0.9, 0.2, 0.32, 0.04, 2);
-                const stripeMat = new THREE.MeshBasicMaterial({ color: isDesert ? 0xfef3c7 : 0x0f172a });
-                const stripe = new THREE.Mesh(stripeGeo, stripeMat);
-                stripe.position.y = 0.35; mesh.add(stripe);
+                mesh = T.hurdle.clone();
                 bounds = { width: LANE_WIDTH * 0.92, height: 0.7, depth: 0.3, minY: 0 };
             }
             mesh.position.set(x, 0, zPos);
@@ -1321,17 +1594,47 @@
 
         spawnCoinArc(lane, startZ, count = 4, arc = false) {
             const x = LANES[lane];
-            const coinGeo = new THREE.CylinderGeometry(0.32, 0.32, 0.08, 20);
-            const coinMat = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.95, roughness: 0.15, emissive: 0xffaa00, emissiveIntensity: 0.35 });
             for (let i = 0; i < count; i++) {
-                const coin = new THREE.Mesh(coinGeo, coinMat);
+                const coin = new THREE.Mesh(this.coinGeo, this.coinMat);
                 coin.rotation.x = Math.PI / 2; coin.castShadow = true;
                 let y = 0.85;
                 if (arc) { const t = (i / (count - 1)) * 2 - 1; y += (1 - t * t) * 1.8; }
                 coin.position.set(x, y, startZ - i * 2.2);
                 this.scene.add(coin);
-                this.coinsList.push({ mesh: coin, collected: false, box: new THREE.Box3() });
+                this.coinsList.push({ mesh: coin, box: new THREE.Box3() });
             }
+        }
+
+        spawnPowerup(lane, z) {
+            const r = Math.random();
+            const type = r < 0.4 ? 'MAGNET' : r < 0.75 ? 'MULT' : 'SHIELD';
+            const g = new THREE.Group();
+            const core = new THREE.Mesh(this.puGeo, this.puMats[type]);
+            core.castShadow = true; g.add(core);
+            const ring = new THREE.Mesh(this.puRingGeo, this.puMats[type]);
+            ring.rotation.x = Math.PI / 2; g.add(ring);
+            g.position.set(LANES[lane], 1.1, z);
+            this.scene.add(g);
+            this.powerups.push({ type: type, mesh: g, baseY: g.position.y, phase: Math.random() * 6.28, box: new THREE.Box3() });
+        }
+
+        applyPowerup(type) {
+            if (type === 'MAGNET') { this.magnetTimer = 8; this.showToast('🧲 Coin Magnet!'); }
+            else if (type === 'MULT') { this.multTimer = 10; this.showToast('✨ Double Score!'); }
+            else { this.shieldActive = true; this.shieldMesh.visible = true; this.showToast('🛡️ Shield Up!'); }
+            sound.playPowerup();
+        }
+
+        updatePowerupHUD() {
+            if (this.magnetTimer > 0) {
+                this.badgeMagnet.classList.add('on');
+                this.badgeMagnet.querySelector('.pu-fill').style.width = (this.magnetTimer / 8 * 100) + '%';
+            } else this.badgeMagnet.classList.remove('on');
+            if (this.multTimer > 0) {
+                this.badgeMult.classList.add('on');
+                this.badgeMult.querySelector('.pu-fill').style.width = (this.multTimer / 10 * 100) + '%';
+            } else this.badgeMult.classList.remove('on');
+            this.badgeShield.classList.toggle('on', this.shieldActive);
         }
 
         createSparks(pos, colorHex = 0x00f0ff) {
@@ -1352,11 +1655,23 @@
 
         setupControls() {
             window.addEventListener('keydown', (e) => {
-                if (this.state !== STATE.PLAYING) return;
-                if (e.code === 'ArrowLeft' || e.code === 'KeyA') this.moveLane(-1);
-                else if (e.code === 'ArrowRight' || e.code === 'KeyD') this.moveLane(1);
-                else if (e.code === 'ArrowUp' || e.code === 'KeyW' || e.code === 'Space') this.jump();
-                else if (e.code === 'ArrowDown' || e.code === 'KeyS') this.slide();
+                const el = document.activeElement;
+                if (el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA')) return;
+                if (this.state === STATE.PLAYING) {
+                    if (e.code === 'ArrowLeft' || e.code === 'KeyA') this.moveLane(-1);
+                    else if (e.code === 'ArrowRight' || e.code === 'KeyD') this.moveLane(1);
+                    else if (e.code === 'ArrowUp' || e.code === 'KeyW' || e.code === 'Space') { e.preventDefault(); this.jump(); }
+                    else if (e.code === 'ArrowDown' || e.code === 'KeyS') { e.preventDefault(); this.slide(); }
+                    else if (e.code === 'Escape' || e.code === 'KeyP') this.pauseGame();
+                } else if (this.state === STATE.PAUSED) {
+                    if (e.code === 'Escape' || e.code === 'KeyP' || e.code === 'Enter' || e.code === 'Space') this.resumeFromPause();
+                } else if (this.state === STATE.MENU) {
+                    if (e.code === 'Enter' || e.code === 'Space') { sound.init(); this.startGame(); }
+                } else if (this.state === STATE.GAMEOVER) {
+                    if ((e.code === 'Enter' || e.code === 'Space' || e.code === 'KeyR') && performance.now() - this.gameOverShownAt > 900) {
+                        sound.init(); this.startGame();
+                    }
+                }
             });
             window.addEventListener('touchmove', (e) => { if (this.state === STATE.PLAYING) e.preventDefault(); }, { passive: false });
             let touchStartX = 0, touchStartY = 0;
@@ -1373,6 +1688,8 @@
                     else { if (dy > 0) this.slide(); else this.jump(); }
                 }
             }, { passive: true });
+            window.addEventListener('contextmenu', (e) => { if (this.state === STATE.PLAYING) e.preventDefault(); });
+            window.addEventListener('pointerdown', () => sound.init(), { once: true });
         }
 
         setupEvents() {
@@ -1382,54 +1699,128 @@
                 this.renderer.setSize(window.innerWidth, window.innerHeight);
                 if (this.state === STATE.CUSTOMIZE) this.updateCustomizerLayout();
             });
-            const mapBtns = document.querySelectorAll('.map-btn');
-            mapBtns.forEach(btn => {
+            const on = (id, fn) => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('click', fn);
+            };
+            document.querySelectorAll('.map-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    mapBtns.forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.map-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     sound.playClick();
                     this.applyMapTheme(btn.dataset.map);
                     this.createEnvironment();
                 });
             });
-            const diffBtns = document.querySelectorAll('.difficulty-btn');
-            diffBtns.forEach(btn => {
+            document.querySelectorAll('.difficulty-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    diffBtns.forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.difficulty-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     this.saveDifficulty(btn.dataset.difficulty);
                     sound.playClick();
                 });
             });
-            document.getElementById('btn-start').addEventListener('click', () => { sound.init(); this.startGame(); });
-            document.getElementById('btn-restart').addEventListener('click', () => { sound.init(); this.startGame(); });
-            document.getElementById('btn-main-menu').addEventListener('click', () => { sound.playClick(); this.goToMainMenu(); });
-            document.getElementById('btn-revive').addEventListener('click', () => { this.requestRewardedRevive(); });
-            document.getElementById('btn-customize').addEventListener('click', () => { this.openCustomizer(STATE.MENU); });
-            document.getElementById('btn-gameover-customize').addEventListener('click', () => { this.openCustomizer(STATE.GAMEOVER); });
-            document.getElementById('btn-save-custom').addEventListener('click', () => { this.saveAndExitCustomizer(); });
-            document.getElementById('btn-cancel-custom').addEventListener('click', () => { this.cancelAndExitCustomizer(); });
+            on('btn-start', () => { sound.init(); this.startGame(); });
+            on('btn-restart', () => { sound.init(); this.startGame(); });
+            on('btn-main-menu', () => { sound.playClick(); this.goToMainMenu(); });
+            on('btn-revive', () => { this.requestRewardedRevive(); });
+            on('btn-customize', () => { this.openCustomizer(STATE.MENU); });
+            on('btn-gameover-customize', () => { this.openCustomizer(STATE.GAMEOVER); });
+            on('btn-save-custom', () => { this.saveAndExitCustomizer(); });
+            on('btn-cancel-custom', () => { this.cancelAndExitCustomizer(); });
+            on('btn-resume', () => { this.resumeFromPause(); });
+            on('btn-pause-restart', () => { sound.playClick(); this.pauseModal.classList.add('hidden'); this.startGame(); });
+            on('btn-pause-menu', () => { sound.playClick(); this.goToMainMenu(); });
+            if (this.btnPause) this.btnPause.addEventListener('click', () => { if (this.state === STATE.PLAYING) this.pauseGame(); });
+            if (this.btnMute) this.btnMute.addEventListener('click', () => {
+                this.mutedPref = !this.mutedPref;
+                Store.set('subway_dash_muted', this.mutedPref ? '1' : '0');
+                if (this.mutedPref) { sound.mute(); this.btnMute.textContent = '🔇'; }
+                else { sound.unmute(); this.btnMute.textContent = '🔊'; sound.playClick(); }
+            });
         }
 
         goToMainMenu() {
+            this.blurUI();
+            this.clearCountdown();
+            this.clearEntities();
             this.state = STATE.MENU;
+            this.pauseModal.classList.add('hidden');
             this.gameoverModal.classList.add('hidden');
+            this.customizeModal.classList.add('hidden');
             this.startModal.classList.remove('hidden');
+            this.setHudVisible(false);
+            this.magnetTimer = 0; this.multTimer = 0; this.shieldActive = false;
+            if (this.shieldMesh) this.shieldMesh.visible = false;
+            this.playerGroup.visible = true;
             this.playerGroup.position.set(0, 0, 0);
             this.playerY = 0;
             this.camera.position.set(0, 4.2, 6.2);
+            this.camera.fov = 55;
+            this.camera.updateProjectionMatrix();
             this.camera.lookAt(0, 1.4, -5);
-            // ✅ رندر لیدربرد وقتی به منوی اصلی برمی‌گردی
+            this.refreshMenuStats();
             refreshAuthUI();
         }
 
         setupVisibilityHandler() {
             document.addEventListener('visibilitychange', () => {
-                if (document.hidden) sound.mute();
-                else { if (this.state !== STATE.AD_PAUSED) sound.unmute(); this.clock.getDelta(); }
+                if (document.hidden) {
+                    sound.mute();
+                    if (this.state === STATE.PLAYING) this.pauseGame();
+                } else {
+                    this.restoreSound();
+                    this.clock.getDelta();
+                }
             });
             window.addEventListener('blur', () => sound.mute());
-            window.addEventListener('focus', () => { if (this.state !== STATE.AD_PAUSED) sound.unmute(); this.clock.getDelta(); });
+            window.addEventListener('focus', () => { this.restoreSound(); this.clock.getDelta(); });
+        }
+
+        pauseGame() {
+            if (this.state !== STATE.PLAYING) return;
+            this.blurUI();
+            this.state = STATE.PAUSED;
+            sound.playClick();
+            const ps = document.getElementById('pause-score'), pc = document.getElementById('pause-coins');
+            if (ps) ps.innerText = Math.floor(this.score).toLocaleString();
+            if (pc) pc.innerText = this.coins.toLocaleString();
+            this.pauseModal.classList.remove('hidden');
+            if (this.crazyGamesSDK && this.crazyGamesSDK.game) this.crazyGamesSDK.game.gameplayStop();
+        }
+
+        resumeFromPause() {
+            if (this.state !== STATE.PAUSED) return;
+            this.blurUI();
+            this.pauseModal.classList.add('hidden');
+            sound.playClick();
+            this.startCountdown(() => {
+                this.state = STATE.PLAYING;
+                this.clock.getDelta();
+                if (this.crazyGamesSDK && this.crazyGamesSDK.game) this.crazyGamesSDK.game.gameplayStart();
+            });
+        }
+
+        startCountdown(cb) {
+            if (this.state === STATE.COUNTDOWN) return;
+            this.state = STATE.COUNTDOWN;
+            this.countdownOverlay.classList.add('active');
+            let n = 3;
+            const step = () => {
+                if (n > 0) {
+                    this.countdownNum.textContent = n;
+                    this.countdownNum.classList.remove('pop');
+                    void this.countdownNum.offsetWidth;
+                    this.countdownNum.classList.add('pop');
+                    sound.playTick();
+                    n--;
+                    this._cdTimer = setTimeout(step, 650);
+                } else {
+                    this.countdownOverlay.classList.remove('active');
+                    if (cb) cb();
+                }
+            };
+            step();
         }
 
         moveLane(dir) {
@@ -1451,31 +1842,33 @@
             if (this.crazyGamesSDK && this.crazyGamesSDK.ad) {
                 this.state = STATE.AD_PAUSED; sound.mute(); this.adOverlay.classList.add('active');
                 const callbacks = {
-                    adFinished: () => { this.adOverlay.classList.remove('active'); sound.unmute(); if (callback) callback(); },
-                    adError: () => { this.adOverlay.classList.remove('active'); sound.unmute(); if (callback) callback(); },
+                    adFinished: () => { this.adOverlay.classList.remove('active'); this.restoreSound(); if (callback) callback(); },
+                    adError: () => { this.adOverlay.classList.remove('active'); this.restoreSound(); if (callback) callback(); },
                     adStarted: () => { console.log('Midroll ad started'); }
                 };
                 try { this.crazyGamesSDK.ad.requestAd('midroll', callbacks); }
-                catch (err) { this.adOverlay.classList.remove('active'); sound.unmute(); if (callback) callback(); }
+                catch (err) { this.adOverlay.classList.remove('active'); this.restoreSound(); if (callback) callback(); }
             } else { if (callback) callback(); }
         }
 
         requestRewardedRevive() {
             sound.playClick();
+            this.blurUI();
             if (this.hasRevivedThisRun) return;
             if (this.crazyGamesSDK && this.crazyGamesSDK.ad) {
                 this.state = STATE.AD_PAUSED; sound.mute(); this.adOverlay.classList.add('active');
                 const callbacks = {
-                    adFinished: () => { this.adOverlay.classList.remove('active'); sound.unmute(); this.revivePlayer(); },
-                    adError: () => { this.adOverlay.classList.remove('active'); sound.unmute(); alert('Ad currently unavailable.'); },
+                    adFinished: () => { this.adOverlay.classList.remove('active'); this.restoreSound(); this.revivePlayer(); },
+                    adError: () => { this.adOverlay.classList.remove('active'); this.restoreSound(); this.showToast('📺 Ad unavailable — free revive!'); this.revivePlayer(); },
                     adStarted: () => { console.log('Rewarded ad started'); }
                 };
                 try { this.crazyGamesSDK.ad.requestAd('rewarded', callbacks); }
-                catch (e) { this.adOverlay.classList.remove('active'); sound.unmute(); this.revivePlayer(); }
+                catch (e) { this.adOverlay.classList.remove('active'); this.restoreSound(); this.revivePlayer(); }
             } else { this.revivePlayer(); }
         }
 
         revivePlayer() {
+            this.blurUI();
             this.hasRevivedThisRun = true;
             this.btnRevive.style.display = 'none';
             this.obstacles.forEach(o => { if (o.mesh.position.z > -50 && o.mesh.position.z < 30) this.scene.remove(o.mesh); });
@@ -1488,17 +1881,16 @@
             this.invincibleBadge.style.opacity = '1';
             this.state = STATE.PLAYING;
             this.gameoverModal.classList.add('hidden');
-            this.hudContainer.style.opacity = '1';
-            this.speedBarContainer.style.opacity = '1';
+            this.setHudVisible(true);
             sound.playRevive();
             if (this.crazyGamesSDK && this.crazyGamesSDK.game) { this.crazyGamesSDK.game.gameplayStart(); this.crazyGamesSDK.game.happytime(); }
         }
 
         startGame() {
-            this.obstacles.forEach(o => this.scene.remove(o.mesh));
-            this.coinsList.forEach(c => this.scene.remove(c.mesh));
-            this.particles.forEach(p => this.scene.remove(p.system));
-            this.obstacles = []; this.coinsList = []; this.particles = [];
+            this.blurUI();
+            this.clearCountdown();
+            this.pauseModal.classList.add('hidden');
+            this.clearEntities();
             this.createEnvironment();
             this.pedestalGroup.visible = false;
             this.score = 0; this.coins = 0; this.distance = 0;
@@ -1506,8 +1898,14 @@
             this.currentLane = 1; this.targetX = LANES[1];
             this.hasRevivedThisRun = false;
             this.invincibleTimer = 0;
+            this.magnetTimer = 0; this.multTimer = 0;
+            if (this.shieldActive) { this.shieldActive = false; this.shieldMesh.visible = false; }
+            this.nextMilestone = 500;
+            this.badgeMagnet.classList.remove('on'); this.badgeMult.classList.remove('on'); this.badgeShield.classList.remove('on');
             this.invincibleBadge.style.opacity = '0';
             this.btnRevive.style.display = 'inline-flex';
+            this.newRecordBadge.style.display = 'none';
+            this.playerGroup.visible = true;
             this.playerGroup.position.set(0, 0, 0);
             this.playerGroup.rotation.set(0, 0, 0);
             this.torso.position.set(0, 1.15, 0); this.torso.rotation.set(0, 0, 0);
@@ -1520,12 +1918,13 @@
             this.isGrounded = true; this.isSliding = false; this.slideTimer = 0;
             this.nextSpawnZ = -36;
             for (let i = 0; i < 6; i++) this.spawnPattern();
+            this.camera.fov = 55;
+            this.camera.updateProjectionMatrix();
             this.state = STATE.PLAYING;
             this.startModal.classList.add('hidden');
             this.gameoverModal.classList.add('hidden');
             this.customizeModal.classList.add('hidden');
-            this.hudContainer.style.opacity = '1';
-            this.speedBarContainer.style.opacity = '1';
+            this.setHudVisible(true);
             if (this.crazyGamesSDK && this.crazyGamesSDK.game) this.crazyGamesSDK.game.gameplayStart();
         }
 
@@ -1546,29 +1945,40 @@
             };
             shake();
             const totalScore = Math.floor(this.score);
+            const prevHigh = this.highScore;
             if (totalScore > this.highScore) {
                 this.highScore = totalScore;
-                localStorage.setItem('subway_dash_hi', this.highScore.toString());
+                Store.set('subway_dash_hi', this.highScore.toString());
                 if (this.crazyGamesSDK && this.crazyGamesSDK.game) this.crazyGamesSDK.game.happytime();
             }
-            // ✅ ثبت امتیاز در لیدربرد
+            this.newRecordBadge.style.display = (totalScore > prevHigh && totalScore > 0) ? 'block' : 'none';
+            const runCoins = this.coins;
+            this.bank += runCoins;
+            Store.set('subway_dash_bank', String(this.bank));
+            const runDist = Math.floor(this.distance);
+            if (runDist > this.bestDist) {
+                this.bestDist = runDist;
+                Store.set('subway_dash_bestdist', String(this.bestDist));
+            }
+            this.finalBankNote.textContent = runCoins > 0
+                ? `🪙 +${runCoins} coins banked — Total: ${this.bank.toLocaleString()}`
+                : `🪙 Bank total: ${this.bank.toLocaleString()}`;
             if (Auth.currentUser && Auth.currentUser.username) {
                 Auth.updateLeaderboard(Auth.currentUser.username, totalScore);
-                console.log('Score saved to leaderboard:', totalScore);
-            } else {
-                console.log('User not logged in, score not saved to leaderboard');
             }
             document.getElementById('final-score').innerText = totalScore.toLocaleString();
             document.getElementById('best-score').innerText = this.highScore.toLocaleString();
             document.getElementById('final-coins').innerText = this.coins.toLocaleString();
-            document.getElementById('final-dist').innerText = `${Math.floor(this.distance)}m`;
+            document.getElementById('final-dist').innerText = `${runDist}m`;
             if (this.hasRevivedThisRun) this.btnRevive.style.display = 'none';
             else this.btnRevive.style.display = 'inline-flex';
             setTimeout(() => {
-                this.hudContainer.style.opacity = '0';
-                this.speedBarContainer.style.opacity = '0';
-                this.invincibleBadge.style.opacity = '0';
-                this.requestMidrollAd(() => { this.state = STATE.GAMEOVER; this.gameoverModal.classList.remove('hidden'); });
+                this.setHudVisible(false);
+                this.requestMidrollAd(() => {
+                    this.state = STATE.GAMEOVER;
+                    this.gameoverModal.classList.remove('hidden');
+                    this.gameOverShownAt = performance.now();
+                });
             }, 600);
         }
 
@@ -1577,6 +1987,7 @@
             const lanes = [0, 1, 2].sort(() => Math.random() - 0.5);
             const diffConfig = DIFFICULTY_CONFIG[this.selectedDifficulty];
             const rand = Math.random();
+            let puLane = -1;
             if (this.selectedDifficulty === 'hard' && rand < 0.18) {
                 this.spawnObstacle(lanes[0], z, 'TRAIN');
                 this.spawnObstacle(lanes[1], z, 'TRAIN');
@@ -1589,13 +2000,14 @@
             } else {
                 const patternIndex = Math.floor(Math.random() * 5);
                 switch (patternIndex) {
-                    case 0: this.spawnObstacle(lanes[0], z, 'TRAIN'); this.spawnCoinArc(lanes[1], z, 5, false); break;
+                    case 0: this.spawnObstacle(lanes[0], z, 'TRAIN'); this.spawnCoinArc(lanes[1], z, 5, false); puLane = lanes[2]; break;
                     case 1: this.spawnObstacle(lanes[0], z, 'HURDLE_LOW'); this.spawnObstacle(lanes[1], z, 'BARRIER_HIGH'); this.spawnCoinArc(lanes[2], z, 4, false); break;
                     case 2: this.spawnObstacle(lanes[0], z, 'TRAIN'); this.spawnObstacle(lanes[1], z, 'HURDLE_LOW'); this.spawnCoinArc(lanes[2], z, 5, false); break;
-                    case 3: this.spawnObstacle(lanes[0], z, 'HURDLE_LOW'); this.spawnCoinArc(lanes[0], z + 4.5, 5, true); break;
+                    case 3: this.spawnObstacle(lanes[0], z, 'HURDLE_LOW'); this.spawnCoinArc(lanes[0], z + 4.5, 5, true); puLane = lanes[1]; break;
                     case 4: this.spawnObstacle(0, z, 'HURDLE_LOW'); this.spawnObstacle(1, z, 'HURDLE_LOW'); this.spawnCoinArc(2, z + 4.5, 5, true); break;
                 }
             }
+            if (puLane >= 0 && Math.random() < 0.13) this.spawnPowerup(puLane, z);
             const minGap = diffConfig.spawnMinGap;
             const maxGap = diffConfig.spawnMaxGap;
             const dynamicSpacing = minGap + Math.random() * (maxGap - minGap) - (this.speed - this.baseSpeed) * 0.2;
@@ -1605,6 +2017,7 @@
         animate() {
             requestAnimationFrame(this.animate);
             const dt = Math.min(this.clock.getDelta(), 0.1);
+            this.elapsed += dt;
             if (this.state === STATE.PLAYING) this.updatePlaying(dt);
             else if (this.state === STATE.MENU) this.updateMenu(dt);
             else if (this.state === STATE.CUSTOMIZE) this.updateCustomize(dt);
@@ -1615,7 +2028,7 @@
         updateMenu(dt) {
             const moveDist = 6.0 * dt;
             this.scrollTracks(moveDist);
-            const time = this.clock.getElapsedTime();
+            const time = this.elapsed;
             this.head.rotation.y = Math.sin(time * 2.0) * 0.15;
             this.torso.position.y = 1.15 + Math.sin(time * 3.5) * 0.025;
         }
@@ -1625,27 +2038,44 @@
             if (isMobile) { this.camera.position.set(0, 3.5, 10.5); this.camera.lookAt(0, 2.2, 0); }
             else { this.camera.position.set(0.6, 2.0, 4.6); this.camera.lookAt(-0.25, 1.0, 0); }
             this.playerGroup.rotation.y += 1.35 * dt;
-            const time = this.clock.getElapsedTime();
+            const time = this.elapsed;
             this.torso.position.y = 1.15 + Math.sin(time * 2.8) * 0.02;
             this.leftArmPivot.rotation.z = 0.14 + Math.sin(time * 2.8) * 0.025;
             this.rightArmPivot.rotation.z = -0.14 - Math.sin(time * 2.8) * 0.025;
         }
 
         updatePlaying(dt) {
+            const time = this.elapsed;
             if (this.invincibleTimer > 0) {
                 this.invincibleTimer -= dt;
                 this.playerGroup.visible = Math.floor(Date.now() / 90) % 2 === 0;
                 if (this.invincibleTimer <= 0) { this.playerGroup.visible = true; this.invincibleBadge.style.opacity = '0'; }
             }
+            if (this.magnetTimer > 0) this.magnetTimer = Math.max(0, this.magnetTimer - dt);
+            if (this.multTimer > 0) this.multTimer = Math.max(0, this.multTimer - dt);
             if (this.speed < this.maxSpeed) this.speed += this.speedAccel * dt;
             const moveDist = this.speed * dt;
             this.distance += moveDist;
-            this.score += (moveDist * 1.2) * (1 + (this.speed - this.baseSpeed) / 22);
+            const scoreMult = this.multTimer > 0 ? 2 : 1;
+            this.score += (moveDist * 1.2) * (1 + (this.speed - this.baseSpeed) / 22) * scoreMult;
+            if (this.distance >= this.nextMilestone) {
+                const bonus = 100 * scoreMult;
+                this.score += bonus;
+                this.showToast(`🏁 ${this.nextMilestone}m   +${bonus}`);
+                sound.playCoin();
+                this.nextMilestone += 500;
+            }
             this.uiScore.innerText = Math.floor(this.score).toLocaleString();
-            this.uiMult.innerText = `${(1 + (this.speed - this.baseSpeed) * 0.08).toFixed(1)}x`;
+            const sm = (1 + (this.speed - this.baseSpeed) * 0.08) * scoreMult;
+            this.uiMult.innerText = `${sm.toFixed(1)}x`;
             this.uiCoins.innerText = this.coins;
             const speedPct = ((this.speed - this.baseSpeed) / (this.maxSpeed - this.baseSpeed)) * 100;
             this.uiSpeedBar.style.width = `${Math.min(100, speedPct)}%`;
+            const targetFov = 55 + Math.min(1, speedPct / 100) * 9;
+            if (Math.abs(this.camera.fov - targetFov) > 0.05) {
+                this.camera.fov += (targetFov - this.camera.fov) * 3 * dt;
+                this.camera.updateProjectionMatrix();
+            }
             this.playerGroup.position.x += (this.targetX - this.playerGroup.position.x) * 15.0 * dt;
             const xDiff = this.targetX - this.playerGroup.position.x;
             this.playerGroup.rotation.z = -xDiff * 0.12;
@@ -1657,10 +2087,16 @@
             }
             if (this.isSliding) { this.slideTimer -= dt; if (this.slideTimer <= 0) this.isSliding = false; }
             this.playerGroup.position.y = this.playerY;
+            if (this.shieldMesh.visible) {
+                const s = 1 + Math.sin(time * 6) * 0.05;
+                this.shieldMesh.scale.setScalar(s);
+            }
             this.animatePlayerMesh(dt);
             this.scrollTracks(moveDist);
             this.updateObstacles(moveDist);
             this.updateCoins(moveDist, dt);
+            this.updatePowerups(moveDist, dt);
+            this.updatePowerupHUD();
             if (this.nextSpawnZ > -SPAWN_DISTANCE) this.spawnPattern();
             this.camera.position.x += (this.playerGroup.position.x * 0.35 - this.camera.position.x) * 6.0 * dt;
             this.camera.position.y = 4.2 + (this.playerY * 0.3);
@@ -1669,7 +2105,7 @@
 
         animatePlayerMesh(dt) {
             const runCadence = 8.5 + (this.speed - this.baseSpeed) * 0.15;
-            const time = this.clock.getElapsedTime() * runCadence;
+            const time = this.elapsed * runCadence;
             if (this.isSliding) {
                 this.torso.position.y = 0.52; this.torso.rotation.x = 1.05;
                 this.head.rotation.x = -0.55;
@@ -1716,7 +2152,26 @@
                 const minY = b.minY !== undefined ? b.minY : 0;
                 obs.box.min.set(obs.mesh.position.x - b.width / 2 + 0.08, obs.mesh.position.y + minY, obs.mesh.position.z - b.depth / 2 + 0.08);
                 obs.box.max.set(obs.mesh.position.x + b.width / 2 - 0.08, obs.mesh.position.y + minY + b.height, obs.mesh.position.z + b.depth / 2 - 0.08);
-                if (this.invincibleTimer <= 0 && this.playerBox.intersectsBox(obs.box)) { this.gameOver(); return; }
+                if (this.invincibleTimer <= 0 && this.playerBox.intersectsBox(obs.box)) {
+                    if (this.shieldActive) {
+                        this.shieldActive = false;
+                        this.shieldMesh.visible = false;
+                        this.invincibleTimer = 1.5;
+                        this.invincibleBadge.style.opacity = '1';
+                        for (let j = this.obstacles.length - 1; j >= 0; j--) {
+                            const o2 = this.obstacles[j];
+                            if (o2.mesh.position.z > -16 && o2.mesh.position.z < 8) {
+                                this.scene.remove(o2.mesh);
+                                this.obstacles.splice(j, 1);
+                            }
+                        }
+                        sound.playShield();
+                        this.showToast('💥 Shield broke!');
+                        return;
+                    }
+                    this.gameOver();
+                    return;
+                }
                 if (obs.mesh.position.z > REMOVE_DISTANCE + (b.depth || 0)) { this.scene.remove(obs.mesh); this.obstacles.splice(i, 1); }
             }
         }
@@ -1727,18 +2182,41 @@
                 const c = this.coinsList[i];
                 c.mesh.position.z += moveDist;
                 c.mesh.rotation.z += rotSpeed;
-                if (!c.collected) {
-                    c.box.setFromObject(c.mesh);
-                    if (this.playerBox.intersectsBox(c.box)) {
-                        c.collected = true; this.coins++; this.score += 50;
-                        sound.playCoin();
-                        this.createSparks(c.mesh.position, 0x00f0ff);
-                        this.scene.remove(c.mesh);
-                        this.coinsList.splice(i, 1);
-                        continue;
-                    }
+                if (this.magnetTimer > 0 && c.mesh.position.z > -22 && c.mesh.position.z < 6) {
+                    this._magnetTmp.set(this.playerGroup.position.x, 0.9, this.playerGroup.position.z);
+                    c.mesh.position.lerp(this._magnetTmp, Math.min(1, 10 * dt));
+                }
+                c.box.setFromCenterAndSize(c.mesh.position, this._coinSize);
+                if (this.playerBox.intersectsBox(c.box)) {
+                    this.coins++;
+                    this.score += 50 * (this.multTimer > 0 ? 2 : 1);
+                    sound.playCoin();
+                    this.createSparks(c.mesh.position, 0x00f0ff);
+                    this.scene.remove(c.mesh);
+                    this.coinsList.splice(i, 1);
+                    continue;
                 }
                 if (c.mesh.position.z > REMOVE_DISTANCE) { this.scene.remove(c.mesh); this.coinsList.splice(i, 1); }
+            }
+        }
+
+        updatePowerups(moveDist, dt) {
+            for (let i = this.powerups.length - 1; i >= 0; i--) {
+                const p = this.powerups[i];
+                p.mesh.position.z += moveDist;
+                p.mesh.rotation.y += 2.6 * dt;
+                p.mesh.position.y = p.baseY + Math.sin(this.elapsed * 3 + p.phase) * 0.18;
+                p.mesh.children[1].rotation.z += 1.8 * dt;
+                p.box.setFromCenterAndSize(p.mesh.position, this._puSize);
+                if (this.playerBox.intersectsBox(p.box)) {
+                    this.applyPowerup(p.type);
+                    const sparkColor = p.type === 'MAGNET' ? 0xff3355 : p.type === 'MULT' ? 0xffd700 : 0x00f0ff;
+                    this.createSparks(p.mesh.position, sparkColor);
+                    this.scene.remove(p.mesh);
+                    this.powerups.splice(i, 1);
+                    continue;
+                }
+                if (p.mesh.position.z > REMOVE_DISTANCE) { this.scene.remove(p.mesh); this.powerups.splice(i, 1); }
             }
         }
 
@@ -1767,7 +2245,36 @@
         }
     }
 
-    window.addEventListener('DOMContentLoaded', () => { new GameEngine(); });
+    function bootEngine() {
+        const statusEl = document.getElementById('engine-status');
+        window.__whenThree(function(ok) {
+            if (!ok) {
+                if (statusEl) statusEl.textContent = '❌ 3D engine failed to load';
+                __showFatal(
+                    'موتور سه‌بعدی (three.js) از هیچ CDN ای لود نشد.\n\n' +
+                    'اگر بازی را داخل پیش‌نمایش چت باز کرده ای:\n' +
+                    'آن محیط، اسکریپت خارجی و localStorage را مسدود می‌کند و بازی آنجا اجرا نمی‌شود.\n\n' +
+                    '✅ راه‌حل: این کد را در فایل MetroDash.html ذخیره کن و روی فایل دابل‌کلیک کن تا مستقیم در کروم/اج باز شود.'
+                );
+                return;
+            }
+            try {
+                window.game = new GameEngine();
+                if (statusEl) statusEl.textContent = '✅ Engine ready — all systems go!';
+            } catch (err) {
+                console.error(err);
+                if (statusEl) statusEl.textContent = '❌ Engine error: ' + err.message;
+                __showFatal('خطا در راه‌اندازی بازی: ' + err.message);
+            }
+        });
+    }
+    bindBtn('btn-start', function () {
+        if (!window.game) {
+            __showFatal('موتور بازی هنوز لود نشده است. اگر داخل پیش‌نمایش چت هستی، فایل را دانلود کن و مستقیم در کروم/اج باز کن.');
+        }
+    });
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bootEngine);
+    else bootEngine();
     </script>
 </body>
 </html>
