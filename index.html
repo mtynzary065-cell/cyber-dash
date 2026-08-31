@@ -182,7 +182,10 @@
         .user-logout-btn { background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); color: #ff6b6b; padding: 7px 12px; border-radius: 8px; cursor: pointer; font-size: 11px; font-weight: 700; flex-shrink: 0; transition: all 0.3s; }
         .user-logout-btn:hover { background: rgba(239, 68, 68, 0.3); }
         .leaderboard-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px; max-height: 180px; overflow-y: auto; }
-        .leaderboard-header { color: #ffd700; font-size: 13px; font-weight: 900; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        .leaderboard-header { color: #ffd700; font-size: 13px; font-weight: 900; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; }
+        .lb-status { font-size: 9.5px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5px; }
+        .lb-status.online { color: #4cd137; }
+        .lb-status.offline { color: #ffa502; }
         .lb-entry { display: flex; align-items: center; gap: 8px; padding: 7px; background: rgba(255,255,255,0.03); border-radius: 8px; margin-bottom: 5px; transition: all 0.3s; }
         .lb-entry:hover { background: rgba(255,255,255,0.06); }
         .lb-entry.is-me { background: rgba(0, 240, 255, 0.1); border: 1px solid rgba(0, 240, 255, 0.3); }
@@ -313,6 +316,7 @@
                     </div>
                     <div class="leaderboard-box">
                         <div class="leaderboard-header">🏆 Top Players</div>
+                        <div class="lb-status offline" id="lb-status">⏳ Checking connection…</div>
                         <div id="leaderboard-list"></div>
                     </div>
                 </div>
@@ -473,23 +477,69 @@
         return 'x' + h.toString(16);
     }
 
+    // ============ 🏆 سیستم لیدربرد دو لایه (محلی + آنلاین) ============
     const Auth = {
         currentUser: null,
         users: [],
-        leaderboard: [],
+        onlineScores: [],     // امتیازهای سرور Firebase (عمومی)
+        localScores: [],      // امتیازهای این دستگاه
+        leaderboard: [],      // ادغام دو تای بالا
+        firebaseOnline: false,
+        warnedOffline: false,
+
         init() {
             try {
                 this.users = JSON.parse(Store.get('metro_users', '[]'));
-                this.leaderboard = JSON.parse(Store.get('metro_leaderboard', '[]'));
+                this.localScores = JSON.parse(Store.get('metro_leaderboard', '[]'));
                 if (!Array.isArray(this.users)) this.users = [];
-                if (!Array.isArray(this.leaderboard)) this.leaderboard = [];
+                if (!Array.isArray(this.localScores)) this.localScores = [];
                 const session = Store.get('metro_session', null);
                 if (session) this.currentUser = JSON.parse(session);
             } catch (e) {
-                this.users = []; this.leaderboard = [];
+                this.users = []; this.localScores = [];
             }
+            this.rebuild();
+            this.updateStatusUI();
             if (firebaseReady) this.fetchOnlineLeaderboard();
+            else this.updateStatusUI();
         },
+
+        // ادغام: برای هر کاربر بالاترین امتیاز (محلی یا آنلاین)
+        rebuild() {
+            const byUser = {};
+            [...this.onlineScores, ...this.localScores].forEach(e => {
+                if (!e || !e.username || typeof e.score !== 'number') return;
+                const key = e.username.toLowerCase();
+                if (!byUser[key] || e.score > byUser[key].score) {
+                    byUser[key] = { username: e.username, score: e.score, date: e.date };
+                }
+            });
+            this.leaderboard = Object.values(byUser).sort((a, b) => b.score - a.score).slice(0, 10);
+        },
+
+        updateStatusUI() {
+            const el = document.getElementById('lb-status');
+            if (!el) return;
+            if (!firebaseReady) {
+                el.textContent = '📴 Device Only — Firebase not loaded';
+                el.className = 'lb-status offline';
+            } else if (this.firebaseOnline) {
+                el.textContent = '🌐 Global Leaderboard — Connected';
+                el.className = 'lb-status online';
+            } else {
+                el.textContent = '📴 Device Only — Firebase blocked (check Rules)';
+                el.className = 'lb-status offline';
+            }
+        },
+
+        showOfflineWarning() {
+            if (this.warnedOffline) return;
+            this.warnedOffline = true;
+            if (window.game && window.game.showToast) {
+                window.game.showToast('📴 Leaderboard is device-only — check Firebase Rules', true);
+            }
+        },
+
         saveSession() {
             if (this.currentUser) Store.set('metro_session', JSON.stringify(this.currentUser));
             else Store.remove('metro_session');
@@ -524,44 +574,73 @@
         },
         logout() { this.currentUser = null; this.saveSession(); },
         isLoggedIn() { return this.currentUser !== null; },
+
         async fetchOnlineLeaderboard() {
-            if (!firebaseReady) return;
+            if (!firebaseReady) { this.updateStatusUI(); return; }
             try {
                 const snapshot = await firebaseDB.ref('leaderboard').once('value');
                 const data = snapshot.val();
-                if (data) {
-                    this.leaderboard = Object.values(data).filter(e => e && e.username && typeof e.score === 'number');
-                    this.leaderboard.sort((a, b) => b.score - a.score);
-                    this.leaderboard = this.leaderboard.slice(0, 10);
-                    Store.set('metro_leaderboard', JSON.stringify(this.leaderboard));
-                    renderLeaderboard();
-                }
-            } catch(e) { console.warn('Fetch LB error', e); }
+                this.onlineScores = data
+                    ? Object.values(data).filter(e => e && e.username && typeof e.score === 'number')
+                    : [];
+                this.firebaseOnline = true;
+                this.warnedOffline = false;
+                this.rebuild();
+                renderLeaderboard();
+                // 🔄 همگام‌سازی امتیازهای محلی که قبلاً آپلود نشده بودند
+                this.localScores.forEach(loc => {
+                    if (!loc || !loc.username) return;
+                    const on = this.onlineScores.find(o => o.username.toLowerCase() === loc.username.toLowerCase());
+                    if (!on || loc.score > on.score) {
+                        const safeUsername = loc.username.replace(/[.#$\[\]]/g, '_');
+                        firebaseDB.ref('leaderboard/' + safeUsername).set({
+                            username: loc.username,
+                            score: loc.score,
+                            date: loc.date || new Date().toISOString()
+                        }).catch(() => {});
+                    }
+                });
+            } catch (e) {
+                console.warn('Fetch LB error', e);
+                this.firebaseOnline = false;
+                this.showOfflineWarning();
+            }
+            this.updateStatusUI();
         },
+
         async updateLeaderboard(username, score) {
             let improved = false;
-            let entry = this.leaderboard.find(e => e.username.toLowerCase() === username.toLowerCase());
+            let entry = this.localScores.find(e => e.username.toLowerCase() === username.toLowerCase());
             if (entry) {
-                if (score > entry.score) { entry.score = score; entry.date = new Date().toISOString(); improved = true; }
+                if (score > entry.score) {
+                    entry.score = score;
+                    entry.date = new Date().toISOString();
+                    improved = true;
+                }
             } else {
                 entry = { username: username, score: score, date: new Date().toISOString() };
-                this.leaderboard.push(entry);
+                this.localScores.push(entry);
                 improved = true;
             }
-            if (improved) {
-                this.leaderboard.sort((a, b) => b.score - a.score);
-                this.leaderboard = this.leaderboard.slice(0, 10);
-                Store.set('metro_leaderboard', JSON.stringify(this.leaderboard));
-            }
+            Store.set('metro_leaderboard', JSON.stringify(this.localScores));
+            this.rebuild();
             renderLeaderboard();
+
             if (firebaseReady && improved) {
                 try {
                     const safeUsername = username.replace(/[.#$\[\]]/g, '_');
                     await firebaseDB.ref('leaderboard/' + safeUsername).set({
                         username: username, score: entry.score, date: entry.date
                     });
+                    this.firebaseOnline = true;
+                    this.updateStatusUI();
                     this.fetchOnlineLeaderboard();
-                } catch(e) { console.warn('Firebase save error:', e); }
+                } catch (e) {
+                    console.warn('Firebase save error:', e);
+                    this.firebaseOnline = false;
+                    this.updateStatusUI();
+                    this.showOfflineWarning();
+                }
             }
         },
         getLeaderboard() { return this.leaderboard; }
@@ -608,6 +687,7 @@
             nameEl.textContent = Auth.currentUser.username;
             avEl.textContent = Auth.currentUser.username.charAt(0).toUpperCase();
             renderLeaderboard();
+            Auth.updateStatusUI();
             showAuthView('logged');
         } else {
             showAuthView('guest');
@@ -865,7 +945,6 @@
     const GRAVITY = 46.0;
     const JUMP_VELOCITY = 14.5;
     const SLIDE_DURATION = 0.68;
-    // ⏱️ مدت زمان کامل یک پرش (بالا + پایین) — برای محاسبه‌ی فاصله‌ی امن بین دو پرش
     const JUMP_AIR_TIME = (2 * JUMP_VELOCITY) / GRAVITY;
     const SPAWN_DISTANCE = 190.0;
     const REMOVE_DISTANCE = 16.0;
@@ -879,9 +958,7 @@
     const RAMP_DISTANCE = 2800;
     const LEVEL_STEP = 1000;
     const COIN_VALUE_CAP = 5;
-    // 🔧 حافظه‌ی فاصله بین دو مانع پرشی روی مسیر امن:
-    // بعد از فرود، بازیکن باید زمان کافی برای پریدن دوباره داشته باشد
-    const REJUMP_BUFFER = 0.3; // ثانیه اضافه بعد از فرود برای پرش دوباره
+    const REJUMP_BUFFER = 0.3;
 
     class GameEngine {
         constructor() {
@@ -908,7 +985,7 @@
             this._cdTimer = null;
             this.eyes = [];
             this.safeLane = 1;
-            this.lastSafeHurdleZ = null; // 🧠 محل آخرین مانع پرشی روی مسیر امن
+            this.lastSafeHurdleZ = null;
             this.crazyGamesSDK = null;
             this.initCrazyGamesSDK();
             this.customColors = Object.assign({}, DEFAULT_COLORS);
@@ -2097,7 +2174,6 @@
             return Math.min(1, this.distance / RAMP_DISTANCE);
         }
 
-        // ============ 🎯 اسپاون منصفانه + محافظت از پرش‌های پشت‌سرهم ============
         spawnPattern() {
             const z = this.nextSpawnZ;
             const diffConfig = DIFFICULTY_CONFIG[this.selectedDifficulty];
@@ -2115,24 +2191,20 @@
             const doubleChance = diffConfig.doubleObstacleChance + intensity * 0.26;
             const hardHurdleChance = (this.selectedDifficulty === 'hard' ? 0.1 : 0) + intensity * 0.14;
 
-            // 🦘 حداقل فاصله بین دو مانع پرشی روی مسیر امن:
-            // طول کامل یک پرش (بالا+پایین) + بافر فرود و پریدن دوباره
             const minJumpGap = this.speed * (JUMP_AIR_TIME + REJUMP_BUFFER);
             const gapFromLastHurdle = (this.lastSafeHurdleZ !== null)
                 ? (this.lastSafeHurdleZ - z)
                 : Infinity;
             const canPlaceHurdle = gapFromLastHurdle >= minJumpGap;
 
-            const doubleChanceEff = doubleChance;
             const hardHurdleEff = canPlaceHurdle ? hardHurdleChance : 0;
 
             let coinLane = free, coinZ = z, coinArc = false, coinCount = 5;
-            if (rand < doubleChanceEff) {
+            if (rand < doubleChance) {
                 this.spawnObstacle(others[0], z, 'TRAIN');
                 this.spawnObstacle(others[1], z, 'TRAIN');
                 coinCount = 5;
-            } else if (rand < doubleChanceEff + hardHurdleEff) {
-                // مسیر امن یک مانع پرشی دارد — فقط اگر فاصله از پرش قبلی کافی باشد
+            } else if (rand < doubleChance + hardHurdleEff) {
                 this.spawnObstacle(others[0], z, 'TRAIN');
                 this.spawnObstacle(others[1], z, 'TRAIN');
                 this.spawnObstacle(free, z, 'HURDLE_LOW');
