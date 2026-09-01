@@ -182,8 +182,10 @@
         .user-logout-btn { background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); color: #ff6b6b; padding: 7px 12px; border-radius: 8px; cursor: pointer; font-size: 11px; font-weight: 700; flex-shrink: 0; transition: all 0.3s; }
         .user-logout-btn:hover { background: rgba(239, 68, 68, 0.3); }
         .leaderboard-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px; max-height: 180px; overflow-y: auto; }
-        .leaderboard-header { color: #ffd700; font-size: 13px; font-weight: 900; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; }
-        .lb-status { font-size: 9.5px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5px; }
+        .leaderboard-header { color: #ffd700; font-size: 13px; font-weight: 900; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; justify-content: space-between; }
+        .lb-sync-btn { width: 24px; height: 24px; border-radius: 50%; border: 1px solid rgba(0,240,255,0.4); background: rgba(0,240,255,0.1); color: #00f0ff; font-size: 12px; cursor: pointer; transition: transform 0.15s ease; }
+        .lb-sync-btn:active { transform: scale(0.88) rotate(-30deg); }
+        .lb-status { font-size: 9.5px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5px; direction: ltr; text-align: left; }
         .lb-status.online { color: #4cd137; }
         .lb-status.offline { color: #ffa502; }
         .lb-entry { display: flex; align-items: center; gap: 8px; padding: 7px; background: rgba(255,255,255,0.03); border-radius: 8px; margin-bottom: 5px; transition: all 0.3s; }
@@ -315,7 +317,7 @@
                         <button class="user-logout-btn" id="do-logout-btn">Logout</button>
                     </div>
                     <div class="leaderboard-box">
-                        <div class="leaderboard-header">🏆 Top Players</div>
+                        <div class="leaderboard-header">🏆 Top Players <button id="btn-sync-lb" class="lb-sync-btn" title="Sync now">🔄</button></div>
                         <div class="lb-status offline" id="lb-status">⏳ Checking connection…</div>
                         <div id="leaderboard-list"></div>
                     </div>
@@ -455,6 +457,10 @@
     const FIREBASE_API_KEY = "AIzaSyC9Q5tOOlG7E2d_wBAlGHCed79QQlQQLhw";
     const FIREBASE_DB_URL = "https://cyber-dash-457a0-default-rtdb.firebaseio.com";
 
+    // 🌍 آدرس Cloudflare Worker لیدربرد — اگر پرش کنی، لیدربرد از ایران هم بدون VPN کار می‌کند!
+    // مثال: const LEADERBOARD_API = "https://metrodash-lb.yourname.workers.dev";
+    const LEADERBOARD_API = "https://metrodash-lb.zeus-njc9ff.workers.dev";
+
     let firebaseReady = false;
     let firebaseDB = null;
     try {
@@ -477,15 +483,15 @@
         return 'x' + h.toString(16);
     }
 
-    // ============ 🏆 سیستم لیدربرد دو لایه (محلی + آنلاین) ============
+    // ============ 🏆 لیدربرد: دو حالت — Worker (بدون تحریم) یا Firebase مستقیم ============
     const Auth = {
         currentUser: null,
         users: [],
-        onlineScores: [],     // امتیازهای سرور Firebase (عمومی)
-        localScores: [],      // امتیازهای این دستگاه
-        leaderboard: [],      // ادغام دو تای بالا
+        onlineScores: [],
+        localScores: [],
+        leaderboard: [],
         firebaseOnline: false,
-        warnedOffline: false,
+        lastError: '',
 
         init() {
             try {
@@ -500,11 +506,13 @@
             }
             this.rebuild();
             this.updateStatusUI();
-            if (firebaseReady) this.fetchOnlineLeaderboard();
-            else this.updateStatusUI();
+            if (LEADERBOARD_API) {
+                this.startApiMode();
+            } else if (firebaseReady) {
+                this.startRealtimeSync();
+            }
         },
 
-        // ادغام: برای هر کاربر بالاترین امتیاز (محلی یا آنلاین)
         rebuild() {
             const byUser = {};
             [...this.onlineScores, ...this.localScores].forEach(e => {
@@ -520,24 +528,164 @@
         updateStatusUI() {
             const el = document.getElementById('lb-status');
             if (!el) return;
+            if (LEADERBOARD_API) {
+                if (this.firebaseOnline) {
+                    el.textContent = 'Global Leaderboard — Connected ✓';
+                    el.className = 'lb-status online';
+                } else {
+                    el.textContent = 'Device Only — ' + (this.lastError || 'connecting…');
+                    el.className = 'lb-status offline';
+                }
+                return;
+            }
             if (!firebaseReady) {
-                el.textContent = '📴 Device Only — Firebase not loaded';
+                el.textContent = 'Device Only — Firebase SDK blocked';
                 el.className = 'lb-status offline';
             } else if (this.firebaseOnline) {
-                el.textContent = '🌐 Global Leaderboard — Connected';
+                el.textContent = 'Global Leaderboard — Connected ✓';
                 el.className = 'lb-status online';
             } else {
-                el.textContent = '📴 Device Only — Firebase blocked (check Rules)';
+                el.textContent = 'Device Only — ' + (this.lastError || 'waiting for connection…');
                 el.className = 'lb-status offline';
             }
         },
 
-        showOfflineWarning() {
-            if (this.warnedOffline) return;
-            this.warnedOffline = true;
-            if (window.game && window.game.showToast) {
-                window.game.showToast('📴 Leaderboard is device-only — check Firebase Rules', true);
+        gameToast(msg, hot) {
+            if (window.game && window.game.showToast) window.game.showToast(msg, !!hot);
+        },
+
+        // ============ 🔄 حالت Firebase مستقیم (اتصال زنده) ============
+        startRealtimeSync() {
+            firebaseDB.ref('.info/connected').on('value', (snap) => {
+                const connected = snap.val() === true;
+                this.firebaseOnline = connected;
+                if (!connected) this.lastError = 'no server connection (VPN?)';
+                this.updateStatusUI();
+                if (connected) this.backfillLocalScores();
+            }, (err) => {
+                this.lastError = 'connection error';
+                this.firebaseOnline = false;
+                this.updateStatusUI();
+            });
+            firebaseDB.ref('leaderboard').on('value', (snap) => {
+                const data = snap.val();
+                this.onlineScores = data
+                    ? Object.values(data).filter(e => e && e.username && typeof e.score === 'number')
+                    : [];
+                this.firebaseOnline = true;
+                this.lastError = '';
+                this.rebuild();
+                renderLeaderboard();
+                this.updateStatusUI();
+            }, (err) => {
+                this.lastError = err.code || 'read denied';
+                this.firebaseOnline = false;
+                this.updateStatusUI();
+                this.gameToast('📴 Leaderboard read denied — check Firebase Rules', true);
+            });
+        },
+
+        backfillLocalScores() {
+            this.localScores.forEach(loc => {
+                if (!loc || !loc.username || typeof loc.score !== 'number') return;
+                const on = this.onlineScores.find(o => o.username.toLowerCase() === loc.username.toLowerCase());
+                if (!on || loc.score > on.score) {
+                    const safeUsername = loc.username.replace(/[.#$\[\]]/g, '_');
+                    firebaseDB.ref('leaderboard/' + safeUsername).set({
+                        username: loc.username, score: loc.score, date: loc.date || new Date().toISOString()
+                    }).catch(() => {});
+                }
+            });
+        },
+
+        // ============ 🌍 حالت Cloudflare Worker (بدون تحریم — polling) ============
+        startApiMode() {
+            this.apiFetch().then(ok => { if (ok) this.apiBackfill(); });
+            this._apiTimer = setInterval(() => this.apiFetch(), 45000);
+        },
+
+        async apiFetch() {
+            if (!LEADERBOARD_API) return false;
+            try {
+                const r = await fetch(LEADERBOARD_API + '/leaderboard', { cache: 'no-store' });
+                if (!r.ok) throw new Error('http ' + r.status);
+                const data = await r.json();
+                this.onlineScores = Object.values(data || {}).filter(e => e && e.username && typeof e.score === 'number');
+                this.firebaseOnline = true;
+                this.lastError = '';
+                this.rebuild();
+                renderLeaderboard();
+                this.updateStatusUI();
+                return true;
+            } catch (e) {
+                this.lastError = 'network blocked / wrong URL';
+                this.firebaseOnline = false;
+                this.updateStatusUI();
+                return false;
             }
+        },
+
+        async apiSubmit(username, score) {
+            try {
+                const r = await fetch(LEADERBOARD_API + '/leaderboard', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: username, score: score })
+                });
+                if (!r.ok) return false;
+                const j = await r.json();
+                return !!(j && j.ok);
+            } catch (e) { return false; }
+        },
+
+        async apiBackfill() {
+            for (const loc of this.localScores) {
+                if (!loc || !loc.username || typeof loc.score !== 'number') continue;
+                const on = this.onlineScores.find(o => o.username.toLowerCase() === loc.username.toLowerCase());
+                if (!on || loc.score > on.score) {
+                    await this.apiSubmit(loc.username, loc.score);
+                }
+            }
+        },
+
+        manualSync() {
+            if (LEADERBOARD_API) {
+                this.lastError = 'manual sync…';
+                this.updateStatusUI();
+                this.apiFetch().then(ok => {
+                    if (ok) {
+                        this.apiBackfill();
+                        this.gameToast('🌐 Synced — ' + this.leaderboard.length + ' players');
+                    } else {
+                        this.gameToast('📴 Sync failed — check URL / connection', true);
+                    }
+                });
+                return;
+            }
+            if (!firebaseReady) {
+                this.gameToast('📴 Firebase SDK not loaded', true);
+                return;
+            }
+            this.lastError = 'manual sync…';
+            this.updateStatusUI();
+            firebaseDB.ref('leaderboard').once('value').then(snap => {
+                const data = snap.val();
+                this.onlineScores = data
+                    ? Object.values(data).filter(e => e && e.username && typeof e.score === 'number')
+                    : [];
+                this.firebaseOnline = true;
+                this.lastError = '';
+                this.rebuild();
+                renderLeaderboard();
+                this.backfillLocalScores();
+                this.updateStatusUI();
+                this.gameToast('🌐 Synced — ' + this.leaderboard.length + ' players');
+            }).catch(err => {
+                this.lastError = err.code || 'sync failed';
+                this.firebaseOnline = false;
+                this.updateStatusUI();
+                this.gameToast('📴 Sync failed: ' + this.lastError, true);
+            });
         },
 
         saveSession() {
@@ -575,39 +723,6 @@
         logout() { this.currentUser = null; this.saveSession(); },
         isLoggedIn() { return this.currentUser !== null; },
 
-        async fetchOnlineLeaderboard() {
-            if (!firebaseReady) { this.updateStatusUI(); return; }
-            try {
-                const snapshot = await firebaseDB.ref('leaderboard').once('value');
-                const data = snapshot.val();
-                this.onlineScores = data
-                    ? Object.values(data).filter(e => e && e.username && typeof e.score === 'number')
-                    : [];
-                this.firebaseOnline = true;
-                this.warnedOffline = false;
-                this.rebuild();
-                renderLeaderboard();
-                // 🔄 همگام‌سازی امتیازهای محلی که قبلاً آپلود نشده بودند
-                this.localScores.forEach(loc => {
-                    if (!loc || !loc.username) return;
-                    const on = this.onlineScores.find(o => o.username.toLowerCase() === loc.username.toLowerCase());
-                    if (!on || loc.score > on.score) {
-                        const safeUsername = loc.username.replace(/[.#$\[\]]/g, '_');
-                        firebaseDB.ref('leaderboard/' + safeUsername).set({
-                            username: loc.username,
-                            score: loc.score,
-                            date: loc.date || new Date().toISOString()
-                        }).catch(() => {});
-                    }
-                });
-            } catch (e) {
-                console.warn('Fetch LB error', e);
-                this.firebaseOnline = false;
-                this.showOfflineWarning();
-            }
-            this.updateStatusUI();
-        },
-
         async updateLeaderboard(username, score) {
             let improved = false;
             let entry = this.localScores.find(e => e.username.toLowerCase() === username.toLowerCase());
@@ -626,26 +741,53 @@
             this.rebuild();
             renderLeaderboard();
 
-            if (firebaseReady && improved) {
+            if (!improved) return;
+
+            // 🌍 حالت ۱: از طریق Worker (بدون تحریم)
+            if (LEADERBOARD_API) {
+                const ok = await this.apiSubmit(username, entry.score);
+                if (ok) {
+                    this.firebaseOnline = true;
+                    this.lastError = '';
+                    this.updateStatusUI();
+                    this.gameToast('🌐 Score uploaded to Global!');
+                    this.apiFetch();
+                } else {
+                    this.lastError = 'upload blocked';
+                    this.firebaseOnline = false;
+                    this.updateStatusUI();
+                    this.gameToast('📴 Score saved locally only', true);
+                }
+                return;
+            }
+
+            // 🔄 حالت ۲: Firebase مستقیم
+            if (firebaseReady) {
                 try {
                     const safeUsername = username.replace(/[.#$\[\]]/g, '_');
                     await firebaseDB.ref('leaderboard/' + safeUsername).set({
                         username: username, score: entry.score, date: entry.date
                     });
                     this.firebaseOnline = true;
+                    this.lastError = '';
                     this.updateStatusUI();
-                    this.fetchOnlineLeaderboard();
+                    this.gameToast('🌐 Score uploaded to Global!');
                 } catch (e) {
                     console.warn('Firebase save error:', e);
+                    this.lastError = (e && e.code) ? e.code : 'write failed';
                     this.firebaseOnline = false;
                     this.updateStatusUI();
-                    this.showOfflineWarning();
+                    this.gameToast('📴 Score saved locally only (' + this.lastError + ')', true);
                 }
+            } else {
+                this.gameToast('📴 Score saved locally only (no server)', true);
             }
         },
         getLeaderboard() { return this.leaderboard; }
     };
     Auth.init();
+
+    bindBtn('btn-sync-lb', () => { Auth.manualSync(); });
 
     function renderLeaderboard() {
         const list = document.getElementById('leaderboard-list');
@@ -1942,6 +2084,8 @@
             this.camera.lookAt(0, 1.4, -5);
             this.refreshMenuStats();
             refreshAuthUI();
+            // 🌍 در حالت Worker، بعد از برگشتن به منو هم لیدربرد تازه شود
+            if (LEADERBOARD_API) Auth.apiFetch();
         }
 
         setupVisibilityHandler() {
