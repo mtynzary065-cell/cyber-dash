@@ -182,12 +182,11 @@
         .user-logout-btn { background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); color: #ff6b6b; padding: 7px 12px; border-radius: 8px; cursor: pointer; font-size: 11px; font-weight: 700; flex-shrink: 0; transition: all 0.3s; }
         .user-logout-btn:hover { background: rgba(239, 68, 68, 0.3); }
         .leaderboard-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px; max-height: 180px; overflow-y: auto; }
-        .leaderboard-header { color: #ffd700; font-size: 13px; font-weight: 900; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; justify-content: space-between; }
-        .lb-sync-btn { width: 24px; height: 24px; border-radius: 50%; border: 1px solid rgba(0,240,255,0.4); background: rgba(0,240,255,0.1); color: #00f0ff; font-size: 12px; cursor: pointer; transition: transform 0.15s ease; }
-        .lb-sync-btn:active { transform: scale(0.88) rotate(-30deg); }
-        .lb-status { font-size: 9.5px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5px; direction: ltr; text-align: left; }
-        .lb-status.online { color: #4cd137; }
-        .lb-status.offline { color: #ffa502; }
+        .leaderboard-header { color: #ffd700; font-size: 13px; font-weight: 900; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
+        #lb-vpn { display: none; border: 1px dashed rgba(255,170,0,.45); border-radius: 10px; padding: 6px 9px; margin: 0 0 6px; align-items: center; gap: 7px; direction: ltr; }
+        #lb-vpn .vpn-msg { flex: 1; font-size: 10px; color: #fde68a; text-align: left; line-height: 1.4; }
+        #btn-retry-lb { padding: 4px 12px; border: none; border-radius: 14px; background: linear-gradient(135deg, #00f0ff, #7000ff); color: #fff; font-size: 10px; font-weight: 800; cursor: pointer; flex-shrink: 0; }
+        #btn-retry-lb:active { transform: scale(0.94); }
         .lb-entry { display: flex; align-items: center; gap: 8px; padding: 7px; background: rgba(255,255,255,0.03); border-radius: 8px; margin-bottom: 5px; transition: all 0.3s; }
         .lb-entry:hover { background: rgba(255,255,255,0.06); }
         .lb-entry.is-me { background: rgba(0, 240, 255, 0.1); border: 1px solid rgba(0, 240, 255, 0.3); }
@@ -317,8 +316,11 @@
                         <button class="user-logout-btn" id="do-logout-btn">Logout</button>
                     </div>
                     <div class="leaderboard-box">
-                        <div class="leaderboard-header">🏆 Top Players <button id="btn-sync-lb" class="lb-sync-btn" title="Sync now">🔄</button></div>
-                        <div class="lb-status offline" id="lb-status">⏳ Checking connection…</div>
+                        <div class="leaderboard-header">🏆 Top Players</div>
+                        <div id="lb-vpn">
+                            <span class="vpn-msg">📶 Leaderboard offline? Connect with a <b>VPN</b></span>
+                            <button id="btn-retry-lb">Retry</button>
+                        </div>
                         <div id="leaderboard-list"></div>
                     </div>
                 </div>
@@ -445,7 +447,7 @@
         };
     })();
     if (!Store.ok) {
-        __showNotice('⚠️ حالت پیش‌نمایش محدود: ذخیره‌سازی دائمی و موتور سه‌بعدی ممکن است کار نکند.\n✅ برای بازی کامل: این کد را در فایل MetroDash.html ذخیره کن و مستقیم با کروم/اج باز کن.');
+        __showNotice('⚠️ Limited preview mode: storage & 3D engine may not work here.\n✅ For the full game: save this code as MetroDash.html and open it directly in Chrome/Edge.');
     }
 
     function bindBtn(id, fn) {
@@ -456,10 +458,6 @@
 
     const FIREBASE_API_KEY = "AIzaSyC9Q5tOOlG7E2d_wBAlGHCed79QQlQQLhw";
     const FIREBASE_DB_URL = "https://cyber-dash-457a0-default-rtdb.firebaseio.com";
-
-    // 🌍 آدرس Cloudflare Worker لیدربرد — اگر پرش کنی، لیدربرد از ایران هم بدون VPN کار می‌کند!
-    // مثال: const LEADERBOARD_API = "https://metrodash-lb.yourname.workers.dev";
-    const LEADERBOARD_API = "";
 
     let firebaseReady = false;
     let firebaseDB = null;
@@ -483,7 +481,6 @@
         return 'x' + h.toString(16);
     }
 
-    // ============ 🏆 لیدربرد: دو حالت — Worker (بدون تحریم) یا Firebase مستقیم ============
     const Auth = {
         currentUser: null,
         users: [],
@@ -491,7 +488,6 @@
         localScores: [],
         leaderboard: [],
         firebaseOnline: false,
-        lastError: '',
 
         init() {
             try {
@@ -505,12 +501,7 @@
                 this.users = []; this.localScores = [];
             }
             this.rebuild();
-            this.updateStatusUI();
-            if (LEADERBOARD_API) {
-                this.startApiMode();
-            } else if (firebaseReady) {
-                this.startRealtimeSync();
-            }
+            if (firebaseReady) this.startRealtimeSync();
         },
 
         rebuild() {
@@ -525,47 +516,18 @@
             this.leaderboard = Object.values(byUser).sort((a, b) => b.score - a.score).slice(0, 10);
         },
 
-        updateStatusUI() {
-            const el = document.getElementById('lb-status');
-            if (!el) return;
-            if (LEADERBOARD_API) {
-                if (this.firebaseOnline) {
-                    el.textContent = 'Global Leaderboard — Connected ✓';
-                    el.className = 'lb-status online';
-                } else {
-                    el.textContent = 'Device Only — ' + (this.lastError || 'connecting…');
-                    el.className = 'lb-status offline';
-                }
-                return;
-            }
-            if (!firebaseReady) {
-                el.textContent = 'Device Only — Firebase SDK blocked';
-                el.className = 'lb-status offline';
-            } else if (this.firebaseOnline) {
-                el.textContent = 'Global Leaderboard — Connected ✓';
-                el.className = 'lb-status online';
-            } else {
-                el.textContent = 'Device Only — ' + (this.lastError || 'waiting for connection…');
-                el.className = 'lb-status offline';
-            }
-        },
-
         gameToast(msg, hot) {
             if (window.game && window.game.showToast) window.game.showToast(msg, !!hot);
         },
 
-        // ============ 🔄 حالت Firebase مستقیم (اتصال زنده) ============
         startRealtimeSync() {
             firebaseDB.ref('.info/connected').on('value', (snap) => {
-                const connected = snap.val() === true;
-                this.firebaseOnline = connected;
-                if (!connected) this.lastError = 'no server connection (VPN?)';
-                this.updateStatusUI();
-                if (connected) this.backfillLocalScores();
-            }, (err) => {
-                this.lastError = 'connection error';
+                this.firebaseOnline = snap.val() === true;
+                if (this.firebaseOnline) this.backfillLocalScores();
+                lbVpnCheck();
+            }, () => {
                 this.firebaseOnline = false;
-                this.updateStatusUI();
+                lbVpnCheck();
             });
             firebaseDB.ref('leaderboard').on('value', (snap) => {
                 const data = snap.val();
@@ -573,15 +535,12 @@
                     ? Object.values(data).filter(e => e && e.username && typeof e.score === 'number')
                     : [];
                 this.firebaseOnline = true;
-                this.lastError = '';
                 this.rebuild();
                 renderLeaderboard();
-                this.updateStatusUI();
-            }, (err) => {
-                this.lastError = err.code || 'read denied';
+                lbVpnCheck();
+            }, () => {
                 this.firebaseOnline = false;
-                this.updateStatusUI();
-                this.gameToast('📴 Leaderboard read denied — check Firebase Rules', true);
+                lbVpnCheck();
             });
         },
 
@@ -598,93 +557,26 @@
             });
         },
 
-        // ============ 🌍 حالت Cloudflare Worker (بدون تحریم — polling) ============
-        startApiMode() {
-            this.apiFetch().then(ok => { if (ok) this.apiBackfill(); });
-            this._apiTimer = setInterval(() => this.apiFetch(), 45000);
-        },
-
-        async apiFetch() {
-            if (!LEADERBOARD_API) return false;
-            try {
-                const r = await fetch(LEADERBOARD_API + '/leaderboard', { cache: 'no-store' });
-                if (!r.ok) throw new Error('http ' + r.status);
-                const data = await r.json();
-                this.onlineScores = Object.values(data || {}).filter(e => e && e.username && typeof e.score === 'number');
-                this.firebaseOnline = true;
-                this.lastError = '';
-                this.rebuild();
-                renderLeaderboard();
-                this.updateStatusUI();
-                return true;
-            } catch (e) {
-                this.lastError = 'network blocked / wrong URL';
-                this.firebaseOnline = false;
-                this.updateStatusUI();
-                return false;
-            }
-        },
-
-        async apiSubmit(username, score) {
-            try {
-                const r = await fetch(LEADERBOARD_API + '/leaderboard', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username: username, score: score })
-                });
-                if (!r.ok) return false;
-                const j = await r.json();
-                return !!(j && j.ok);
-            } catch (e) { return false; }
-        },
-
-        async apiBackfill() {
-            for (const loc of this.localScores) {
-                if (!loc || !loc.username || typeof loc.score !== 'number') continue;
-                const on = this.onlineScores.find(o => o.username.toLowerCase() === loc.username.toLowerCase());
-                if (!on || loc.score > on.score) {
-                    await this.apiSubmit(loc.username, loc.score);
-                }
-            }
-        },
-
         manualSync() {
-            if (LEADERBOARD_API) {
-                this.lastError = 'manual sync…';
-                this.updateStatusUI();
-                this.apiFetch().then(ok => {
-                    if (ok) {
-                        this.apiBackfill();
-                        this.gameToast('🌐 Synced — ' + this.leaderboard.length + ' players');
-                    } else {
-                        this.gameToast('📴 Sync failed — check URL / connection', true);
-                    }
-                });
-                return;
-            }
             if (!firebaseReady) {
-                this.gameToast('📴 Firebase SDK not loaded', true);
+                this.gameToast('📶 Leaderboard offline — connect with a VPN', true);
                 return;
             }
-            this.lastError = 'manual sync…';
-            this.updateStatusUI();
             firebaseDB.ref('leaderboard').once('value').then(snap => {
                 const data = snap.val();
                 this.onlineScores = data
                     ? Object.values(data).filter(e => e && e.username && typeof e.score === 'number')
                     : [];
                 this.firebaseOnline = true;
-                this.lastError = '';
                 this.rebuild();
                 renderLeaderboard();
                 this.backfillLocalScores();
-                this.updateStatusUI();
+                lbVpnCheck();
                 this.gameToast('🌐 Synced — ' + this.leaderboard.length + ' players');
             }).catch(err => {
-                this.lastError = err.code || 'sync failed';
                 this.firebaseOnline = false;
-                this.updateStatusUI();
-                this.gameToast('📴 Sync failed: ' + this.lastError, true);
+                lbVpnCheck();
+                this.gameToast('📶 Leaderboard offline — connect with a VPN', true);
             });
         },
 
@@ -741,53 +633,40 @@
             this.rebuild();
             renderLeaderboard();
 
-            if (!improved) return;
-
-            // 🌍 حالت ۱: از طریق Worker (بدون تحریم)
-            if (LEADERBOARD_API) {
-                const ok = await this.apiSubmit(username, entry.score);
-                if (ok) {
-                    this.firebaseOnline = true;
-                    this.lastError = '';
-                    this.updateStatusUI();
-                    this.gameToast('🌐 Score uploaded to Global!');
-                    this.apiFetch();
-                } else {
-                    this.lastError = 'upload blocked';
-                    this.firebaseOnline = false;
-                    this.updateStatusUI();
-                    this.gameToast('📴 Score saved locally only', true);
-                }
-                return;
-            }
-
-            // 🔄 حالت ۲: Firebase مستقیم
-            if (firebaseReady) {
+            if (firebaseReady && improved) {
                 try {
                     const safeUsername = username.replace(/[.#$\[\]]/g, '_');
                     await firebaseDB.ref('leaderboard/' + safeUsername).set({
                         username: username, score: entry.score, date: entry.date
                     });
                     this.firebaseOnline = true;
-                    this.lastError = '';
-                    this.updateStatusUI();
+                    lbVpnCheck();
                     this.gameToast('🌐 Score uploaded to Global!');
                 } catch (e) {
                     console.warn('Firebase save error:', e);
-                    this.lastError = (e && e.code) ? e.code : 'write failed';
                     this.firebaseOnline = false;
-                    this.updateStatusUI();
-                    this.gameToast('📴 Score saved locally only (' + this.lastError + ')', true);
+                    lbVpnCheck();
+                    this.gameToast('📴 Score saved locally — VPN for global!', true);
                 }
-            } else {
-                this.gameToast('📴 Score saved locally only (no server)', true);
+            } else if (!firebaseReady && improved) {
+                this.gameToast('📴 Score saved locally — VPN for global!', true);
             }
         },
         getLeaderboard() { return this.leaderboard; }
     };
     Auth.init();
 
-    bindBtn('btn-sync-lb', () => { Auth.manualSync(); });
+    bindBtn('btn-retry-lb', () => { Auth.manualSync(); });
+
+    // 🔧 FIXED: direct reference to Auth (window.Auth was always undefined for const)
+    function lbVpnCheck(){
+        var el = document.getElementById('lb-vpn');
+        if (!el) return;
+        var online = (typeof Auth !== 'undefined') && Auth.firebaseOnline;
+        el.style.display = online ? 'none' : 'flex';
+    }
+    lbVpnCheck();
+    setInterval(lbVpnCheck, 1000);
 
     function renderLeaderboard() {
         const list = document.getElementById('leaderboard-list');
@@ -820,6 +699,7 @@
             if (el) el.style.display = (k === viewName) ? (k === 'guest' || k === 'logged' ? 'block' : 'flex') : 'none';
         });
         document.querySelectorAll('.auth-error-msg').forEach(e => { e.style.display = 'none'; e.textContent = ''; });
+        if (viewName === 'logged') lbVpnCheck();
     }
 
     function refreshAuthUI() {
@@ -829,7 +709,6 @@
             nameEl.textContent = Auth.currentUser.username;
             avEl.textContent = Auth.currentUser.username.charAt(0).toUpperCase();
             renderLeaderboard();
-            Auth.updateStatusUI();
             showAuthView('logged');
         } else {
             showAuthView('guest');
@@ -2084,8 +1963,6 @@
             this.camera.lookAt(0, 1.4, -5);
             this.refreshMenuStats();
             refreshAuthUI();
-            // 🌍 در حالت Worker، بعد از برگشتن به منو هم لیدربرد تازه شود
-            if (LEADERBOARD_API) Auth.apiFetch();
         }
 
         setupVisibilityHandler() {
@@ -2655,10 +2532,10 @@
             if (!ok) {
                 if (statusEl) statusEl.textContent = '❌ 3D engine failed to load';
                 __showFatal(
-                    'موتور سه‌بعدی (three.js) از هیچ CDN ای لود نشد.\n\n' +
-                    'اگر بازی را داخل پیش‌نمایش چت باز کرده ای:\n' +
-                    'آن محیط، اسکریپت خارجی و localStorage را مسدود می‌کند و بازی آنجا اجرا نمی‌شود.\n\n' +
-                    '✅ راه‌حل: این کد را در فایل MetroDash.html ذخیره کن و روی فایل دابل‌کلیک کن تا مستقیم در کروم/اج باز شود.'
+                    '3D engine (three.js) could not load from any CDN.\n\n' +
+                    'If you opened this inside a chat preview:\n' +
+                    'that environment blocks external scripts & storage.\n\n' +
+                    '✅ Solution: save this code as MetroDash.html and open it directly in Chrome/Edge.'
                 );
                 return;
             }
@@ -2668,13 +2545,13 @@
             } catch (err) {
                 console.error(err);
                 if (statusEl) statusEl.textContent = '❌ Engine error: ' + err.message;
-                __showFatal('خطا در راه‌اندازی بازی: ' + err.message);
+                __showFatal('Engine error: ' + err.message);
             }
         });
     }
     bindBtn('btn-start', function () {
         if (!window.game) {
-            __showFatal('موتور بازی هنوز لود نشده است. اگر داخل پیش‌نمایش چت هستی، فایل را دانلود کن و مستقیم در کروم/اج باز کن.');
+            __showFatal('Engine not loaded yet. If you are in a chat preview, download the file and open it directly in Chrome/Edge.');
         }
     });
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bootEngine);
