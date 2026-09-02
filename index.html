@@ -73,15 +73,15 @@
         .multiplier-val { color: #ff007f; font-size: 15px; margin-left: 6px; }
         #speed-bar-container { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); width: 200px; height: 6px; background: rgba(255,255,255,0.12); border-radius: 6px; overflow: hidden; opacity: 0; transition: opacity 0.3s ease; }
         #speed-bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #00f0ff, #ff007f); border-radius: 6px; }
-        #invincible-badge { position: absolute; top: 86px; left: 50%; transform: translateX(-50%); background: rgba(0, 240, 255, 0.2); border: 1px solid #00f0ff; border-radius: 50px; padding: 6px 18px; color: #00f0ff; font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; box-shadow: 0 0 16px rgba(0, 240, 255, 0.4); opacity: 0; transition: opacity 0.2s ease; }
-        #level-badge { position: absolute; top: 52px; left: 50%; transform: translateX(-50%); background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 170, 0, 0.45); border-radius: 50px; padding: 4px 14px; color: #ffd700; font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; box-shadow: 0 6px 16px rgba(0,0,0,0.4); opacity: 0; transition: opacity 0.3s ease; }
+        #invincible-badge { position: absolute; top: 106px; left: 50%; transform: translateX(-50%); background: rgba(0, 240, 255, 0.2); border: 1px solid #00f0ff; border-radius: 50px; padding: 6px 18px; color: #00f0ff; font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; box-shadow: 0 0 16px rgba(0, 240, 255, 0.4); opacity: 0; transition: opacity 0.2s ease; }
+        #level-badge { position: absolute; top: 74px; left: 50%; transform: translateX(-50%); background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 170, 0, 0.45); border-radius: 50px; padding: 4px 14px; color: #ffd700; font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; box-shadow: 0 6px 16px rgba(0,0,0,0.4); opacity: 0; transition: opacity 0.3s ease; }
         #hud-controls { position: absolute; top: 24px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; transition: opacity 0.3s ease; }
         #hud-controls.off { opacity: 0; visibility: hidden; }
         .round-ctrl { width: 42px; height: 42px; border-radius: 50%; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(0, 240, 255, 0.3); color: #fff; font-size: 15px; cursor: pointer; pointer-events: auto; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 18px rgba(0,0,0,0.5); transition: transform 0.15s ease; }
         .round-ctrl:hover { transform: scale(1.1); }
         .round-ctrl:active { transform: scale(0.94); }
         #btn-pause { font-size: 11px; font-weight: 900; letter-spacing: 1px; }
-        #powerup-bar { position: absolute; top: 130px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; }
+        #powerup-bar { position: absolute; top: 142px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; }
         .pu-badge { display: none; flex-direction: column; align-items: center; gap: 5px; background: rgba(15, 23, 42, 0.85); border: 1px solid; border-radius: 12px; padding: 7px 11px; min-width: 74px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
         .pu-badge.on { display: flex; }
         .pu-badge .pu-icon { font-size: 11px; font-weight: 900; letter-spacing: 0.5px; white-space: nowrap; }
@@ -90,8 +90,8 @@
         #pu-magnet { border-color: rgba(255, 51, 85, 0.6); } #pu-magnet .pu-icon { color: #ff3355; } #pu-magnet .pu-fill { background: #ff3355; }
         #pu-mult { border-color: rgba(255, 215, 0, 0.6); } #pu-mult .pu-icon { color: #ffd700; } #pu-mult .pu-fill { background: #ffd700; }
         #pu-shield { border-color: rgba(0, 240, 255, 0.6); } #pu-shield .pu-icon { color: #00f0ff; } #pu-shield .pu-fill { background: #00f0ff; }
-        #toast-wrap { position: absolute; top: 195px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 8px; align-items: center; z-index: 12; pointer-events: none; }
-        .toast-item { background: rgba(15, 23, 42, 0.92); border: 1px solid rgba(0, 240, 255, 0.35); color: #f1f5f9; padding: 8px 18px; border-radius: 50px; font-size: 13px; font-weight: 700; box-shadow: 0 8px 24px rgba(0,0,0,0.5); opacity: 0; transform: translateY(-8px); transition: all 0.3s ease; white-space: nowrap; }
+        #toast-wrap { position: absolute; bottom: 88px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column-reverse; gap: 7px; align-items: center; z-index: 12; pointer-events: none; }
+        .toast-item { background: rgba(15, 23, 42, 0.68); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border: 1px solid rgba(0, 240, 255, 0.28); color: rgba(241, 245, 249, 0.9); padding: 5px 14px; border-radius: 50px; font-size: 11.5px; font-weight: 700; box-shadow: 0 4px 14px rgba(0,0,0,0.3); opacity: 0; transform: translateY(8px); transition: all 0.3s ease; white-space: nowrap; }
         .toast-item.show { opacity: 1; transform: translateY(0); }
         .toast-item.hot { border-color: rgba(255, 170, 0, 0.6); color: #ffd700; }
         #countdown-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; align-items: center; justify-content: center; z-index: 18; pointer-events: none; }
@@ -141,20 +141,35 @@
         .stat-box .val { font-size: 20px; font-weight: 900; color: #fff; }
         #customize-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: transparent !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; z-index: 25; pointer-events: none; transition: opacity 0.3s ease, visibility 0.3s ease; }
         #customize-modal.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-        .style-studio-panel { position: fixed !important; top: 50% !important; right: 4% !important; transform: translateY(-50%) !important; width: 360px !important; max-width: 90vw !important; max-height: 82vh !important; height: auto !important; background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 24px; padding: 20px 18px; box-shadow: 0 16px 45px rgba(0,0,0,0.8), 0 0 35px rgba(0, 240, 255, 0.2); display: flex; flex-direction: column; gap: 13px; overflow-y: auto !important; -webkit-overflow-scrolling: touch; touch-action: pan-y !important; pointer-events: auto !important; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+        /* ── v7 Robot Studio — same glass language as the menu Player Hub ── */
+        .style-studio-panel { position: fixed !important; top: 50% !important; right: 4% !important; transform: translateY(-50%) !important; width: 372px !important; max-width: 90vw !important; max-height: 86vh !important; height: auto !important; background: linear-gradient(168deg, rgba(10, 16, 32, 0.88), rgba(7, 11, 22, 0.8)); border: 1px solid rgba(0, 240, 255, 0.22); border-radius: 22px; padding: 18px 18px 14px; box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06); display: flex; flex-direction: column; gap: 13px; overflow-y: auto !important; -webkit-overflow-scrolling: touch; touch-action: pan-y !important; pointer-events: auto !important; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
+        .style-studio-panel::before { content: ''; position: absolute; top: -1px; left: 26px; right: 26px; height: 1px; background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.55), transparent); pointer-events: none; }
         .style-studio-panel::-webkit-scrollbar { width: 5px; }
         .style-studio-panel::-webkit-scrollbar-thumb { background: rgba(0, 240, 255, 0.4); border-radius: 10px; }
-        .customizer-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 8px; }
-        .customizer-title { font-size: 16.5px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.2px; background: linear-gradient(135deg, #00f0ff 0%, #ff007f 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .custom-section { display: flex; flex-direction: column; gap: 5px; text-align: left; }
-        .custom-label { font-size: 10.5px; font-weight: 800; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.8px; }
-        .swatch-group { display: flex; gap: 8px; flex-wrap: wrap; }
-        .swatch-btn { width: 32px; height: 32px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.22); cursor: pointer; transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); outline: none; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.3); touch-action: manipulation; }
-        .swatch-btn:hover { transform: scale(1.14); border-color: #fff; }
-        .swatch-btn.active { transform: scale(1.22); border-color: #00f0ff; box-shadow: 0 0 14px #00f0ff; }
-        .swatch-btn.active::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 7px; height: 7px; background: #fff; border-radius: 50%; box-shadow: 0 0 4px rgba(0,0,0,0.8); }
-        .customizer-actions { display: flex; gap: 10px; margin-top: 8px; width: 100%; padding-bottom: 4px; }
-        .customizer-badge { position: absolute; top: 24px; left: 28px; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 50px; padding: 8px 18px; color: #f1f5f9; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; pointer-events: none; box-shadow: 0 8px 24px rgba(0,0,0,0.4); display: flex; align-items: center; gap: 8px; }
+        .lab-dot { width: 8px; height: 8px; border-radius: 50%; background: #00f0ff; box-shadow: 0 0 10px #00f0ff; animation: hubPulse 2.2s ease-in-out infinite; flex-shrink: 0; }
+        .lab-live { margin-left: auto; font-size: 9px; color: #4cd137; letter-spacing: 1.5px; font-weight: 800; text-transform: uppercase; }
+        .customizer-header { display: flex; align-items: center; gap: 9px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; flex-shrink: 0; }
+        .customizer-title { font-size: 12.5px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: rgba(255, 255, 255, 0.8); }
+        .custom-section { display: flex; flex-direction: column; gap: 7px; text-align: left; flex-shrink: 0; }
+        .custom-label { display: flex; align-items: baseline; justify-content: space-between; font-size: 10.5px; font-weight: 800; color: #38bdf8; text-transform: uppercase; letter-spacing: 1px; }
+        .swatch-current { font-size: 9px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; opacity: 0.95; }
+        .preset-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .preset-chip { display: flex; flex-direction: column; gap: 5px; align-items: stretch; background: rgba(255, 255, 255, 0.045); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 7px 8px 6px; cursor: pointer; transition: all 0.18s ease; outline: none; font-family: inherit; }
+        .preset-chip:hover { background: rgba(255, 255, 255, 0.09); border-color: rgba(0, 240, 255, 0.4); transform: translateY(-2px); }
+        .preset-chip.active { border-color: rgba(0, 240, 255, 0.85); background: linear-gradient(135deg, rgba(0, 240, 255, 0.14), rgba(112, 0, 255, 0.12)); box-shadow: 0 0 0 1px rgba(0, 240, 255, 0.3), 0 6px 18px rgba(0, 240, 255, 0.14); }
+        .preset-strip { display: flex; height: 9px; border-radius: 6px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.14); }
+        .preset-strip i { flex: 1; }
+        .preset-name { font-size: 8.8px; font-weight: 800; letter-spacing: 0.7px; text-transform: uppercase; color: rgba(255, 255, 255, 0.62); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .swatch-group { display: flex; gap: 9px; flex-wrap: wrap; }
+        .swatch-btn { width: 36px; height: 36px; border-radius: 12px; border: 2px solid rgba(255, 255, 255, 0.18); cursor: pointer; transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); outline: none; position: relative; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25); touch-action: manipulation; }
+        .swatch-btn:hover { transform: translateY(-3px) scale(1.08); border-color: #fff; }
+        .swatch-btn.active { transform: scale(1.12); border-color: #00f0ff; box-shadow: 0 0 16px rgba(0, 240, 255, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.25); }
+        .swatch-btn.active::after { content: '✓'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900; color: #fff; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9); }
+        .btn-random-custom, .cust-act-random { background: rgba(112, 0, 255, 0.2) !important; border: 1px solid rgba(168, 85, 247, 0.5) !important; color: #e9d5ff !important; box-shadow: 0 4px 14px rgba(112, 0, 255, 0.3) !important; }
+        .customizer-actions { display: flex; gap: 8px; margin-top: 6px; width: 100%; padding-bottom: 2px; flex-shrink: 0; }
+        .customizer-badge { position: absolute; top: 24px; left: 28px; background: rgba(10, 16, 32, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 50px; padding: 8px 18px; color: #f1f5f9; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; pointer-events: none; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); display: flex; align-items: center; gap: 8px; }
+        .badge-dot { width: 7px; height: 7px; border-radius: 50%; background: #4cd137; box-shadow: 0 0 8px #4cd137; animation: hubPulse 2.2s ease-in-out infinite; flex-shrink: 0; }
+        .cust-hero { display: none; }
         #ad-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 7, 18, 0.94); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #00f0ff; font-size: 17px; font-weight: 800; letter-spacing: 1px; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.2s ease; }
         #ad-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
         .difficulty-hint { font-size: 9px; color: rgba(255,255,255,0.5); margin-top: 4px; text-align: center; }
@@ -230,7 +245,7 @@
         @keyframes menuSheen { 0%, 100% { background-position: 0% 0%; } 50% { background-position: 100% 100%; } }
         h1.game-title { background-size: 220% 220%; animation: titleFlow 5s ease-in-out infinite; }
         @keyframes titleFlow { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
-        .modal-content > *:not(.menu-orb) { position: relative; z-index: 1; }
+        .modal-content > *:not(.menu-orb), .menu-col > * { position: relative; z-index: 1; }
         .menu-orb { position: absolute; border-radius: 50%; pointer-events: none; opacity: 0.6; box-shadow: 0 0 16px currentColor; z-index: 0; animation: orbFloat 8s ease-in-out infinite; }
         .orb1 { width: 10px; height: 10px; top: 10%; left: 7%; background: #00f0ff; color: #00f0ff; }
         .orb2 { width: 7px; height: 7px; top: 20%; right: 9%; background: #ff007f; color: #ff007f; animation-delay: 1.3s; }
@@ -276,6 +291,95 @@
         .daily-claim-btn.claimed-today { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); color: rgba(255,255,255,0.75); box-shadow: none; }
         .boost-chip.free { border-color: rgba(16, 185, 129, 0.7); background: rgba(16, 185, 129, 0.12); box-shadow: 0 0 12px rgba(16, 185, 129, 0.35); }
         .boost-chip .b-cost.free-cost { color: #4cd137; }
+        /* ── Menu layout: hero + unified glass hub sidebar desktop · narrow card mobile (v6) ── */
+        .menu-col { display: contents; }
+        .hub-head { display: none; }
+        @keyframes hubPulse { 0%, 100% { opacity: 1; box-shadow: 0 0 9px #00f0ff; } 50% { opacity: 0.45; box-shadow: 0 0 2px #00f0ff; } }
+        #start-modal .modal-content { display: flex; flex-direction: column; }
+        #start-modal .modal-content > *:not(.menu-orb):not(.menu-col), .menu-col > * { flex-shrink: 0; }
+        .menu-col-center .game-title { order: 1; }
+        .menu-col-center .subtitle { order: 2; }
+        .menu-col-center #engine-status { order: 3; }
+        .menu-col-right .user-section { order: 4; }
+        .menu-col-right .menu-stats { order: 5; }
+        .menu-col-center .map-selector { order: 6; }
+        .menu-col-center .difficulty-selector { order: 7; }
+        .menu-col-right .boost-selector { order: 8; }
+        .menu-col-right .daily-selector { order: 9; }
+        .menu-col-right .controls-guide { order: 10; }
+        .menu-col-center .btn-stack { order: 11; }
+        @media (min-width: 1024px) {
+            #start-modal { background: linear-gradient(100deg, rgba(4, 7, 16, 0.95) 0%, rgba(4, 7, 16, 0.87) 36%, rgba(5, 9, 18, 0.55) 66%, rgba(5, 9, 18, 0.36) 100%); backdrop-filter: none; -webkit-backdrop-filter: none; }
+            #start-modal .modal-content { width: 100%; height: 100%; max-width: none; max-height: none; box-sizing: border-box; flex-direction: row; align-items: stretch; justify-content: center; gap: clamp(28px, 3.5vw, 64px); padding: 4.5vh 4.5vw; border-radius: 0; border: none; background: transparent; box-shadow: none; overflow: hidden; }
+            #start-modal .modal-content::before, #start-modal .modal-content::after { border-radius: 0; }
+            .menu-col { display: flex; flex-direction: column; min-width: 0; max-height: 100%; box-sizing: border-box; }
+            /* ── Hero column (left) ── */
+            .menu-col-center { flex: 1 1 500px; max-width: 660px; text-align: left; overflow-y: auto; padding: 12px 10px 12px 4px; }
+            #start-modal .menu-col-center > .game-title { margin-top: auto; }
+            #start-modal .menu-col-center > .btn-stack { margin-bottom: auto; }
+            #start-modal h1.game-title { font-size: clamp(50px, 5.4vw, 80px); line-height: 0.95; text-align: left; letter-spacing: 3px; margin-bottom: 10px; }
+            #start-modal .subtitle { font-size: 14px; letter-spacing: 4px; text-transform: uppercase; color: rgba(56, 189, 248, 0.85); margin-bottom: 0; }
+            #start-modal .subtitle::after { content: ''; display: block; width: 92px; height: 3px; margin-top: 14px; border-radius: 3px; background: linear-gradient(90deg, #00f0ff, #7000ff); box-shadow: 0 0 12px rgba(0, 240, 255, 0.5); }
+            #start-modal #engine-status { display: inline-flex; align-self: flex-start; align-items: center; padding: 6px 14px; border-radius: 50px; background: rgba(16, 185, 129, 0.09); border: 1px solid rgba(16, 185, 129, 0.3); color: rgba(255, 255, 255, 0.6); font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; font-weight: 800; margin: 18px 0 34px; }
+            #start-modal .map-selector { margin-bottom: 22px; }
+            #start-modal .map-selector-label, #start-modal .difficulty-selector-label { color: rgba(255, 255, 255, 0.4); font-size: 10px; margin-bottom: 10px; }
+            #start-modal .map-btn { padding: 14px 10px; font-size: 13px; border-radius: 14px; background: rgba(12, 18, 34, 0.62); border-color: rgba(255, 255, 255, 0.13); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+            #start-modal .map-btn.active { border-color: rgba(0, 240, 255, 0.85); background: linear-gradient(135deg, rgba(0, 240, 255, 0.17), rgba(112, 0, 255, 0.15)); box-shadow: 0 0 0 1px rgba(0, 240, 255, 0.28), 0 10px 28px rgba(0, 240, 255, 0.16); }
+            #start-modal .difficulty-selector { margin-bottom: 30px; }
+            #start-modal .difficulty-btn { padding: 11px; font-size: 12px; border-radius: 12px; background: rgba(12, 18, 34, 0.62); border-color: rgba(255, 255, 255, 0.13); }
+            #start-modal .difficulty-hint { text-align: left; font-size: 10px; }
+            #start-modal .menu-col-center .btn-stack { flex-direction: row; gap: 12px; }
+            #start-modal .menu-col-center .btn-stack .btn-action { flex: 1; padding: 16px 14px; font-size: 14px; }
+            #start-modal #btn-start { flex: 1.5; font-size: 15.5px; }
+            #start-modal #btn-customize { background: rgba(12, 18, 34, 0.7); border: 1px solid rgba(0, 240, 255, 0.32); font-size: 12.5px; }
+            /* ── Player Hub sidebar (right, one unified glass panel) ── */
+            .menu-col-right { position: relative; flex: 0 0 clamp(430px, 34vw, 570px); align-self: center; max-height: 100%; overflow-y: auto; background: linear-gradient(168deg, rgba(10, 16, 32, 0.6), rgba(7, 11, 22, 0.46)); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 22px; padding: 22px 24px 16px; box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06); }
+            .menu-col-right::before { content: ''; position: absolute; top: -1px; left: 26px; right: 26px; height: 1px; background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.55), transparent); pointer-events: none; }
+            #start-modal .menu-col-right > * + * { margin-top: 16px; }
+            #start-modal .menu-col-right > *:last-child { margin-bottom: auto; }
+            .hub-head { display: flex; align-items: center; gap: 9px; padding-bottom: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); flex-shrink: 0; }
+            .hub-dot { width: 8px; height: 8px; border-radius: 50%; background: #00f0ff; box-shadow: 0 0 10px #00f0ff; animation: hubPulse 2.2s ease-in-out infinite; flex-shrink: 0; }
+            .hub-title { font-size: 12.5px; font-weight: 900; letter-spacing: 3px; color: rgba(255, 255, 255, 0.78); text-transform: uppercase; }
+            .hub-live { margin-left: auto; font-size: 9px; color: #4cd137; letter-spacing: 1.5px; font-weight: 800; text-transform: uppercase; }
+            #start-modal .menu-col-right .user-section { background: transparent; border: none; border-radius: 0; padding: 0; margin-bottom: 0; }
+            #start-modal .menu-col-right .menu-stats { margin-bottom: 0; gap: 8px; }
+            #start-modal .menu-col-right .menu-stat { background: rgba(255, 255, 255, 0.055); border-color: rgba(255, 255, 255, 0.1); padding: 11px 8px; }
+            #start-modal .menu-col-right .menu-stat .v { font-size: 17px; }
+            #start-modal .menu-col-right .boost-chip .b-title { font-size: 13px; }
+            #start-modal .menu-col-right .boost-chip .b-cost { font-size: 11px; }
+            #start-modal .menu-col-right .boost-selector { margin-bottom: 0; }
+            #start-modal .menu-col-right .daily-selector { margin-bottom: 0; background: rgba(255, 215, 0, 0.06); }
+            #start-modal .menu-col-right .controls-guide { margin-top: 0; gap: 7px; margin-bottom: 0; }
+            #start-modal .menu-col-right .ctrl-item { background: rgba(255, 255, 255, 0.045); padding: 7px 8px; gap: 6px; }
+            #start-modal .menu-col-right .key-badge { font-size: 9.5px; padding: 2px 6px; white-space: nowrap; }
+            #start-modal .menu-col-right .ctrl-desc { font-size: 10.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .leaderboard-box { max-height: 21vh; }
+            /* ── Robot Studio (customizer) — full-screen hero + glass panel, same frame as menu ── */
+            #customize-modal { background: linear-gradient(100deg, rgba(4, 7, 16, 0.95) 0%, rgba(4, 7, 16, 0.87) 36%, rgba(5, 9, 18, 0.55) 66%, rgba(5, 9, 18, 0.36) 100%) !important; display: flex; flex-direction: row; align-items: stretch; justify-content: center; gap: clamp(28px, 3.5vw, 64px); padding: 4.5vh 4.5vw; box-sizing: border-box; }
+            .customizer-badge { display: none; }
+            .cust-hero { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; text-align: left; flex: 1 1 460px; max-width: 620px; min-width: 0; padding: 12px 10px 12px 4px; pointer-events: auto; }
+            .cust-status { display: inline-flex; align-items: center; gap: 7px; padding: 6px 14px; border-radius: 50px; background: rgba(16, 185, 129, 0.09); border: 1px solid rgba(16, 185, 129, 0.3); color: rgba(255, 255, 255, 0.6); font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; font-weight: 800; margin-bottom: 22px; }
+            .cust-title { font-size: clamp(46px, 4.9vw, 74px); line-height: 0.95; letter-spacing: 3px; font-weight: 900; margin: 0 0 14px; background: linear-gradient(135deg, #00f0ff 0%, #4d7cff 45%, #a855f7 75%, #ff007f 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+            .cust-sub { font-size: 13px; letter-spacing: 4px; text-transform: uppercase; color: rgba(56, 189, 248, 0.85); }
+            .cust-sub::after { content: ''; display: block; width: 92px; height: 3px; margin-top: 14px; border-radius: 3px; background: linear-gradient(90deg, #00f0ff, #7000ff); box-shadow: 0 0 12px rgba(0, 240, 255, 0.5); }
+            .cust-hint { margin-top: 20px; font-size: 12.5px; line-height: 1.6; color: rgba(255, 255, 255, 0.45); max-width: 400px; }
+            .cust-hint b { color: rgba(0, 240, 255, 0.8); font-weight: 700; }
+            .cust-actions { display: flex; gap: 12px; width: 100%; max-width: 480px; margin-top: 36px; }
+            .cust-actions .btn-action { flex: 1; padding: 15px 12px; font-size: 13px; }
+            .cust-actions .cust-act-save { flex: 1.4; }
+            .style-studio-panel { position: relative !important; top: auto !important; right: auto !important; bottom: auto !important; transform: none !important; flex: 0 0 clamp(430px, 34vw, 570px); width: auto !important; max-width: none !important; max-height: 100%; align-self: center; gap: 14px; padding: 20px 22px 16px; }
+            .style-studio-panel .customizer-actions { display: none; }
+            /* short desktop screens: compact the studio panel too */
+            @media (max-height: 700px) {
+                #customize-modal { padding: 2.5vh 4.5vw; }
+                .style-studio-panel { gap: 9px; padding: 14px 18px 12px; }
+                .cust-title { margin-bottom: 10px; }
+                .cust-actions { margin-top: 22px; }
+                .cust-actions .btn-action { padding: 12px 10px; }
+                .cust-status { margin-bottom: 14px; }
+                .cust-hint { margin-top: 12px; }
+            }
+        }
         @media (max-width: 768px), (orientation: portrait) {
             .ui-layer { padding: 14px; }
             .hud-card { padding: 8px 14px; }
@@ -283,13 +387,18 @@
             .hud-label { font-size: 9.5px; }
             #hud-controls { top: 14px; }
             .round-ctrl { width: 38px; height: 38px; font-size: 13px; }
-            #level-badge { top: 46px; font-size: 10px; padding: 3px 10px; }
+            #level-badge { top: 58px; font-size: 10px; padding: 3px 10px; }
+            #invincible-badge { top: 84px; }
             #powerup-bar { top: 118px; }
-            #toast-wrap { top: 172px; }
+            #toast-wrap { bottom: 102px; }
             #countdown-num { font-size: 80px; }
-            .style-studio-panel { top: auto !important; bottom: 0 !important; left: 0 !important; right: 0 !important; transform: none !important; width: 100% !important; max-width: 100% !important; height: 38vh !important; max-height: 38vh !important; border-radius: 20px 20px 0 0 !important; padding: 12px 14px !important; gap: 9px !important; background: rgba(15, 23, 42, 0.98) !important; }
+            .style-studio-panel { top: auto !important; bottom: 0 !important; left: 0 !important; right: 0 !important; transform: none !important; width: 100% !important; max-width: 100% !important; height: 44vh !important; max-height: 44vh !important; border-radius: 20px 20px 0 0 !important; padding: 14px 16px 12px !important; gap: 10px !important; background: linear-gradient(168deg, rgba(10, 16, 32, 0.97), rgba(7, 11, 22, 0.96)) !important; }
+            .customizer-actions { padding-bottom: 0 !important; }
             .customizer-badge { top: 14px; left: 50%; transform: translateX(-50%); font-size: 10.5px; padding: 5px 12px; white-space: nowrap; }
-            .swatch-btn { width: 29px; height: 29px; }
+            .swatch-btn { width: 31px; height: 31px; border-radius: 10px; }
+            .preset-grid { gap: 6px; }
+            .preset-chip { padding: 6px 6px 5px; border-radius: 10px; }
+            .preset-name { font-size: 8.2px; }
             .btn-action { font-size: 12px; padding: 10px 14px; }
             .map-btn, .difficulty-btn { font-size: 10px; padding: 8px; }
             .modal-content { padding: 20px 16px; }
@@ -356,10 +465,37 @@
             <div class="menu-orb orb3"></div>
             <div class="menu-orb orb4"></div>
             <div class="menu-orb orb5"></div>
+            
+
+            <div class="menu-col menu-col-center">
             <h1 class="game-title">Metro Dash</h1>
             <p class="subtitle">Robot Runner Edition</p>
             <div id="engine-status">⏳ Loading 3D engine…</div>
+            <div class="map-selector">
+                <div class="map-selector-label">Select Map</div>
+                <div class="map-options">
+                    <button class="map-btn active" data-map="city">🏙️ Neon City</button>
+                    <button class="map-btn" data-map="desert">🏜️ Desert Oasis</button>
+                    <button class="map-btn" data-map="snow">❄️ Frost Peak</button>
+                </div>
+            </div>
+            <div class="difficulty-selector">
+                <div class="difficulty-selector-label"> Difficulty Level</div>
+                <div class="difficulty-options">
+                    <button class="difficulty-btn easy" data-difficulty="easy">🟢 Easy</button>
+                    <button class="difficulty-btn normal active" data-difficulty="normal"> Normal</button>
+                    <button class="difficulty-btn hard" data-difficulty="hard"> Hard</button>
+                </div>
+                <div class="difficulty-hint" id="difficulty-hint">🟡 Balanced speed & obstacles</div>
+            </div>
+            <div class="btn-stack">
+                <button id="btn-start" class="btn-action" style="width:100%;">🏃 Start Run</button>
+                <button id="btn-customize" class="btn-action btn-secondary" style="width:100%;">🤖 Customize Bot</button>
+            </div>
+            </div>
 
+            <div class="menu-col menu-col-right">
+            <div class="hub-head"><span class="hub-dot"></span><span class="hub-title">Player Hub</span><span class="hub-live">● Live</span></div>
             <div class="user-section">
                 <div id="auth-guest-view">
                     <div style="color: rgba(255,255,255,0.7); font-size: 12px; margin-bottom: 10px;">Login to save your score & compete on the leaderboard!</div>
@@ -423,30 +559,10 @@
                     </div>
                 </div>
             </div>
-
             <div class="menu-stats">
                 <div class="menu-stat"><div class="t">Best Score</div><div class="v" id="menu-best">0</div></div>
                 <div class="menu-stat"><div class="t">🪙 Coin Bank</div><div class="v" id="menu-bank">0</div></div>
                 <div class="menu-stat"><div class="t">Best Distance</div><div class="v" id="menu-dist">0m</div></div>
-            </div>
-
-            <div class="map-selector">
-                <div class="map-selector-label">Select Map</div>
-                <div class="map-options">
-                    <button class="map-btn active" data-map="city">🏙️ Neon City</button>
-                    <button class="map-btn" data-map="desert">🏜️ Desert Oasis</button>
-                    <button class="map-btn" data-map="snow">❄️ Frost Peak</button>
-                </div>
-            </div>
-
-            <div class="difficulty-selector">
-                <div class="difficulty-selector-label"> Difficulty Level</div>
-                <div class="difficulty-options">
-                    <button class="difficulty-btn easy" data-difficulty="easy">🟢 Easy</button>
-                    <button class="difficulty-btn normal active" data-difficulty="normal"> Normal</button>
-                    <button class="difficulty-btn hard" data-difficulty="hard"> Hard</button>
-                </div>
-                <div class="difficulty-hint" id="difficulty-hint">🟡 Balanced speed & obstacles</div>
             </div>
 
             <div class="boost-selector">
@@ -456,14 +572,12 @@
                     <button class="boost-chip" id="boost-shield"><span class="b-title">🛡️ Shield Start</span><span class="b-cost">150 🪙 · 12s shield</span></button>
                 </div>
             </div>
-
             <div class="daily-selector" id="daily-box">
                 <div class="map-selector-label">🎁 Daily Rewards <span id="daily-week-label">· Week 1</span></div>
                 <div class="daily-row" id="daily-row"></div>
                 <button id="btn-daily-claim" class="btn-action btn-rewarded daily-claim-btn">🎁 Claim Reward</button>
                 <div class="difficulty-hint" id="daily-hint">💡 Come back every day for 7 days — rewards grow! Miss a day & the streak resets.</div>
             </div>
-
             <div class="controls-guide">
                 <div class="ctrl-item"><span class="key-badge">A / D / ← →</span><span class="ctrl-desc">Switch Lane</span></div>
                 <div class="ctrl-item"><span class="key-badge">W / SPACE / ↑</span><span class="ctrl-desc">Jump Over</span></div>
@@ -472,26 +586,35 @@
                 <div class="ctrl-item"><span class="key-badge">SWIPE</span><span class="ctrl-desc">Touch Gestures</span></div>
                 <div class="ctrl-item"><span class="key-badge">PICKUPS</span><span class="ctrl-desc">🧲 🛡️ ✨ Power-ups</span></div>
             </div>
-
-            <div class="btn-stack">
-                <button id="btn-start" class="btn-action" style="width:100%;">🏃 Start Run</button>
-                <button id="btn-customize" class="btn-action btn-secondary" style="width:100%;">🤖 Customize Bot</button>
             </div>
         </div>
     </div>
 
     <div id="customize-modal" class="hidden">
-        <div class="customizer-badge">🤖 Bot Studio — Fixed Pose & Customize</div>
+        <div class="customizer-badge"><span class="badge-dot"></span>🤖 Bot Studio — Live Preview</div>
+        <div class="cust-hero">
+            <div class="cust-status">✓ Style Engine — Live Preview</div>
+            <h1 class="cust-title">ROBOT<br>STUDIO</h1>
+            <div class="cust-sub">Paint Your Runner · 5 Zones</div>
+            <div class="cust-hint">Every tap repaints the bot <b>instantly</b> — grab a Quick Style, roll a random loadout with 🎲, then save to keep it forever.</div>
+            <div class="cust-actions">
+                <button class="btn-action btn-cancel-custom cust-act-cancel">✕ Cancel</button>
+                <button class="btn-action cust-act-random">🎲 Surprise Me</button>
+                <button class="btn-action btn-save-custom cust-act-save">💾 Save Style</button>
+            </div>
+        </div>
         <div class="style-studio-panel">
-            <div class="customizer-header"><div class="customizer-title">Bot Style Studio</div></div>
-            <div class="custom-section"><div class="custom-label">🤖 Robot Head</div><div class="swatch-group" id="swatches-skin"></div></div>
-            <div class="custom-section"><div class="custom-label">🧥 Hoodie</div><div class="swatch-group" id="swatches-suit"></div></div>
-            <div class="custom-section"><div class="custom-label">🦿 Legs</div><div class="swatch-group" id="swatches-pants"></div></div>
-            <div class="custom-section"><div class="custom-label">👟 Sneakers</div><div class="swatch-group" id="swatches-shoe"></div></div>
-            <div class="custom-section"><div class="custom-label">👁️ Eye Glow</div><div class="swatch-group" id="swatches-visor"></div></div>
+            <div class="customizer-header"><span class="lab-dot"></span><div class="customizer-title">Style Lab</div><span class="lab-live">● Live</span></div>
+            <div class="custom-section"><div class="custom-label"><span>⚡ Quick Styles</span></div><div class="preset-grid" id="preset-grid"></div></div>
+            <div class="custom-section"><div class="custom-label"><span>🤖 Head</span><span class="swatch-current" id="swatch-cur-skin"></span></div><div class="swatch-group" id="swatches-skin"></div></div>
+            <div class="custom-section"><div class="custom-label"><span>🧥 Hoodie</span><span class="swatch-current" id="swatch-cur-suit"></span></div><div class="swatch-group" id="swatches-suit"></div></div>
+            <div class="custom-section"><div class="custom-label"><span>🦿 Legs</span><span class="swatch-current" id="swatch-cur-pants"></span></div><div class="swatch-group" id="swatches-pants"></div></div>
+            <div class="custom-section"><div class="custom-label"><span>👟 Sneakers</span><span class="swatch-current" id="swatch-cur-shoe"></span></div><div class="swatch-group" id="swatches-shoe"></div></div>
+            <div class="custom-section"><div class="custom-label"><span>👁️ Eye Glow</span><span class="swatch-current" id="swatch-cur-visor"></span></div><div class="swatch-group" id="swatches-visor"></div></div>
             <div class="customizer-actions">
-                <button id="btn-cancel-custom" class="btn-action btn-cancel-custom" style="flex: 1;">Cancel</button>
-                <button id="btn-save-custom" class="btn-action btn-save-custom" style="flex: 1.3;">Save Style</button>
+                <button id="btn-cancel-custom" class="btn-action btn-cancel-custom" style="flex: 1;">✕ Cancel</button>
+                <button id="btn-random-custom" class="btn-action btn-random-custom" style="flex: 1;">🎲 Random</button>
+                <button id="btn-save-custom" class="btn-action btn-save-custom" style="flex: 1.2;">💾 Save</button>
             </div>
         </div>
     </div>
@@ -510,10 +633,8 @@
             <div id="final-bank-note"></div>
             <div id="final-level"></div>
             <div class="btn-stack">
-                <button id="btn-revive" class="btn-action btn-rewarded" style="width:100%;"><span>🎬 Revive & Continue (Ad)</span></button>
                 <button id="btn-restart" class="btn-action" style="width:100%;">🔄 Run Again</button>
                 <button id="btn-main-menu" class="btn-action btn-secondary" style="width:100%;">🏠 Main Menu</button>
-                <button id="btn-gameover-customize" class="btn-action btn-secondary" style="width:100%;">🤖 Customize Bot</button>
             </div>
         </div>
     </div>
@@ -1257,6 +1378,14 @@
         ]
     };
     const DEFAULT_COLORS = { skin: '#56d8f2', suit: '#2bb8dd', pants: '#3d4455', shoe: '#b515d6', visor: '#00f0ff' };
+    const STYLE_PRESETS = [
+        { name: 'Neon Rush', colors: { skin: '#56d8f2', suit: '#8b5cf6', pants: '#2d3436', shoe: '#f1f2f6', visor: '#00f0ff' } },
+        { name: 'Gold Elite', colors: { skin: '#fdcb6e', suit: '#ffb8a8', pants: '#3d4455', shoe: '#d63031', visor: '#ffa502' } },
+        { name: 'Toxic', colors: { skin: '#63e6be', suit: '#00b894', pants: '#273c75', shoe: '#4cd137', visor: '#4cd137' } },
+        { name: 'Ice Cold', colors: { skin: '#f1f2f6', suit: '#0984e3', pants: '#273c75', shoe: '#f1f2f6', visor: '#00f0ff' } },
+        { name: 'Bubblegum', colors: { skin: '#ffb8a8', suit: '#ff7675', pants: '#2d3436', shoe: '#fdcb6e', visor: '#ff6b81' } },
+        { name: 'Shadow', colors: { skin: '#a29bfe', suit: '#2d3436', pants: '#2d3436', shoe: '#b515d6', visor: '#a55eea' } }
+    ];
     const DIFFICULTY_CONFIG = {
         easy: { baseSpeed: 16.0, maxSpeed: 48.0, speedAccel: 0.35, doubleObstacleChance: 0.06, hint: ' Relaxed pace, fewer obstacles' },
         normal: { baseSpeed: 22.0, maxSpeed: 68.0, speedAccel: 0.55, doubleObstacleChance: 0.18, hint: '🟡 Balanced speed & obstacles' },
@@ -1312,7 +1441,6 @@
             this.bank = parseInt(Store.get('subway_dash_bank', '0'), 10) || 0;
             this.bestDist = parseInt(Store.get('subway_dash_bestdist', '0'), 10) || 0;
             this.mutedPref = Store.get('subway_dash_muted', '0') === '1';
-            this.hasRevivedThisRun = false;
             this.invincibleTimer = 0;
             this.magnetTimer = 0;
             this.multTimer = 0;
@@ -1393,7 +1521,6 @@
             this.gameoverModal = document.getElementById('gameover-modal');
             this.customizeModal = document.getElementById('customize-modal');
             this.adOverlay = document.getElementById('ad-overlay');
-            this.btnRevive = document.getElementById('btn-revive');
             this.difficultyHint = document.getElementById('difficulty-hint');
             const diffCfg = DIFFICULTY_CONFIG[this.selectedDifficulty];
             this.baseSpeed = diffCfg.baseSpeed;
@@ -1561,6 +1688,8 @@
             this.popups = []; this.shockwaves = [];
             this.speedStreaks = [];
             this.weather = null;
+            this.fxFlames = [];
+            this.airCars = [];
             this.comboCount = 0; this.comboTimer = 0;
             this.feverTimer = 0;
             this.ghostTimer = 0;
@@ -1686,7 +1815,9 @@
 
         createEnvironment() {
             if (this.trackSegments) this.trackSegments.forEach(seg => { this.scene.remove(seg); this.disposeGroup(seg); });
-            this.fxNeon = []; this.fxWindows = [];
+            if (this.skyDome) { this.scene.remove(this.skyDome); this.disposeGroup(this.skyDome); this.skyDome = null; }
+            if (this.airCars) this.airCars.forEach(c => { this.scene.remove(c); this.disposeGroup(c); });
+            this.fxNeon = []; this.fxWindows = []; this.fxFlames = []; this.airCars = [];
             const segmentLength = 42;
             const segmentCount = 6;
             this.trackSegments = [];
@@ -1696,7 +1827,119 @@
                 this.scene.add(seg);
                 this.trackSegments.push(seg);
             }
+            this.buildSkyDome();
+            if (this.selectedMap === 'city') this.spawnAirCars();
             this.createWeather();
+        }
+        buildSkyDome() {
+            const map = this.selectedMap;
+            if (!this._skyCache) this._skyCache = {};
+            if (!this._skyCache[map]) this._skyCache[map] = this.makeSkyTexture(map);
+            const dome = new THREE.Mesh(
+                new THREE.SphereGeometry(230, 24, 16),
+                new THREE.MeshBasicMaterial({ map: this._skyCache[map], side: THREE.BackSide, fog: false, depthWrite: false })
+            );
+            dome.renderOrder = -10;
+            this.scene.add(dome);
+            this.skyDome = dome;
+        }
+        makeSkyTexture(map) {
+            const c = document.createElement('canvas');
+            c.width = 1024; c.height = 512;
+            const ctx = c.getContext('2d');
+            const g = ctx.createLinearGradient(0, 0, 0, 512);
+            if (map === 'desert') {
+                g.addColorStop(0, '#1e5aa8'); g.addColorStop(0.45, '#5fa8dc');
+                g.addColorStop(0.75, '#ffd9a0'); g.addColorStop(1, '#ffb066');
+            } else if (map === 'snow') {
+                g.addColorStop(0, '#16324f'); g.addColorStop(0.5, '#3a6d9e');
+                g.addColorStop(0.8, '#a9c9e8'); g.addColorStop(1, '#d7e8f7');
+            } else {
+                g.addColorStop(0, '#02030a'); g.addColorStop(0.5, '#0a0f2d');
+                g.addColorStop(0.8, '#1c1440'); g.addColorStop(1, '#3d1d5c');
+            }
+            ctx.fillStyle = g;
+            ctx.fillRect(0, 0, 1024, 512);
+            if (map === 'city') {
+                for (let i = 0; i < 260; i++) {
+                    const sx = Math.random() * 1024, sy = Math.random() * 290;
+                    ctx.fillStyle = 'rgba(255,255,255,' + (0.25 + Math.random() * 0.75).toFixed(2) + ')';
+                    ctx.fillRect(sx, sy, Math.random() < 0.08 ? 2 : 1, Math.random() < 0.08 ? 2 : 1);
+                }
+                const mg = ctx.createRadialGradient(760, 110, 8, 760, 110, 70);
+                mg.addColorStop(0, 'rgba(240,248,255,1)');
+                mg.addColorStop(0.25, 'rgba(220,235,255,0.95)');
+                mg.addColorStop(1, 'rgba(180,200,255,0)');
+                ctx.fillStyle = mg;
+                ctx.beginPath(); ctx.arc(760, 110, 70, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = 'rgba(245,250,255,0.98)';
+                ctx.beginPath(); ctx.arc(760, 110, 30, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = 'rgba(185,200,228,0.55)';
+                ctx.beginPath(); ctx.arc(750, 102, 6, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.arc(771, 121, 4, 0, Math.PI * 2); ctx.fill();
+            } else if (map === 'desert') {
+                const sg = ctx.createRadialGradient(512, 150, 10, 512, 150, 130);
+                sg.addColorStop(0, 'rgba(255,252,230,1)');
+                sg.addColorStop(0.18, 'rgba(255,236,160,0.95)');
+                sg.addColorStop(0.5, 'rgba(255,190,90,0.4)');
+                sg.addColorStop(1, 'rgba(255,170,60,0)');
+                ctx.fillStyle = sg;
+                ctx.beginPath(); ctx.arc(512, 150, 130, 0, Math.PI * 2); ctx.fill();
+                ctx.strokeStyle = 'rgba(60,50,40,0.5)';
+                ctx.lineWidth = 2;
+                [[300, 185], [330, 168], [700, 125], [725, 140], [820, 205]].forEach(b => {
+                    ctx.beginPath();
+                    ctx.moveTo(b[0] - 9, b[1]);
+                    ctx.quadraticCurveTo(b[0] - 3, b[1] - 7, b[0], b[1]);
+                    ctx.quadraticCurveTo(b[0] + 3, b[1] - 7, b[0] + 9, b[1]);
+                    ctx.stroke();
+                });
+            } else {
+                const bands = [['rgba(52,211,153,', 55], ['rgba(96,220,255,', 95], ['rgba(167,139,250,', 135]];
+                bands.forEach((bd, bi) => {
+                    for (let i = 0; i < 3; i++) {
+                        ctx.beginPath();
+                        const y0 = bd[1] + i * 26;
+                        ctx.moveTo(-20, y0);
+                        for (let x = 0; x <= 1044; x += 24) {
+                            const y = y0 + Math.sin(x * 0.012 + bi * 2 + i) * 22 + Math.sin(x * 0.004 + bi) * 30;
+                            ctx.lineTo(x, y);
+                        }
+                        ctx.lineTo(1044, y0 + 140); ctx.lineTo(-20, y0 + 140);
+                        ctx.closePath();
+                        ctx.fillStyle = bd[0] + (0.05 + i * 0.014) + ')';
+                        ctx.fill();
+                    }
+                });
+                for (let i = 0; i < 90; i++) {
+                    ctx.fillStyle = 'rgba(255,255,255,' + (0.15 + Math.random() * 0.5).toFixed(2) + ')';
+                    ctx.fillRect(Math.random() * 1024, Math.random() * 240, 1.5, 1.5);
+                }
+            }
+            return new THREE.CanvasTexture(c);
+        }
+        spawnAirCars() {
+            this.airCars = [];
+            if (!this.trailTex) return;
+            for (let i = 0; i < 3; i++) {
+                const car = new THREE.Group();
+                const glowColor = i % 2 === 0 ? 0x00f0ff : 0xff007f;
+                const body = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.35, 1.1), new THREE.MeshStandardMaterial({ color: 0x151b30, roughness: 0.4, metalness: 0.7 }));
+                car.add(body);
+                [-1.4, 1.4].forEach(px => {
+                    const thr = new THREE.Mesh(new THREE.SphereGeometry(0.16, 8, 8), new THREE.MeshBasicMaterial({ color: glowColor }));
+                    thr.position.set(px, 0, 0);
+                    car.add(thr);
+                });
+                const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: this.trailTex, color: glowColor, transparent: true, opacity: 0.75, blending: THREE.AdditiveBlending, depthWrite: false }));
+                glow.scale.setScalar(1.7);
+                car.add(glow);
+                car.position.set((Math.random() - 0.5) * 70, 13 + Math.random() * 7, -25 - Math.random() * 80);
+                car.userData.speed = (4 + Math.random() * 5) * (Math.random() < 0.5 ? 1 : -1);
+                if (car.userData.speed < 0) car.rotation.y = Math.PI;
+                this.scene.add(car);
+                this.airCars.push(car);
+            }
         }
         createWeather() {
             if (this.weather) { this.scene.remove(this.weather.pts); this.weather.pts.geometry.dispose(); this.weather.pts.material.dispose(); this.weather = null; }
@@ -1734,14 +1977,27 @@
             }
             w.pts.geometry.attributes.position.needsUpdate = true;
         }
-        updateEnvFX(time) {
+        updateEnvFX(time, dt) {
             for (let i = 0; i < this.fxNeon.length; i++) {
                 const n = this.fxNeon[i];
                 n.mat.color.copy(n.base).multiplyScalar(0.72 + 0.28 * Math.sin(time * 2.2 + n.phase));
             }
             for (let i = 0; i < this.fxWindows.length; i++) {
                 const w = this.fxWindows[i];
-                w.mat.opacity = 0.2 + 0.24 * Math.max(0, Math.sin(time * 1.6 + w.phase));
+                w.mat.opacity = (w.base !== undefined ? w.base : 0.2) + (w.amp !== undefined ? w.amp : 0.24) * Math.max(0, Math.sin(time * 1.6 + w.phase));
+            }
+            for (let i = 0; i < this.fxFlames.length; i++) {
+                const f = this.fxFlames[i];
+                if (f.mode === 'blink') f.mat.opacity = Math.sin(time * 3 + f.phase) > 0.55 ? 1 : 0.12;
+                else f.mat.opacity = 0.55 + 0.3 * Math.sin(time * 11 + f.phase) + 0.15 * Math.sin(time * 23 + f.phase * 2);
+            }
+            if (this.airCars && this.airCars.length && dt) {
+                for (let i = 0; i < this.airCars.length; i++) {
+                    const car = this.airCars[i];
+                    car.position.x += car.userData.speed * dt;
+                    if (car.position.x > 48) car.position.x = -48;
+                    else if (car.position.x < -48) car.position.x = 48;
+                }
             }
         }
 
@@ -1783,46 +2039,162 @@
                 const bZ = -length / 2 + (i / objCount) * length;
                 [-1, 1].forEach(side => {
                     if (theme.side === 'city') {
-                        const height = 22 + Math.random() * 25;
-                        const width = 5.0 + Math.random() * 3.0;
-                        const depth = 5.0 + Math.random() * 3.0;
+                        const height = 16 + Math.random() * 34;
+                        const width = 5.0 + Math.random() * 3.5;
+                        const depth = 5.0 + Math.random() * 3.5;
+                        const shades = [0x0d1426, 0x0f172a, 0x111c36, 0x0c1122];
                         const wallGeo = createRoundedBox(width, height, depth, 0.3, 2);
-                        const wallMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.5 });
+                        const wallMat = new THREE.MeshStandardMaterial({ color: shades[Math.floor(Math.random() * shades.length)], roughness: 0.45, metalness: 0.25 });
                         const wall = new THREE.Mesh(wallGeo, wallMat);
-                        wall.position.set(side * (9.0 + width / 2 + Math.random() * 2), height / 2 - 0.5, bZ);
+                        const bx = side * (9.0 + width / 2 + Math.random() * 2.5);
+                        wall.position.set(bx, height / 2 - 0.5, bZ);
                         wall.castShadow = true;
                         wall.receiveShadow = true;
                         group.add(wall);
-                        const windowGeo = new THREE.PlaneGeometry(width * 0.7, height * 0.7);
-                        const windowMat = new THREE.MeshBasicMaterial({ color: (Math.random() > 0.5 ? 0x00f0ff : 0xff007f), opacity: 0.4, transparent: true });
-                        const win = new THREE.Mesh(windowGeo, windowMat);
-                        win.position.set(wall.position.x - (side * (width / 2 + 0.02)), height / 2, bZ);
-                        win.rotation.y = side * Math.PI / 2;
+                        if (!this._winTexes) this._winTexes = [this.makeWindowTexture(), this.makeWindowTexture(), this.makeWindowTexture()];
+                        const winTex = this._winTexes[Math.floor(Math.random() * this._winTexes.length)];
+                        const winMat = new THREE.MeshBasicMaterial({ map: winTex, transparent: true, opacity: 0.85, side: THREE.DoubleSide });
+                        const win = new THREE.Mesh(new THREE.PlaneGeometry(width * 0.86, height * 0.82), winMat);
+                        win.position.set(bx - side * (width / 2 + 0.04), height / 2 - 0.5, bZ);
+                        win.rotation.y = -side * Math.PI / 2;
                         group.add(win);
-                        this.fxWindows.push({ mat: windowMat, phase: Math.random() * 6.28 });
+                        this.fxWindows.push({ mat: winMat, phase: Math.random() * 6.28, base: 0.68, amp: 0.22 });
+                        if (Math.random() < 0.55) {
+                            const stripColor = Math.random() < 0.4 ? 0x00f0ff : (Math.random() < 0.6 ? 0xff007f : 0xffd700);
+                            const edgeMat = new THREE.MeshBasicMaterial({ color: stripColor });
+                            const edge = new THREE.Mesh(new THREE.BoxGeometry(0.14, height * 0.92, 0.14), edgeMat);
+                            edge.position.set(bx - side * (width / 2 + 0.06), height / 2 - 0.5, bZ + (depth / 2) * (Math.random() < 0.5 ? 1 : -1));
+                            group.add(edge);
+                            this.fxNeon.push({ mat: edgeMat, base: new THREE.Color(stripColor), phase: Math.random() * 6.28 });
+                        }
+                        if (height > 32 && Math.random() < 0.6) {
+                            const ant = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.1, 4.5, 8), new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.8, roughness: 0.4 }));
+                            ant.position.set(bx, height + 1.7, bZ);
+                            group.add(ant);
+                            const beaconMat = new THREE.MeshBasicMaterial({ color: 0xff2244, transparent: true, opacity: 1 });
+                            const beacon = new THREE.Mesh(new THREE.SphereGeometry(0.17, 8, 8), beaconMat);
+                            beacon.position.set(bx, height + 4.0, bZ);
+                            group.add(beacon);
+                            this.fxFlames.push({ mat: beaconMat, phase: Math.random() * 6.28, mode: 'blink' });
+                        }
+                        if (Math.random() < 0.3) group.add(this.createBillboard(side, bZ + (Math.random() * 8 - 4)));
                     } else if (theme.side === 'desert') {
-                        const height = 6 + Math.random() * 8;
-                        const width = 6.0 + Math.random() * 4.0;
-                        const duneGeo = new THREE.ConeGeometry(width, height, 5);
-                        const duneMat = new THREE.MeshStandardMaterial({ color: 0x2a9d8f, roughness: 0.9 });
-                        const dune = new THREE.Mesh(duneGeo, duneMat);
-                        dune.position.set(side * (9.0 + width / 2 + Math.random() * 3), height / 2, bZ);
-                        dune.castShadow = true;
-                        dune.receiveShadow = true;
-                        group.add(dune);
+                        const roll = Math.random();
+                        if (roll < 0.4) {
+                            const r = 3.5 + Math.random() * 5;
+                            const sandCols = [0xe9c46a, 0xf4a261, 0xdfb15c];
+                            const dune = new THREE.Mesh(new THREE.SphereGeometry(r, 12, 9), new THREE.MeshStandardMaterial({ color: sandCols[Math.floor(Math.random() * 3)], roughness: 0.95 }));
+                            const dScale = 0.38 + Math.random() * 0.18;
+                            dune.scale.y = dScale;
+                            dune.position.set(side * (13 + r + Math.random() * 9), -r * dScale * 0.62, bZ + (Math.random() * 8 - 4));
+                            dune.receiveShadow = true;
+                            group.add(dune);
+                        } else if (roll < 0.56) {
+                            const palm = this.createPalm();
+                            palm.position.set(side * (8.3 + Math.random() * 2.5), 0, bZ + (Math.random() * 6 - 3));
+                            palm.scale.setScalar(0.85 + Math.random() * 0.5);
+                            group.add(palm);
+                        } else if (roll < 0.72) {
+                            const rockCols = [0xb08356, 0x9c6b43, 0xc19a6b];
+                            const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(1 + Math.random() * 1.6, 0), new THREE.MeshStandardMaterial({ color: rockCols[Math.floor(Math.random() * 3)], roughness: 0.95, flatShading: true }));
+                            rock.position.set(side * (8.5 + Math.random() * 4), 0.5, bZ + (Math.random() * 6 - 3));
+                            rock.rotation.set(Math.random(), Math.random() * 3, Math.random() * 0.4);
+                            rock.scale.y = 0.7 + Math.random() * 0.6;
+                            rock.castShadow = true;
+                            group.add(rock);
+                        } else if (roll < 0.86) {
+                            const ob = this.createObelisk();
+                            ob.position.set(side * (9 + Math.random() * 3), 0, bZ);
+                            ob.scale.setScalar(0.8 + Math.random() * 0.5);
+                            group.add(ob);
+                        } else {
+                            group.add(this.createTorch(side * 7.8, bZ));
+                        }
+                        if (Math.random() < 0.3) {
+                            const pyr = new THREE.Mesh(new THREE.ConeGeometry(14 + Math.random() * 8, 11 + Math.random() * 7, 4), new THREE.MeshStandardMaterial({ color: 0xd9a066, roughness: 1, flatShading: true }));
+                            pyr.position.set(side * (34 + Math.random() * 12), 2, bZ - 10 - Math.random() * 12);
+                            pyr.rotation.y = Math.PI / 4;
+                            group.add(pyr);
+                        }
                     } else {
-                        if (Math.random() < 0.65) {
+                        const roll = Math.random();
+                        if (roll < 0.38) {
                             const pine = this.createPine();
                             pine.position.set(side * (9.5 + Math.random() * 2.5), 0, bZ);
-                            pine.scale.setScalar(0.9 + Math.random() * 0.7);
+                            pine.scale.setScalar(0.9 + Math.random() * 0.8);
                             group.add(pine);
+                        } else if (roll < 0.54) {
+                            const ice = this.createIceCrystal();
+                            ice.position.set(side * (8.4 + Math.random() * 3), 0, bZ + (Math.random() * 5 - 2.5));
+                            ice.scale.setScalar(0.7 + Math.random() * 0.7);
+                            group.add(ice);
+                        } else if (roll < 0.72) {
+                            const mR = 1.2 + Math.random() * 1.5;
+                            const boulder = new THREE.Mesh(new THREE.DodecahedronGeometry(mR, 0), new THREE.MeshStandardMaterial({ color: 0xcfd8e3, roughness: 0.9, flatShading: true }));
+                            boulder.position.set(side * (8.4 + Math.random() * 5), mR * 0.4, bZ + (Math.random() * 6 - 3));
+                            boulder.rotation.set(Math.random(), Math.random() * 3, 0);
+                            boulder.castShadow = true;
+                            group.add(boulder);
+                            const cap = new THREE.Mesh(new THREE.SphereGeometry(mR * 0.78, 9, 7), new THREE.MeshStandardMaterial({ color: 0xf8fbff, roughness: 0.9 }));
+                            cap.scale.y = 0.4;
+                            cap.position.set(boulder.position.x, boulder.position.y + mR * 0.45, boulder.position.z);
+                            group.add(cap);
+                        } else if (roll < 0.84) {
+                            const lamp = new THREE.Group();
+                            const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.1, 3.2, 8), new THREE.MeshStandardMaterial({ color: 0x2c3e50, metalness: 0.6, roughness: 0.5 }));
+                            pole.position.y = 1.6;
+                            lamp.add(pole);
+                            const bulbMat = new THREE.MeshBasicMaterial({ color: 0x7fe9ff, transparent: true, opacity: 0.9 });
+                            const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.22, 10, 8), bulbMat);
+                            bulb.position.y = 3.3;
+                            lamp.add(bulb);
+                            this.fxNeon.push({ mat: bulbMat, base: new THREE.Color(0x7fe9ff), phase: Math.random() * 6.28 });
+                            lamp.position.set(side * 7.9, 0, bZ + (Math.random() * 4 - 2));
+                            group.add(lamp);
+                        } else {
+                            const mR = 1.4 + Math.random() * 1.6;
+                            const mound = new THREE.Mesh(new THREE.SphereGeometry(mR, 10, 8), new THREE.MeshStandardMaterial({ color: 0xf4f9ff, roughness: 0.95 }));
+                            mound.scale.y = 0.38;
+                            mound.position.set(side * (8.2 + Math.random() * 5), 0.05, bZ + (Math.random() * 6 - 3));
+                            mound.receiveShadow = true;
+                            group.add(mound);
                         }
-                        const mR = 1.4 + Math.random() * 1.6;
-                        const mound = new THREE.Mesh(new THREE.SphereGeometry(mR, 10, 8), new THREE.MeshStandardMaterial({ color: 0xf4f9ff, roughness: 0.95 }));
-                        mound.scale.y = 0.38;
-                        mound.position.set(side * (8.2 + Math.random() * 5), 0.05, bZ + (Math.random() * 6 - 3));
-                        mound.receiveShadow = true;
-                        group.add(mound);
+                        if (Math.random() < 0.4) {
+                            const mtn = new THREE.Mesh(new THREE.ConeGeometry(10 + Math.random() * 14, 9 + Math.random() * 12, 6), new THREE.MeshStandardMaterial({ color: 0xe8f1f8, roughness: 1, flatShading: true }));
+                            mtn.position.set(side * (30 + Math.random() * 14), 0, bZ - 8 - Math.random() * 14);
+                            group.add(mtn);
+                        }
+                    }
+                });
+            }
+            if (theme.side === 'desert' || theme.side === 'snow') {
+                const groundGeo = new THREE.PlaneGeometry(260, length);
+                const groundMat = new THREE.MeshStandardMaterial({ color: theme.side === 'desert' ? 0xdfb15c : 0xeef4fb, roughness: 1, metalness: 0 });
+                const ground = new THREE.Mesh(groundGeo, groundMat);
+                ground.rotation.x = -Math.PI / 2;
+                ground.position.y = -0.06;
+                ground.receiveShadow = true;
+                group.add(ground);
+                [-1, 1].forEach(side => {
+                    const fz = -length / 2 + Math.random() * length;
+                    const fx = side * (48 + Math.random() * 24);
+                    if (theme.side === 'desert') {
+                        if (Math.random() < 0.65) {
+                            const mesaH = 8 + Math.random() * 11;
+                            const mesaCols = [0xc19a6b, 0xb08356, 0xd9a066];
+                            const mesa = new THREE.Mesh(new THREE.CylinderGeometry(4.5 + Math.random() * 3.5, 8 + Math.random() * 5, mesaH, 7), new THREE.MeshStandardMaterial({ color: mesaCols[Math.floor(Math.random() * 3)], roughness: 1, flatShading: true }));
+                            mesa.position.set(fx, mesaH / 2 - 0.8, fz);
+                            mesa.rotation.y = Math.random() * 3;
+                            group.add(mesa);
+                        }
+                    } else {
+                        if (Math.random() < 0.65) {
+                            const pkH = 14 + Math.random() * 16;
+                            const peak = new THREE.Mesh(new THREE.ConeGeometry(9 + Math.random() * 8, pkH, 6), new THREE.MeshStandardMaterial({ color: 0xe8f1f8, roughness: 1, flatShading: true }));
+                            peak.position.set(fx, pkH / 2 - 1.5, fz);
+                            peak.rotation.y = Math.random() * 3;
+                            group.add(peak);
+                        }
                     }
                 });
             }
@@ -1832,6 +2204,11 @@
             gantry.position.set(0, 4.8, 0);
             gantry.castShadow = true;
             group.add(gantry);
+            const glowStripMat = new THREE.MeshBasicMaterial({ color: theme.neonL, transparent: true, opacity: 0.95 });
+            const glowStrip = new THREE.Mesh(new THREE.BoxGeometry(LANE_WIDTH * 3.7, 0.09, 0.12), glowStripMat);
+            glowStrip.position.set(0, 4.6, 0.24);
+            group.add(glowStrip);
+            this.fxNeon.push({ mat: glowStripMat, base: new THREE.Color(theme.neonL), phase: Math.random() * 6.28 });
             const poleGeo = new THREE.CylinderGeometry(0.12, 0.12, 4.8, 16);
             [-1, 1].forEach(side => {
                 const pole = new THREE.Mesh(poleGeo, gantryMat);
@@ -1840,6 +2217,152 @@
                 group.add(pole);
             });
             return group;
+        }
+
+        makeWindowTexture() {
+            const c = document.createElement('canvas');
+            c.width = 128; c.height = 256;
+            const ctx = c.getContext('2d');
+            ctx.fillStyle = '#050a16';
+            ctx.fillRect(0, 0, 128, 256);
+            for (let x = 0; x < 6; x++) {
+                for (let y = 0; y < 14; y++) {
+                    if (Math.random() < 0.55) {
+                        const warm = Math.random() < 0.28;
+                        ctx.fillStyle = warm ? 'rgba(255, 200, 120, 0.92)'
+                            : (Math.random() < 0.5 ? 'rgba(0, 240, 255, 0.85)' : 'rgba(255, 0, 127, 0.8)');
+                        ctx.fillRect(6 + x * 20, 8 + y * 17, 12, 9);
+                    }
+                }
+            }
+            return new THREE.CanvasTexture(c);
+        }
+        getBillTexes() {
+            if (!this._billTexes) {
+                const cfgs = [
+                    { bg: '#12002b', t1: 'METRO', t2: 'DASH', c1: '#00f0ff', c2: '#ff007f' },
+                    { bg: '#001a1a', t1: 'NEON', t2: 'RUN!', c1: '#ffd700', c2: '#00f0ff' },
+                    { bg: '#20000a', t1: 'ROBOT', t2: 'RACE', c1: '#ff007f', c2: '#ffd700' }
+                ];
+                this._billTexes = cfgs.map(cfg => {
+                    const c = document.createElement('canvas');
+                    c.width = 256; c.height = 128;
+                    const x = c.getContext('2d');
+                    x.fillStyle = cfg.bg;
+                    x.fillRect(0, 0, 256, 128);
+                    x.strokeStyle = cfg.c1;
+                    x.lineWidth = 6;
+                    x.strokeRect(6, 6, 244, 116);
+                    x.font = '900 44px Arial';
+                    x.textAlign = 'center';
+                    x.fillStyle = cfg.c1;
+                    x.fillText(cfg.t1, 128, 56);
+                    x.fillStyle = cfg.c2;
+                    x.fillText(cfg.t2, 128, 104);
+                    return new THREE.CanvasTexture(c);
+                });
+            }
+            return this._billTexes;
+        }
+        createBillboard(side, z) {
+            const g = new THREE.Group();
+            const tex = this.getBillTexes()[Math.floor(Math.random() * 3)];
+            const panel = new THREE.Mesh(new THREE.PlaneGeometry(4.4, 2.2), new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide }));
+            panel.position.y = 5.4;
+            g.add(panel);
+            const frame = new THREE.Mesh(new THREE.BoxGeometry(4.7, 2.5, 0.15), new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.6, roughness: 0.5 }));
+            frame.position.set(0, 5.4, -0.15);
+            g.add(frame);
+            const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.12, 4.4, 10), new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.7, roughness: 0.5 }));
+            pole.position.y = 2.2;
+            g.add(pole);
+            g.position.set(side * 7.6, 0, z);
+            g.rotation.y = -side * Math.PI / 6;
+            return g;
+        }
+        createPalm() {
+            const g = new THREE.Group();
+            const trunkMat = new THREE.MeshStandardMaterial({ color: 0x8b6f47, roughness: 0.9 });
+            const frondMat = new THREE.MeshStandardMaterial({ color: 0x40916c, roughness: 0.8 });
+            let py = 0, px = 0;
+            for (let i = 0; i < 5; i++) {
+                const seg = new THREE.Mesh(new THREE.CylinderGeometry(0.14 - i * 0.012, 0.17 - i * 0.012, 0.75, 8), trunkMat);
+                px += i * 0.075;
+                seg.position.set(px, py + 0.375, 0);
+                seg.rotation.z = -0.1 * i;
+                seg.castShadow = true;
+                g.add(seg);
+                py += 0.72;
+            }
+            const topX = px + 0.2, topY = py + 0.1;
+            for (let i = 0; i < 6; i++) {
+                const a = (i / 6) * Math.PI * 2;
+                const frond = new THREE.Mesh(new THREE.ConeGeometry(0.16, 1.5, 6), frondMat);
+                frond.position.set(topX + Math.cos(a) * 0.55, topY + 0.28, Math.sin(a) * 0.55);
+                frond.rotation.z = Math.cos(a) * 1.25;
+                frond.rotation.x = Math.sin(a) * 1.25;
+                frond.castShadow = true;
+                g.add(frond);
+            }
+            const coco = new THREE.Mesh(new THREE.SphereGeometry(0.12, 8, 6), new THREE.MeshStandardMaterial({ color: 0x6b4423, roughness: 0.9 }));
+            coco.position.set(topX, topY - 0.08, 0.1);
+            g.add(coco);
+            return g;
+        }
+        createObelisk() {
+            const g = new THREE.Group();
+            const stoneMat = new THREE.MeshStandardMaterial({ color: 0xd9b36c, roughness: 0.85 });
+            const body = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.45, 3.6, 4), stoneMat);
+            body.position.y = 1.8;
+            body.rotation.y = Math.PI / 4;
+            body.castShadow = true;
+            g.add(body);
+            const tip = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.55, 4), new THREE.MeshStandardMaterial({ color: 0xc9a227, roughness: 0.5, metalness: 0.35 }));
+            tip.position.y = 3.85;
+            tip.rotation.y = Math.PI / 4;
+            g.add(tip);
+            const bandMat = new THREE.MeshBasicMaterial({ color: 0xffd700, transparent: true, opacity: 0.9 });
+            const band = new THREE.Mesh(new THREE.CylinderGeometry(0.318, 0.338, 0.1, 4), bandMat);
+            band.position.y = 2.6;
+            band.rotation.y = Math.PI / 4;
+            g.add(band);
+            this.fxNeon.push({ mat: bandMat, base: new THREE.Color(0xffd700), phase: Math.random() * 6.28 });
+            return g;
+        }
+        createTorch(x, z) {
+            const g = new THREE.Group();
+            const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.1, 2.6, 8), new THREE.MeshStandardMaterial({ color: 0x5d4037, roughness: 0.85 }));
+            pole.position.y = 1.3;
+            pole.castShadow = true;
+            g.add(pole);
+            const bowl = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.14, 0.3, 10), new THREE.MeshStandardMaterial({ color: 0x4e342e, roughness: 0.7, metalness: 0.3 }));
+            bowl.position.y = 2.72;
+            g.add(bowl);
+            if (this.trailTex) {
+                const flameMat = new THREE.SpriteMaterial({ map: this.trailTex, color: 0xff9d33, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false });
+                const flame = new THREE.Sprite(flameMat);
+                flame.scale.set(0.85, 1.15, 1);
+                flame.position.y = 3.15;
+                g.add(flame);
+                this.fxFlames.push({ mat: flameMat, phase: Math.random() * 6.28, mode: 'flicker' });
+            }
+            g.position.set(x, 0, z);
+            return g;
+        }
+        createIceCrystal() {
+            const g = new THREE.Group();
+            const iceMat = new THREE.MeshStandardMaterial({ color: 0x9fd8f0, roughness: 0.12, metalness: 0.08, transparent: true, opacity: 0.82, emissive: 0x2a7fa8, emissiveIntensity: 0.4, flatShading: true });
+            for (let i = 0; i < 3; i++) {
+                const h = 1.2 + Math.random() * 1.6;
+                const shard = new THREE.Mesh(new THREE.OctahedronGeometry(0.3 + Math.random() * 0.22, 0), iceMat);
+                shard.scale.y = h / 0.8;
+                shard.position.set((Math.random() - 0.5) * 0.7, h / 2, (Math.random() - 0.5) * 0.6);
+                shard.rotation.y = Math.random() * 3;
+                shard.rotation.z = (Math.random() - 0.5) * 0.2;
+                shard.castShadow = true;
+                g.add(shard);
+            }
+            return g;
         }
 
         createPedestal() {
@@ -1971,6 +2494,29 @@
         }
 
         setupCustomizerUI() {
+            const pg = document.getElementById('preset-grid');
+            if (pg) {
+                pg.innerHTML = '';
+                STYLE_PRESETS.forEach((p, i) => {
+                    const chip = document.createElement('button');
+                    chip.className = 'preset-chip';
+                    chip.dataset.preset = i;
+                    const strip = document.createElement('div');
+                    strip.className = 'preset-strip';
+                    ['skin', 'suit', 'pants', 'shoe', 'visor'].forEach(cat => {
+                        const seg = document.createElement('i');
+                        seg.style.background = p.colors[cat];
+                        strip.appendChild(seg);
+                    });
+                    const nm = document.createElement('div');
+                    nm.className = 'preset-name';
+                    nm.textContent = p.name;
+                    chip.appendChild(strip);
+                    chip.appendChild(nm);
+                    chip.addEventListener('click', (e) => { e.stopPropagation(); this.applyStylePreset(i); });
+                    pg.appendChild(chip);
+                });
+            }
             Object.keys(CUSTOM_OPTIONS).forEach(cat => {
                 const container = document.getElementById(`swatches-${cat}`);
                 if (!container) return;
@@ -1997,7 +2543,41 @@
                     if (btn.dataset.hex.toLowerCase() === currentHex) btn.classList.add('active');
                     else btn.classList.remove('active');
                 });
+                const cur = document.getElementById('swatch-cur-' + cat);
+                if (cur) {
+                    const opt = CUSTOM_OPTIONS[cat].find(o => o.hex.toLowerCase() === currentHex);
+                    cur.textContent = opt ? opt.name : this.customColors[cat].toUpperCase();
+                    cur.style.color = this.customColors[cat];
+                    cur.style.textShadow = '0 0 8px ' + this.customColors[cat] + '66';
+                }
             });
+            document.querySelectorAll('.preset-chip').forEach(chip => {
+                const p = STYLE_PRESETS[+chip.dataset.preset];
+                const match = !!p && Object.keys(p.colors).every(c => p.colors[c].toLowerCase() === this.customColors[c].toLowerCase());
+                chip.classList.toggle('active', match);
+            });
+        }
+
+        applyStylePreset(idx) {
+            const p = STYLE_PRESETS[idx]; if (!p) return;
+            Object.keys(p.colors).forEach(cat => {
+                this.customColors[cat] = p.colors[cat];
+                const m = this.playerMaterials[cat];
+                if (m) { m.color.setStyle(p.colors[cat]); if (cat === 'visor') m.emissive.setStyle(p.colors[cat]); }
+            });
+            this.updateSwatchActiveStates();
+            sound.playClick();
+        }
+
+        randomizeStyle() {
+            Object.keys(CUSTOM_OPTIONS).forEach(cat => {
+                const hex = CUSTOM_OPTIONS[cat][Math.floor(Math.random() * CUSTOM_OPTIONS[cat].length)].hex;
+                this.customColors[cat] = hex;
+                const m = this.playerMaterials[cat];
+                if (m) { m.color.setStyle(hex); if (cat === 'visor') m.emissive.setStyle(hex); }
+            });
+            this.updateSwatchActiveStates();
+            sound.playClick();
         }
 
         isMobileCustomizer() {
@@ -2017,6 +2597,10 @@
             this.blurUI();
             this.previousState = fromState;
             this.state = STATE.CUSTOMIZE;
+            // clean slate on the pedestal: no leftover slide/jump/squash state
+            this.isGrounded = true; this.isSliding = false; this.slideTimer = 0;
+            this.playerVelY = 0; this.squashTimer = 0;
+            this.playerGroup.scale.set(PLAYER_SCALE, PLAYER_SCALE, PLAYER_SCALE);
             this.savedColorsBackup = Object.assign({}, this.customColors);
             this.startModal.classList.add('hidden');
             this.gameoverModal.classList.add('hidden');
@@ -2075,17 +2659,21 @@
         buildTemplates(map) {
             const t = {};
             if (map === 'desert') {
-                t.trains = [this.createCactus(), this.createCactus()];
-                t.trainBounds = { width: 1.4, height: 3.0, depth: 1.4 };
+                t.trains = [this.createCactus(), this.createCactus(), this.buildRockBlock(), this.buildRockBlock()];
+                t.trainBounds = { width: 1.5, height: 2.6, depth: 1.6 };
             } else if (map === 'snow') {
-                t.trains = [this.createPine(), this.createPine(), this.createPine()];
-                t.trainBounds = { width: 1.6, height: 3.2, depth: 1.6 };
+                t.trains = [this.createPine(), this.createPine(), this.buildIceBlock(), this.buildIceBlock()];
+                t.trainBounds = { width: 1.6, height: 3.0, depth: 1.6 };
             } else {
-                t.trains = [this.buildBus(), this.buildBus(), this.buildBus(), this.buildBus(), this.buildBus()];
-                t.trainBounds = { width: 2.2, height: 3.0, depth: 9.0 };
+                t.trains = [this.buildBus(), this.buildBus(), this.buildBus(), this.buildTruck(), this.buildTruck()];
+                t.trainBounds = { width: 2.2, height: 3.0, depth: 8.0 };
             }
             t.barrier = this.buildBarrier(map);
             t.hurdle = this.buildHurdle(map);
+            t.spike = this.buildSpikes();
+            t.crate = this.buildCrates();
+            t.drone = this.buildDrone();
+            t.laser = this.buildLaser();
             return t;
         }
 
@@ -2198,6 +2786,187 @@
             return mesh;
         }
 
+        buildSpikes() {
+            const mesh = new THREE.Group();
+            const base = new THREE.Mesh(createRoundedBox(LANE_WIDTH * 0.92, 0.14, 0.9, 0.04, 2), new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.6, metalness: 0.5 }));
+            base.position.y = 0.07;
+            mesh.add(base);
+            const spikeMat = new THREE.MeshStandardMaterial({ color: 0xb8c2cc, roughness: 0.3, metalness: 0.85, emissive: 0x223044, emissiveIntensity: 0.4 });
+            const spikeGeo = new THREE.ConeGeometry(0.16, 0.55, 8);
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 2; j++) {
+                    const sp = new THREE.Mesh(spikeGeo, spikeMat);
+                    sp.position.set(-0.7 + i * 0.7, 0.4, -0.18 + j * 0.36);
+                    sp.castShadow = true;
+                    mesh.add(sp);
+                }
+            }
+            const warn = new THREE.Mesh(new THREE.BoxGeometry(LANE_WIDTH * 0.9, 0.08, 0.06), new THREE.MeshBasicMaterial({ color: 0xffb020 }));
+            warn.position.set(0, 0.16, 0.47);
+            mesh.add(warn);
+            return mesh;
+        }
+
+        buildCrates() {
+            const mesh = new THREE.Group();
+            const mats = [0x8b5a2b, 0x6b4423].map(c => new THREE.MeshStandardMaterial({ color: c, roughness: 0.85 }));
+            const edgeMat = new THREE.MeshStandardMaterial({ color: 0x4a3319, roughness: 0.9 });
+            const crate = (x, y, s, rot) => {
+                const box = new THREE.Mesh(createRoundedBox(s, s, s, 0.04, 1), mats[Math.floor(Math.random() * 2)]);
+                box.position.set(x, y, 0);
+                box.rotation.y = rot;
+                box.castShadow = true;
+                mesh.add(box);
+                const band = new THREE.Mesh(new THREE.BoxGeometry(s * 1.02, s * 0.12, s * 1.02), edgeMat);
+                band.position.set(x, y, 0);
+                band.rotation.y = rot;
+                mesh.add(band);
+            };
+            crate(0, 0.28, 0.56, 0.06);
+            crate(-0.1, 0.76, 0.45, -0.12);
+            const glow = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.07, 0.95), new THREE.MeshBasicMaterial({ color: 0xffb020 }));
+            glow.position.y = 0.05;
+            mesh.add(glow);
+            return mesh;
+        }
+
+        buildDrone() {
+            const mesh = new THREE.Group();
+            const bodyMat = new THREE.MeshStandardMaterial({ color: 0x37474f, roughness: 0.35, metalness: 0.8 });
+            const body = new THREE.Mesh(createRoundedBox(1.1, 0.32, 1.1, 0.1, 2), bodyMat);
+            body.position.y = 1.75;
+            body.castShadow = true;
+            mesh.add(body);
+            const eye = new THREE.Mesh(new THREE.SphereGeometry(0.12, 10, 8), new THREE.MeshBasicMaterial({ color: 0xff2244 }));
+            eye.position.set(0, 1.75, 0.58);
+            mesh.add(eye);
+            const armGeo = new THREE.BoxGeometry(1.5, 0.07, 0.09);
+            const arm1 = new THREE.Mesh(armGeo, bodyMat);
+            arm1.position.y = 1.95;
+            mesh.add(arm1);
+            const arm2 = new THREE.Mesh(armGeo, bodyMat);
+            arm2.position.y = 1.95;
+            arm2.rotation.y = Math.PI / 2;
+            mesh.add(arm2);
+            const propGeo = new THREE.BoxGeometry(0.62, 0.03, 0.07);
+            const propMat = new THREE.MeshStandardMaterial({ color: 0x90a4ae, transparent: true, opacity: 0.85, metalness: 0.6, roughness: 0.3 });
+            [[-0.75, 0], [0.75, 0], [0, -0.75], [0, 0.75]].forEach(p => {
+                const prop = new THREE.Mesh(propGeo, propMat);
+                prop.position.set(p[0], 2.0, p[1]);
+                prop.userData.spin = true;
+                mesh.add(prop);
+                const tip = new THREE.Mesh(new THREE.SphereGeometry(0.05, 6, 6), new THREE.MeshBasicMaterial({ color: 0x00f0ff }));
+                tip.position.set(p[0], 2.0, p[1]);
+                mesh.add(tip);
+            });
+            const ug = new THREE.Mesh(new THREE.SphereGeometry(0.14, 8, 8), new THREE.MeshBasicMaterial({ color: 0xff2244, transparent: true, opacity: 0.85 }));
+            ug.position.y = 1.55;
+            mesh.add(ug);
+            return mesh;
+        }
+
+        buildLaser() {
+            const mesh = new THREE.Group();
+            const postMat = new THREE.MeshStandardMaterial({ color: 0x263238, roughness: 0.4, metalness: 0.85 });
+            const postGeo = new THREE.CylinderGeometry(0.09, 0.12, 2.6, 12);
+            [-LANE_WIDTH * 0.44, LANE_WIDTH * 0.44].forEach(px => {
+                const post = new THREE.Mesh(postGeo, postMat);
+                post.position.set(px, 1.3, 0);
+                post.castShadow = true;
+                mesh.add(post);
+                const cap = new THREE.Mesh(new THREE.SphereGeometry(0.13, 10, 8), new THREE.MeshBasicMaterial({ color: 0xff1744 }));
+                cap.position.set(px, 2.62, 0);
+                mesh.add(cap);
+            });
+            const beamMat = new THREE.MeshBasicMaterial({ color: 0xff1744, transparent: true, opacity: 0.85 });
+            const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.055, LANE_WIDTH * 0.88, 8), beamMat);
+            beam.rotation.z = Math.PI / 2;
+            beam.position.set(0, 1.7, 0);
+            beam.userData.tag = 'beam';
+            mesh.add(beam);
+            const beamCore = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, LANE_WIDTH * 0.88, 8), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.9 }));
+            beamCore.rotation.z = Math.PI / 2;
+            beamCore.position.set(0, 1.7, 0);
+            beamCore.userData.tag = 'beam';
+            mesh.add(beamCore);
+            const warn = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.22, 8), new THREE.MeshBasicMaterial({ color: 0xffb020 }));
+            warn.position.set(0, 0.12, 0.35);
+            mesh.add(warn);
+            return mesh;
+        }
+
+        buildTruck() {
+            const mesh = new THREE.Group();
+            const cabColors = [0x00b8d4, 0xff6d3b, 0x7cb342];
+            const cabMat = new THREE.MeshStandardMaterial({ color: cabColors[Math.floor(Math.random() * 3)], roughness: 0.35, metalness: 0.4 });
+            const boxMat = new THREE.MeshStandardMaterial({ color: 0xeceff1, roughness: 0.7 });
+            const cargo = new THREE.Mesh(createRoundedBox(2.15, 2.2, 4.6, 0.12, 2), boxMat);
+            cargo.position.set(0, 1.5, -1.1);
+            cargo.castShadow = true;
+            mesh.add(cargo);
+            const neonStripe = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.09, 4.65), new THREE.MeshBasicMaterial({ color: 0x00f0ff }));
+            neonStripe.position.set(0, 2.0, -1.1);
+            mesh.add(neonStripe);
+            const cab = new THREE.Mesh(createRoundedBox(2.05, 1.7, 1.9, 0.16, 2), cabMat);
+            cab.position.set(0, 1.15, 2.6);
+            cab.castShadow = true;
+            mesh.add(cab);
+            const windshield = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 0.7), new THREE.MeshStandardMaterial({ color: 0xa8d8ea, emissive: 0x4a90d9, emissiveIntensity: 0.25, metalness: 0.8, roughness: 0.1, transparent: true, opacity: 0.85 }));
+            windshield.position.set(0, 1.5, 3.56);
+            mesh.add(windshield);
+            [-0.7, 0.7].forEach(px => {
+                const hl = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.08, 12), new THREE.MeshBasicMaterial({ color: 0xfff59d }));
+                hl.rotation.x = Math.PI / 2;
+                hl.position.set(px, 0.7, 3.58);
+                mesh.add(hl);
+            });
+            const wheelGeo = new THREE.CylinderGeometry(0.38, 0.38, 0.26, 16);
+            const wheelMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.9 });
+            [[-1.05, 2.7], [1.05, 2.7], [-1.05, -2.4], [1.05, -2.4], [-1.05, -1.3], [1.05, -1.3]].forEach(p => {
+                const w = new THREE.Mesh(wheelGeo, wheelMat);
+                w.position.set(p[0], 0.38, p[1]);
+                w.rotation.z = Math.PI / 2;
+                w.castShadow = true;
+                mesh.add(w);
+            });
+            return mesh;
+        }
+
+        buildRockBlock() {
+            const mesh = new THREE.Group();
+            const mats = [0xa17850, 0x8c6239, 0xb08356].map(c => new THREE.MeshStandardMaterial({ color: c, roughness: 0.95, flatShading: true }));
+            for (let i = 0; i < 4; i++) {
+                const r = 0.55 + Math.random() * 0.5;
+                const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(r, 0), mats[i % 3]);
+                rock.position.set((Math.random() - 0.5) * 0.9, r * 0.55 + (i > 1 ? 0.9 : 0), (Math.random() - 0.5) * 0.8);
+                rock.rotation.set(Math.random(), Math.random() * 3, Math.random());
+                rock.castShadow = true;
+                mesh.add(rock);
+            }
+            const sand = new THREE.Mesh(new THREE.CylinderGeometry(0.95, 1.1, 0.18, 12), new THREE.MeshStandardMaterial({ color: 0xe9c46a, roughness: 1 }));
+            sand.position.y = 0.09;
+            mesh.add(sand);
+            return mesh;
+        }
+
+        buildIceBlock() {
+            const mesh = new THREE.Group();
+            const iceMat = new THREE.MeshStandardMaterial({ color: 0x9fd8f0, roughness: 0.15, metalness: 0.1, transparent: true, opacity: 0.88, emissive: 0x1e6a8f, emissiveIntensity: 0.35, flatShading: true });
+            for (let i = 0; i < 3; i++) {
+                const h = 1.8 + Math.random() * 1.2;
+                const shard = new THREE.Mesh(new THREE.OctahedronGeometry(0.55 + Math.random() * 0.3, 0), iceMat);
+                shard.scale.y = h / 1.1;
+                shard.position.set((Math.random() - 0.5) * 0.8, h / 2, (Math.random() - 0.5) * 0.7);
+                shard.rotation.y = Math.random() * 3;
+                shard.castShadow = true;
+                mesh.add(shard);
+            }
+            const snowBase = new THREE.Mesh(new THREE.CylinderGeometry(0.95, 1.05, 0.16, 12), new THREE.MeshStandardMaterial({ color: 0xf4f9ff, roughness: 0.9 }));
+            snowBase.position.y = 0.08;
+            mesh.add(snowBase);
+            return mesh;
+        }
+
         createPine() {
             const g = new THREE.Group();
             const trunkMat = new THREE.MeshStandardMaterial({ color: 0x6b4423, roughness: 0.9 });
@@ -2293,13 +3062,42 @@
             } else if (type === 'BARRIER_HIGH') {
                 mesh = T.barrier.clone();
                 bounds = { width: LANE_WIDTH * 0.94, height: 1.2, depth: 0.3, minY: 1.25 };
+            } else if (type === 'SPIKE') {
+                mesh = T.spike.clone();
+                bounds = { width: LANE_WIDTH * 0.92, height: 0.62, depth: 0.9, minY: 0 };
+            } else if (type === 'CRATE') {
+                mesh = T.crate.clone();
+                bounds = { width: LANE_WIDTH * 0.9, height: 0.82, depth: 0.85, minY: 0 };
+            } else if (type === 'DRONE') {
+                mesh = T.drone.clone();
+                bounds = { width: LANE_WIDTH * 0.9, height: 1.15, depth: 1.0, minY: 1.2 };
+            } else if (type === 'LASER') {
+                mesh = T.laser.clone();
+                bounds = { width: LANE_WIDTH * 0.94, height: 1.0, depth: 0.3, minY: 1.3 };
             } else { // HURDLE_LOW
                 mesh = T.hurdle.clone();
                 bounds = { width: LANE_WIDTH * 0.92, height: 0.72, depth: 0.3, minY: 0 }; // hitbox matches visual (0 → 0.72)
             }
             mesh.position.set(x, 0, zPos);
             this.scene.add(mesh);
-            this.obstacles.push({ type: type, lane: lane, mesh: mesh, bounds: bounds, box: new THREE.Box3() });
+            const obs = { type: type, lane: lane, mesh: mesh, bounds: bounds, box: new THREE.Box3(), phase: Math.random() * 6.28 };
+            if (type === 'DRONE') {
+                obs.props = [];
+                mesh.traverse(o => { if (o.userData && o.userData.spin) obs.props.push(o); });
+            } else if (type === 'LASER') {
+                obs.beams = [];
+                mesh.traverse(o => { if (o.userData && o.userData.tag === 'beam') obs.beams.push(o); });
+            }
+            this.obstacles.push(obs);
+        }
+
+        pickJumpObstacle() {
+            const r = Math.random();
+            return r < 0.42 ? 'HURDLE_LOW' : r < 0.72 ? 'SPIKE' : 'CRATE';
+        }
+        pickSlideObstacle() {
+            const r = Math.random();
+            return r < 0.38 ? 'BARRIER_HIGH' : r < 0.7 ? 'DRONE' : 'LASER';
         }
 
         spawnCoinArc(lane, startZ, count = 4, arc = false) {
@@ -2481,11 +3279,13 @@
             on('btn-start', () => { sound.init(); this.startGame(); });
             on('btn-restart', () => { sound.init(); this.startGame(); });
             on('btn-main-menu', () => { sound.playClick(); this.goToMainMenu(); });
-            on('btn-revive', () => { this.requestRewardedRevive(); });
             on('btn-customize', () => { this.openCustomizer(STATE.MENU); });
-            on('btn-gameover-customize', () => { this.openCustomizer(STATE.GAMEOVER); });
             on('btn-save-custom', () => { this.saveAndExitCustomizer(); });
             on('btn-cancel-custom', () => { this.cancelAndExitCustomizer(); });
+            on('btn-random-custom', () => this.randomizeStyle());
+            document.querySelectorAll('.cust-act-save').forEach(b => b.addEventListener('click', () => this.saveAndExitCustomizer()));
+            document.querySelectorAll('.cust-act-cancel').forEach(b => b.addEventListener('click', () => this.cancelAndExitCustomizer()));
+            document.querySelectorAll('.cust-act-random').forEach(b => b.addEventListener('click', () => this.randomizeStyle()));
             on('btn-resume', () => { this.resumeFromPause(); });
             on('btn-pause-restart', () => { sound.playClick(); this.pauseModal.classList.add('hidden'); this.startGame(); });
             on('btn-pause-menu', () => { sound.playClick(); this.goToMainMenu(); });
@@ -2520,6 +3320,13 @@
             this.clearFX();
             if (this.shieldMesh) this.shieldMesh.visible = false;
             this.playerGroup.visible = true;
+            // reset locomotion state left over from the crash: dying mid-slide or
+            // mid-air otherwise freezes the menu robot in a crouch/jump pose forever
+            this.isGrounded = true; this.isSliding = false; this.slideTimer = 0;
+            this.playerVelY = 0; this.squashTimer = 0;
+            this.speed = this.baseSpeed; this.targetX = LANES[1];
+            this.invincibleTimer = 0;
+            this.playerGroup.scale.set(PLAYER_SCALE, PLAYER_SCALE, PLAYER_SCALE);
             this.playerGroup.position.set(0, 0, 0);
             this.playerY = 0;
             this.playerGroup.rotation.set(0, this.playerGroup.rotation.y, 0);
@@ -2635,60 +3442,32 @@
         }
 
         requestMidrollAd(callback) {
+            // HARD GUARANTEE: the gameover modal must ALWAYS appear, even if the
+            // SDK hangs (e.g. ad servers unreachable / request never settles).
+            let settled = false;
+            const done = () => {
+                if (settled) return; settled = true;
+                if (this._adWatchdog) { clearTimeout(this._adWatchdog); this._adWatchdog = null; }
+                this.adOverlay.classList.remove('active');
+                this.restoreSound();
+                if (callback) callback();
+            };
             if (this.crazyGamesSDK?.ad) {
                 this.state = STATE.AD_PAUSED; sound.mute(); this.adOverlay.classList.add('active');
+                this._adWatchdog = setTimeout(done, 7000); // SDK hang guard
                 const callbacks = {
-                    adFinished: () => { this.adOverlay.classList.remove('active'); this.restoreSound(); if (callback) callback(); },
-                    adError: () => { this.adOverlay.classList.remove('active'); this.restoreSound(); if (callback) callback(); },
-                    adStarted: () => { console.log('Midroll ad started'); }
+                    adFinished: done,
+                    adError: done,
+                    adStarted: () => {
+                        console.log('Midroll ad started');
+                        // real ad playing — extend guard to max ad length
+                        if (this._adWatchdog) clearTimeout(this._adWatchdog);
+                        this._adWatchdog = setTimeout(done, 45000);
+                    }
                 };
                 try { this.crazyGamesSDK.ad.requestAd('midroll', callbacks); }
-                catch (err) { this.adOverlay.classList.remove('active'); this.restoreSound(); if (callback) callback(); }
+                catch (err) { done(); }
             } else { if (callback) callback(); }
-        }
-
-        requestRewardedRevive() {
-            sound.playClick();
-            this.blurUI();
-            if (this.hasRevivedThisRun) return;
-            if (this.crazyGamesSDK?.ad) {
-                this.state = STATE.AD_PAUSED; sound.mute(); this.adOverlay.classList.add('active');
-                const callbacks = {
-                    adFinished: () => { this.adOverlay.classList.remove('active'); this.restoreSound(); this.revivePlayer(); },
-                    adError: () => { this.adOverlay.classList.remove('active'); this.restoreSound(); this.showToast('📺 Ad unavailable — free revive!'); this.revivePlayer(); },
-                    adStarted: () => { console.log('Rewarded ad started'); }
-                };
-                try { this.crazyGamesSDK.ad.requestAd('rewarded', callbacks); }
-                catch (e) { this.adOverlay.classList.remove('active'); this.restoreSound(); this.revivePlayer(); }
-            } else { this.revivePlayer(); }
-        }
-
-        revivePlayer() {
-            this.blurUI();
-            this.hasRevivedThisRun = true;
-            this.btnRevive.style.display = 'none';
-            this.obstacles.forEach(o => { if (o.mesh.position.z > -50 && o.mesh.position.z < 30) this.scene.remove(o.mesh); });
-            this.obstacles = this.obstacles.filter(o => !(o.mesh.position.z > -50 && o.mesh.position.z < 30));
-            this.currentLane = 1; this.targetX = LANES[1];
-            this.safeLane = 1;
-            this.lastSafeHurdleZ = null;
-            this.playerGroup.position.set(0, 0, 0);
-            this.playerY = 0; this.playerVelY = 0;
-            this.isGrounded = true; this.isSliding = false; this.slideTimer = 0;
-            this.invincibleTimer = 3.0;
-            this.invincibleBadge.style.opacity = '1';
-            this.feverTimer = 0; this.comboCount = 0; this.comboTimer = 0;
-            this.ghostTimer = 0; this.megaTimer = 0; this.rushTimer = 0;
-            this.setGhostVisual(false);
-            if (this.feverOverlay) this.feverOverlay.classList.remove('on');
-            if (this.comboBadge) this.comboBadge.classList.remove('on', 'fever');
-            this.playerGroup.visible = true;
-            this.clearFX();
-            this.state = STATE.PLAYING;
-            this.gameoverModal.classList.add('hidden');
-            this.setHudVisible(true);
-            sound.playRevive();
-            if (this.crazyGamesSDK?.game) { this.crazyGamesSDK.game.gameplayStart(); this.crazyGamesSDK.game.happytime(); }
         }
 
         startGame() {
@@ -2703,7 +3482,6 @@
             this.currentLane = 1; this.targetX = LANES[1];
             this.safeLane = 1;
             this.lastSafeHurdleZ = null;
-            this.hasRevivedThisRun = false;
             this.invincibleTimer = 0;
             this.magnetTimer = 0; this.multTimer = 0;
             this.feverTimer = 0; this.comboCount = 0; this.comboTimer = 0;
@@ -2724,7 +3502,6 @@
             this.invincibleBadge.style.opacity = '0';
             this.shieldTimer = 0; this.shieldFromStart = false;
             this.applyStartBoosts();
-            this.btnRevive.style.display = 'inline-flex';
             this.newRecordBadge.style.display = 'none';
             this.playerGroup.visible = true;
             this.playerGroup.position.set(0, 0, 0);
@@ -2766,7 +3543,7 @@
             this.playerGroup.visible = true;
             if (this.feverOverlay) this.feverOverlay.classList.remove('on');
             if (this.comboBadge) this.comboBadge.classList.remove('on', 'fever');
-            if (this.crazyGamesSDK?.game) this.crazyGamesSDK.game.gameplayStop();
+            if (this.crazyGamesSDK?.game) { try { this.crazyGamesSDK.game.gameplayStop(); } catch (e) {} }
             let shakeFrames = 16;
             const originalCamY = this.camera.position.y;
             const shake = () => {
@@ -2783,7 +3560,7 @@
             if (totalScore > this.highScore) {
                 this.highScore = totalScore;
                 Store.set('subway_dash_hi', this.highScore.toString());
-                if (this.crazyGamesSDK?.game) this.crazyGamesSDK.game.happytime();
+                if (this.crazyGamesSDK?.game) { try { this.crazyGamesSDK.game.happytime(); } catch (e) {} }
             }
             this.newRecordBadge.style.display = (totalScore > prevHigh && totalScore > 0) ? 'block' : 'none';
             const runCoins = this.coins;
@@ -2799,21 +3576,27 @@
                 : `🪙 Bank total: ${this.bank.toLocaleString()}`;
             if (this.finalLevel) this.finalLevel.textContent = `🔥 Reached Level ${this.diffLevel} — ${runDist}m`;
             if (Auth.currentUser && Auth.currentUser.username) {
-                Auth.updateLeaderboard(Auth.currentUser.username, totalScore);
+                try { Auth.updateLeaderboard(Auth.currentUser.username, totalScore); } catch (e) { console.warn('Leaderboard update skipped:', e); }
             }
             document.getElementById('final-score').innerText = totalScore.toLocaleString();
             document.getElementById('best-score').innerText = this.highScore.toLocaleString();
             document.getElementById('final-coins').innerText = this.coins.toLocaleString();
             document.getElementById('final-dist').innerText = `${runDist}m`;
-            if (this.hasRevivedThisRun) this.btnRevive.style.display = 'none';
-            else this.btnRevive.style.display = 'inline-flex';
             setTimeout(() => {
                 this.setHudVisible(false);
-                this.requestMidrollAd(() => {
+                // belt & braces: the modal is shown via callback OR watchdog, never lost
+                let shown = false;
+                const showModal = () => {
+                    if (shown) return; shown = true;
+                    if (this._goWatchdog) { clearTimeout(this._goWatchdog); this._goWatchdog = null; }
+                    this.adOverlay.classList.remove('active');
+                    this.restoreSound();
                     this.state = STATE.GAMEOVER;
                     this.gameoverModal.classList.remove('hidden');
                     this.gameOverShownAt = performance.now();
-                });
+                };
+                this._goWatchdog = setTimeout(showModal, 8500); // absolute fallback
+                this.requestMidrollAd(() => { clearTimeout(this._goWatchdog); this._goWatchdog = null; showModal(); });
             }, 600);
         }
 
@@ -2850,12 +3633,12 @@
             let coinLane = free, coinZ = z, coinArc = false, coinCount = 5;
             if (rand < doubleChance) {
                 this.spawnObstacle(others[0], z, 'TRAIN');
-                this.spawnObstacle(others[1], z, 'TRAIN');
+                this.spawnObstacle(others[1], z, Math.random() < 0.25 ? this.pickJumpObstacle() : 'TRAIN');
                 coinCount = 5;
             } else if (rand < doubleChance + hardHurdleEff) {
                 this.spawnObstacle(others[0], z, 'TRAIN');
                 this.spawnObstacle(others[1], z, 'TRAIN');
-                this.spawnObstacle(free, z, 'HURDLE_LOW');
+                this.spawnObstacle(free, z, this.pickJumpObstacle());
                 coinLane = free; coinZ = z + 4.5; coinArc = true; coinCount = 5;
                 this.lastSafeHurdleZ = z;
             } else {
@@ -2866,22 +3649,22 @@
                         coinCount = 5;
                         break;
                     case 1:
-                        this.spawnObstacle(others[0], z, 'HURDLE_LOW');
-                        this.spawnObstacle(others[1], z, 'BARRIER_HIGH');
+                        this.spawnObstacle(others[0], z, this.pickJumpObstacle());
+                        this.spawnObstacle(others[1], z, this.pickSlideObstacle());
                         coinCount = 4;
                         break;
                     case 2:
                         this.spawnObstacle(others[0], z, 'TRAIN');
-                        this.spawnObstacle(others[1], z, 'HURDLE_LOW');
+                        this.spawnObstacle(others[1], z, this.pickJumpObstacle());
                         coinCount = 5;
                         break;
                     case 3:
-                        this.spawnObstacle(others[0], z, 'HURDLE_LOW');
-                        this.spawnObstacle(others[1], z, 'HURDLE_LOW');
+                        this.spawnObstacle(others[0], z, this.pickJumpObstacle());
+                        this.spawnObstacle(others[1], z, this.pickJumpObstacle());
                         coinLane = free; coinZ = z + 4.5; coinArc = true; coinCount = 5;
                         break;
                     case 4:
-                        this.spawnObstacle(others[0], z, 'HURDLE_LOW');
+                        this.spawnObstacle(others[0], z, this.pickJumpObstacle());
                         coinCount = 4;
                         break;
                 }
@@ -2913,21 +3696,25 @@
             this.updatePopups(dt, worldMove);
             this.updateShockwaves(dt);
             this.updateWeather(dt, nowT);
-            this.updateEnvFX(nowT);
+            this.updateEnvFX(nowT, dt);
             this.renderer.render(this.scene, this.camera);
         }
 
         updateMenu(dt) {
-            const moveDist = 6.0 * dt;
+            const moveDist = 10.5 * dt;
             this.scrollTracks(moveDist);
             const time = this.clock.getElapsedTime();
-            this.head.rotation.y = Math.sin(time * 2.0) * 0.15;
-            this.torso.position.y = 1.15 + Math.sin(time * 3.5) * 0.025;
             this.updateBlink();
-            this.playerGroup.rotation.y += 0.55 * dt;
-            const sway = Math.sin(time * 2.8) * 0.02;
-            this.leftArmPivot.rotation.z = -ARM_TILT - sway;
-            this.rightArmPivot.rotation.z = ARM_TILT + sway;
+            // self-heal: in the menu the robot ALWAYS runs upright — whatever
+            // slide/jump state a crashed run may have left behind
+            this.isGrounded = true; this.isSliding = false; this.playerGroup.visible = true;
+            // settle facing forward down the track (from any showcase spin)
+            let ry = this.playerGroup.rotation.y % (Math.PI * 2);
+            if (ry > Math.PI) ry -= Math.PI * 2;
+            else if (ry < -Math.PI) ry += Math.PI * 2;
+            this.playerGroup.rotation.y = ry + (0 - ry) * 4.5 * dt;
+            // full running cycle on the scrolling treadmill world
+            this.animatePlayerMesh(dt);
             this.camera.position.x += (Math.sin(time * 0.22) * 1.5 - this.camera.position.x) * 1.2 * dt;
             this.camera.position.y += ((4.2 + Math.sin(time * 0.35) * 0.25) - this.camera.position.y) * 1.2 * dt;
             this.camera.lookAt(0, 1.35, -4.5);
@@ -2936,7 +3723,12 @@
         updateCustomize(dt) {
             const isMobile = this.isMobileCustomizer();
             if (isMobile) { this.camera.position.set(0, 3.5, 10.5); this.camera.lookAt(0, 2.2, 0); }
-            else { this.camera.position.set(0.6, 2.0, 4.6); this.camera.lookAt(-0.25, 1.1, 0); }
+            else {
+                // gentle showcase orbit — bot stays centered between hero and panel
+                const t = this.clock.getElapsedTime();
+                this.camera.position.set(Math.sin(t * 0.28) * 0.7, 2.05 + Math.sin(t * 0.4) * 0.06, 4.55 + Math.cos(t * 0.28) * 0.22);
+                this.camera.lookAt(0, 1.08, 0);
+            }
             this.playerGroup.rotation.y += (Math.PI - this.playerGroup.rotation.y) * 5 * dt;
             this.playerGroup.rotation.x = 0;
             this.playerGroup.rotation.z = 0;
@@ -3073,7 +3865,7 @@
             this.animatePlayerMesh(dt);
             this.updateBlink();
             this.scrollTracks(moveDist);
-            this.updateObstacles(moveDist);
+            this.updateObstacles(moveDist, dt, time);
             this.updateCoins(moveDist, dt);
             this.updatePowerups(moveDist, dt);
             this.updatePowerupHUD();
@@ -3136,7 +3928,7 @@
             this.nextSpawnZ += moveDist;
         }
 
-        updateObstacles(moveDist) {
+        updateObstacles(moveDist, dt, time) {
             const playerMinY = this.playerY;
             const s = PLAYER_SCALE;
             const halfW = 0.32 * s;
@@ -3148,6 +3940,13 @@
             for (let i = this.obstacles.length - 1; i >= 0; i--) {
                 const obs = this.obstacles[i];
                 obs.mesh.position.z += moveDist;
+                if (obs.type === 'DRONE' && obs.props) {
+                    obs.mesh.position.y = Math.sin(time * 2.6 + obs.phase) * 0.09;
+                    for (let k = 0; k < obs.props.length; k++) obs.props[k].rotation.y += 17 * dt;
+                } else if (obs.type === 'LASER' && obs.beams && obs.beams.length) {
+                    const pulse = 0.58 + 0.34 * (0.5 + 0.5 * Math.sin(time * 10 + obs.phase));
+                    obs.beams[0].material.opacity = pulse;
+                }
                 const b = obs.bounds;
                 let minY = b.minY !== undefined ? b.minY : 0;
                 obs.box.min.set(obs.mesh.position.x - b.width / 2 + 0.08, obs.mesh.position.y + minY, obs.mesh.position.z - b.depth / 2 + 0.08);
@@ -3180,8 +3979,10 @@
                         if (this.ghostTimer > 0 || this.invincibleTimer > 0) {
                             this.createSparks(new THREE.Vector3(obs.mesh.position.x, 1.0, 0.2), 0x9b59ff, 8);
                         } else if (this.nmCooldown <= 0) {
-                            const cleared = obs.type === 'HURDLE_LOW' ? (this.playerY > 0.45)
-                                : (obs.type === 'BARRIER_HIGH' && this.isSliding);
+                            const isJumpType = obs.type === 'HURDLE_LOW' || obs.type === 'SPIKE' || obs.type === 'CRATE';
+                            const isSlideType = obs.type === 'BARRIER_HIGH' || obs.type === 'DRONE' || obs.type === 'LASER';
+                            const cleared = isJumpType ? (this.playerY > (obs.type === 'CRATE' ? 0.5 : 0.45))
+                                : (isSlideType && this.isSliding);
                             if (cleared) this.awardNearMiss(obs);
                         }
                     }
