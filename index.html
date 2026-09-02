@@ -199,6 +199,83 @@
         .lb-username { color: #fff; font-weight: 700; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .lb-date { color: #38bdf8; font-size: 9px; }
         .lb-score { color: #ffd700; font-weight: 900; font-size: 12px; flex-shrink: 0; }
+        /* ── Gameplay FX HUD (v3) ── */
+        #powerup-bar { flex-wrap: wrap; justify-content: center; max-width: 94vw; }
+        #pu-ghost { border-color: rgba(155, 89, 255, 0.6); } #pu-ghost .pu-icon { color: #b18cff; } #pu-ghost .pu-fill { background: #b18cff; }
+        #pu-mega { border-color: rgba(76, 209, 55, 0.6); } #pu-mega .pu-icon { color: #4cd137; } #pu-mega .pu-fill { background: #4cd137; }
+        #combo-badge { position: absolute; bottom: 46px; left: 50%; transform: translateX(-50%) scale(0.75); opacity: 0; transition: all 0.18s ease; text-align: center; z-index: 12; pointer-events: none; }
+        #combo-badge.on { opacity: 1; transform: translateX(-50%) scale(1); }
+        #combo-label { font-weight: 900; font-size: 18px; letter-spacing: 1px; color: #00f0ff; text-shadow: 0 0 14px rgba(0,240,255,0.85), 0 2px 8px rgba(0,0,0,0.8); white-space: nowrap; }
+        #combo-badge .pu-track { width: 130px; height: 4px; margin: 5px auto 0; }
+        #combo-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #00f0ff, #70e1ff); border-radius: 4px; }
+        #combo-badge.fever #combo-label { color: #ffd700; text-shadow: 0 0 18px rgba(255,215,0,1), 0 2px 8px rgba(0,0,0,0.8); font-size: 21px; }
+        #combo-badge.fever #combo-fill { background: linear-gradient(90deg, #ffd700, #ff8800); }
+        #fever-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0; transition: opacity 0.35s ease; z-index: 9; background: radial-gradient(ellipse at center, transparent 52%, rgba(255, 190, 0, 0.28) 100%); }
+        #fever-overlay.on { opacity: 1; animation: feverPulse 0.7s ease-in-out infinite; }
+        @keyframes feverPulse { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.6); } }
+        #flash-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0; transition: opacity 0.5s ease-out; z-index: 40; }
+        #flash-overlay.red { background: radial-gradient(ellipse at center, rgba(255, 45, 60, 0.38) 0%, rgba(255, 0, 40, 0.62) 100%); transition: opacity 0.05s; }
+        #flash-overlay.gold { background: radial-gradient(ellipse at center, rgba(255, 215, 0, 0.28) 0%, rgba(255, 140, 0, 0.5) 100%); }
+        #flash-overlay.cyan { background: radial-gradient(ellipse at center, rgba(0, 240, 255, 0.22) 0%, rgba(0, 120, 255, 0.42) 100%); }
+        @media (max-width: 768px), (orientation: portrait) {
+            #combo-label { font-size: 15px; }
+            #combo-badge.fever #combo-label { font-size: 17px; }
+            #combo-badge .pu-track { width: 100px; }
+            #combo-badge { bottom: 52px; }
+        }
+        /* ── Animated menu polish (v2) ── */
+        .modal-content { position: relative; }
+        .modal-content::before { content: ''; position: absolute; inset: 0; border-radius: 28px; background: linear-gradient(120deg, transparent 25%, rgba(0,240,255,0.05) 45%, rgba(112,0,255,0.07) 55%, transparent 75%); background-size: 280% 280%; animation: menuSheen 7s ease-in-out infinite; pointer-events: none; z-index: 0; }
+        .modal-content::after { content: ''; position: absolute; inset: 0; border-radius: 28px; background: repeating-linear-gradient(0deg, transparent 0 3px, rgba(0,240,255,0.02) 3px 4px); pointer-events: none; z-index: 0; }
+        @keyframes menuSheen { 0%, 100% { background-position: 0% 0%; } 50% { background-position: 100% 100%; } }
+        h1.game-title { background-size: 220% 220%; animation: titleFlow 5s ease-in-out infinite; }
+        @keyframes titleFlow { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+        .modal-content > *:not(.menu-orb) { position: relative; z-index: 1; }
+        .menu-orb { position: absolute; border-radius: 50%; pointer-events: none; opacity: 0.6; box-shadow: 0 0 16px currentColor; z-index: 0; animation: orbFloat 8s ease-in-out infinite; }
+        .orb1 { width: 10px; height: 10px; top: 10%; left: 7%; background: #00f0ff; color: #00f0ff; }
+        .orb2 { width: 7px; height: 7px; top: 20%; right: 9%; background: #ff007f; color: #ff007f; animation-delay: 1.3s; }
+        .orb3 { width: 12px; height: 12px; top: 55%; left: 5%; background: #ffd700; color: #ffd700; animation-delay: 2.2s; }
+        .orb4 { width: 8px; height: 8px; top: 72%; right: 6%; background: #a29bfe; color: #a29bfe; animation-delay: 3.1s; }
+        .orb5 { width: 6px; height: 6px; top: 38%; right: 16%; background: #00f0ff; color: #00f0ff; animation-delay: 4.5s; }
+        @keyframes orbFloat { 0%, 100% { transform: translate(0, 0); } 33% { transform: translate(7px, -14px); } 66% { transform: translate(-6px, 9px); } }
+        #btn-start { animation: startPulse 2.2s ease-in-out infinite; }
+        @keyframes startPulse { 0%, 100% { box-shadow: 0 8px 24px rgba(0,240,255,0.4), 0 0 0 0 rgba(0,240,255,0.45); } 50% { box-shadow: 0 10px 30px rgba(0,240,255,0.65), 0 0 0 14px rgba(0,240,255,0); } }
+        .boost-selector { margin-bottom: 16px; }
+        .boost-row { display: flex; gap: 8px; }
+        .boost-chip { flex: 1; padding: 9px 8px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: #fff; cursor: pointer; text-align: center; transition: all 0.2s ease; display: flex; flex-direction: column; gap: 2px; align-items: center; }
+        .boost-chip .b-title { font-size: 11.5px; font-weight: 900; }
+        .boost-chip .b-cost { font-size: 9.5px; color: #ffd700; font-weight: 700; }
+        .boost-chip.active { border-color: #ffd700; background: rgba(255,215,0,0.14); box-shadow: 0 0 12px rgba(255,215,0,0.35); }
+        .boost-chip.disabled { opacity: 0.45; cursor: not-allowed; }
+        .boost-chip:not(.disabled):hover { transform: translateY(-1px); background: rgba(255,255,255,0.1); }
+        /* ── Neon custom scrollbars (v4) ── */
+        * { scrollbar-width: thin; scrollbar-color: rgba(0, 240, 255, 0.55) rgba(255, 255, 255, 0.04); }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.03); border-radius: 8px; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, rgba(0,240,255,0.6), rgba(112,0,255,0.6)); border-radius: 8px; }
+        ::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, rgba(0,240,255,0.95), rgba(112,0,255,0.95)); }
+        ::-webkit-scrollbar-corner { background: transparent; }
+        /* ── Daily Rewards (v4) ── */
+        .daily-selector { margin-bottom: 16px; text-align: left; background: rgba(255, 215, 0, 0.05); border: 1px solid rgba(255, 215, 0, 0.22); border-radius: 16px; padding: 12px; position: relative; overflow: hidden; }
+        .daily-selector .map-selector-label { color: #ffd700; }
+        .daily-selector .map-selector-label span { color: rgba(255,255,255,0.55); }
+        .daily-selector.claimable { border-color: rgba(255, 215, 0, 0.55); animation: dailyGlow 2.4s ease-in-out infinite; }
+        @keyframes dailyGlow { 0%, 100% { box-shadow: 0 0 8px rgba(255,215,0,0.15); } 50% { box-shadow: 0 0 22px rgba(255,215,0,0.4); } }
+        .daily-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin: 9px 0 11px; }
+        .day-chip { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 6px 2px; text-align: center; position: relative; transition: all 0.25s ease; }
+        .day-chip .d-num { font-size: 8px; color: #38bdf8; font-weight: 900; letter-spacing: 0.5px; }
+        .day-chip .d-icon { font-size: 13px; margin: 2px 0 1px; }
+        .day-chip .d-amt { font-size: 8.5px; color: #ffd700; font-weight: 800; }
+        .day-chip .d-check { position: absolute; top: -5px; right: -5px; width: 15px; height: 15px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 50%; font-size: 9px; color: #fff; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.5); }
+        .day-chip.claimed { opacity: 0.72; border-color: rgba(16,185,129,0.45); background: rgba(16,185,129,0.08); }
+        .day-chip.claimed .d-check { display: flex; }
+        .day-chip.today { border-color: #ffd700; background: rgba(255,215,0,0.16); box-shadow: 0 0 12px rgba(255,215,0,0.4); animation: dayPulse 1.6s ease-in-out infinite; }
+        @keyframes dayPulse { 0%, 100% { transform: scale(1.04); } 50% { transform: scale(1.1); } }
+        .daily-claim-btn { width: 100%; padding: 11px !important; font-size: 13px !important; }
+        .daily-claim-btn:disabled { opacity: 0.55; cursor: default; transform: none !important; animation: none; box-shadow: none; }
+        .daily-claim-btn.claimed-today { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); color: rgba(255,255,255,0.75); box-shadow: none; }
+        .boost-chip.free { border-color: rgba(16, 185, 129, 0.7); background: rgba(16, 185, 129, 0.12); box-shadow: 0 0 12px rgba(16, 185, 129, 0.35); }
+        .boost-chip .b-cost.free-cost { color: #4cd137; }
         @media (max-width: 768px), (orientation: portrait) {
             .ui-layer { padding: 14px; }
             .hud-card { padding: 8px 14px; }
@@ -219,6 +296,11 @@
             h1.game-title { font-size: 26px; }
             .user-section { padding: 10px; }
             .menu-stat .v { font-size: 13px; }
+            .daily-selector { padding: 10px 8px; }
+            .daily-row { gap: 3px; }
+            .day-chip { padding: 4px 1px; border-radius: 8px; }
+            .day-chip .d-icon { font-size: 11px; }
+            .day-chip .d-amt { font-size: 7.5px; }
         }
     </style>
 </head>
@@ -229,9 +311,15 @@
 
     <div class="ui-layer">
         <div id="hud">
-            <div class="hud-card">
-                <div class="hud-label">Score</div>
-                <div class="hud-value"><span id="hud-score" class="score-val">0</span><span class="multiplier-val" id="hud-mult">1.0x</span></div>
+            <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-start;">
+                <div class="hud-card">
+                    <div class="hud-label">Score</div>
+                    <div class="hud-value"><span id="hud-score" class="score-val">0</span><span class="multiplier-val" id="hud-mult">1.0x</span></div>
+                </div>
+                <div class="hud-card">
+                    <div class="hud-label">Distance</div>
+                    <div class="hud-value" id="hud-dist" style="color:#a5f3fc;">0m</div>
+                </div>
             </div>
             <div class="hud-card">
                 <div class="hud-label">Coins</div>
@@ -244,7 +332,10 @@
             <div class="pu-badge" id="pu-magnet"><div class="pu-icon">🧲 MAGNET</div><div class="pu-track"><div class="pu-fill"></div></div></div>
             <div class="pu-badge" id="pu-mult"><div class="pu-icon">✨ 2× SCORE</div><div class="pu-track"><div class="pu-fill"></div></div></div>
             <div class="pu-badge" id="pu-shield"><div class="pu-icon">🛡️ SHIELD</div><div class="pu-track"><div class="pu-fill" style="width:100%"></div></div></div>
+            <div class="pu-badge" id="pu-ghost"><div class="pu-icon">👻 GHOST</div><div class="pu-track"><div class="pu-fill"></div></div></div>
+            <div class="pu-badge" id="pu-mega"><div class="pu-icon">👟 MEGA</div><div class="pu-track"><div class="pu-fill"></div></div></div>
         </div>
+        <div id="combo-badge"><div id="combo-label">COMBO x2</div><div class="pu-track"><div id="combo-fill"></div></div></div>
         <div id="hud-controls" class="off">
             <button id="btn-mute" class="round-ctrl" title="Sound On/Off">🔊</button>
             <button id="btn-pause" class="round-ctrl" title="Pause (P)">❚❚</button>
@@ -253,11 +344,18 @@
         <div id="speed-bar-container"><div id="speed-bar-fill"></div></div>
     </div>
 
+    <div id="fever-overlay"></div>
+    <div id="flash-overlay"></div>
     <div id="countdown-overlay"><div id="countdown-num">3</div></div>
     <div id="ad-overlay"><div>Loading Advertisement...</div></div>
 
     <div id="start-modal" class="modal">
         <div class="modal-content">
+            <div class="menu-orb orb1"></div>
+            <div class="menu-orb orb2"></div>
+            <div class="menu-orb orb3"></div>
+            <div class="menu-orb orb4"></div>
+            <div class="menu-orb orb5"></div>
             <h1 class="game-title">Metro Dash</h1>
             <p class="subtitle">Robot Runner Edition</p>
             <div id="engine-status">⏳ Loading 3D engine…</div>
@@ -349,6 +447,21 @@
                     <button class="difficulty-btn hard" data-difficulty="hard"> Hard</button>
                 </div>
                 <div class="difficulty-hint" id="difficulty-hint">🟡 Balanced speed & obstacles</div>
+            </div>
+
+            <div class="boost-selector">
+                <div class="map-selector-label">⚡ Run Boosts — spend coin bank</div>
+                <div class="boost-row">
+                    <button class="boost-chip" id="boost-headstart"><span class="b-title">🚀 Head Start</span><span class="b-cost">200 🪙 · +250m boost</span></button>
+                    <button class="boost-chip" id="boost-shield"><span class="b-title">🛡️ Shield Start</span><span class="b-cost">150 🪙 · 12s shield</span></button>
+                </div>
+            </div>
+
+            <div class="daily-selector" id="daily-box">
+                <div class="map-selector-label">🎁 Daily Rewards <span id="daily-week-label">· Week 1</span></div>
+                <div class="daily-row" id="daily-row"></div>
+                <button id="btn-daily-claim" class="btn-action btn-rewarded daily-claim-btn">🎁 Claim Reward</button>
+                <div class="difficulty-hint" id="daily-hint">💡 Come back every day for 7 days — rewards grow! Miss a day & the streak resets.</div>
             </div>
 
             <div class="controls-guide">
@@ -495,6 +608,8 @@
                 this.localScores = JSON.parse(Store.get('metro_leaderboard', '[]'));
                 if (!Array.isArray(this.users)) this.users = [];
                 if (!Array.isArray(this.localScores)) this.localScores = [];
+                this.users = this.users.filter(u => u && u.username && (u.pass || u.password));
+                this.localScores = this.localScores.filter(e => e && e.username && typeof e.score === 'number');
                 const session = Store.get('metro_session', null);
                 if (session) this.currentUser = JSON.parse(session);
             } catch (e) {
@@ -658,7 +773,6 @@
 
     bindBtn('btn-retry-lb', () => { Auth.manualSync(); });
 
-    // 🔧 FIXED: direct reference to Auth (window.Auth was always undefined for const)
     function lbVpnCheck(){
         var el = document.getElementById('lb-vpn');
         if (!el) return;
@@ -667,6 +781,10 @@
     }
     lbVpnCheck();
     setInterval(lbVpnCheck, 1000);
+
+    function escHtml(s) {
+        return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
 
     function renderLeaderboard() {
         const list = document.getElementById('leaderboard-list');
@@ -684,7 +802,7 @@
             return `<div class="lb-entry ${isMe ? 'is-me' : ''}">
                 <div class="lb-rank ${rankClass}">${rank}</div>
                 <div class="lb-user-info">
-                    <div class="lb-username">${entry.username}${isMe ? ' (You)' : ''}</div>
+                    <div class="lb-username">${escHtml(entry.username)}${isMe ? ' (You)' : ''}</div>
                     <div class="lb-date">${dateStr}</div>
                 </div>
                 <div class="lb-score">${entry.score.toLocaleString()}</div>
@@ -713,6 +831,7 @@
         } else {
             showAuthView('guest');
         }
+        if (window.DailyRewards) window.DailyRewards.render();
     }
 
     bindBtn('show-login-btn', () => showAuthView('login'));
@@ -762,6 +881,124 @@
     });
     bindBtn('do-logout-btn', () => { Auth.logout(); refreshAuthUI(); });
     refreshAuthUI();
+
+    /* ── Daily Rewards — 7-day welcome calendar (v4) ── */
+    const DailyRewards = {
+        KEY: 'metro_daily_v1',
+        FREE_HS: 'metro_free_hs',
+        FREE_SHIELD: 'metro_free_shield',
+        REWARDS: [
+            { day: 1, coins: 100, icon: '🪙', amt: '100', boost: null },
+            { day: 2, coins: 150, icon: '🪙', amt: '150', boost: null },
+            { day: 3, coins: 200, icon: '🪙', amt: '200', boost: 'hs' },
+            { day: 4, coins: 250, icon: '🪙', amt: '250', boost: null },
+            { day: 5, coins: 300, icon: '🪙', amt: '300', boost: 'shield' },
+            { day: 6, coins: 400, icon: '🪙', amt: '400', boost: null },
+            { day: 7, coins: 600, icon: '🎉', amt: '600', boost: 'both' }
+        ],
+        state: { streak: 0, lastClaim: null, cycles: 0 },
+
+        load() {
+            try {
+                const raw = Store.get(this.KEY, null);
+                if (raw) {
+                    const s = JSON.parse(raw);
+                    if (s && typeof s.streak === 'number' && s.streak >= 0) {
+                        this.state = { streak: Math.min(s.streak, 7), lastClaim: s.lastClaim || null, cycles: s.cycles || 0 };
+                    }
+                }
+            } catch (e) { this.state = { streak: 0, lastClaim: null, cycles: 0 }; }
+        },
+        save() { Store.set(this.KEY, JSON.stringify(this.state)); },
+        dateStr(offset) {
+            const d = new Date();
+            d.setDate(d.getDate() - (offset || 0));
+            return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        },
+        today() { return this.dateStr(0); },
+        yesterday() { return this.dateStr(1); },
+        isClaimable() { return this.state.lastClaim !== this.today(); },
+        pendingDay() {
+            let next = (this.state.lastClaim === this.yesterday()) ? this.state.streak + 1 : 1;
+            if (next > 7) next = 1;
+            return next;
+        },
+        claim() {
+            if (!this.isClaimable()) return;
+            const day = this.pendingDay();
+            const reward = this.REWARDS[day - 1];
+            if (day === 1 && this.state.streak === 7) this.state.cycles++;
+            this.state.streak = day;
+            this.state.lastClaim = this.today();
+            this.save();
+            let boostMsg = '';
+            const wantHS = reward.boost === 'hs' || reward.boost === 'both';
+            const wantSH = reward.boost === 'shield' || reward.boost === 'both';
+            if (wantHS) { Store.set(this.FREE_HS, '1'); Store.set('subway_dash_boost_hs', '1'); boostMsg = ' + 🚀 Head Start FREE'; }
+            if (wantSH) { Store.set(this.FREE_SHIELD, '1'); Store.set('subway_dash_boost_shield', '1'); boostMsg += (boostMsg ? ' + 🛡️ Shield FREE' : ' + 🛡️ Shield FREE'); }
+            const curBank = window.game ? window.game.bank : (parseInt(Store.get('subway_dash_bank', '0'), 10) || 0);
+            const newBank = curBank + reward.coins;
+            Store.set('subway_dash_bank', String(newBank));
+            if (window.game) {
+                window.game.bank = newBank;
+                if (wantHS) window.game.boostHeadStart = true;
+                if (wantSH) window.game.boostShield = true;
+                window.game.refreshMenuStats();
+                window.game.showToast('🎁 Day ' + day + ' claimed: +' + reward.coins + ' 🪙' + boostMsg);
+                window.game.flashScreen('gold');
+                sound.init();
+                sound.playLevelUp();
+                setTimeout(() => sound.playCoin(), 140);
+            } else {
+                const hint = document.getElementById('daily-hint');
+                if (hint) hint.textContent = '✅ Day ' + day + ' claimed: +' + reward.coins + ' 🪙 — saved!';
+            }
+            this.render();
+        },
+        render() {
+            const row = document.getElementById('daily-row');
+            const btn = document.getElementById('btn-daily-claim');
+            const box = document.getElementById('daily-box');
+            const weekLbl = document.getElementById('daily-week-label');
+            if (!row || !btn) return;
+            const claimable = this.isClaimable();
+            const pending = this.pendingDay();
+            const claimedUpto = claimable ? pending - 1 : this.state.streak;
+            const dispWeek = (claimable && this.state.streak === 7 && pending === 1) ? this.state.cycles + 2 : this.state.cycles + 1;
+            if (box) box.classList.toggle('claimable', claimable);
+            if (weekLbl) weekLbl.textContent = '· Week ' + dispWeek;
+            row.innerHTML = this.REWARDS.map(r => {
+                const isClaimed = r.day <= claimedUpto;
+                const isToday = claimable && r.day === pending;
+                return '<div class="day-chip' + (isClaimed ? ' claimed' : '') + (isToday ? ' today' : '') + '">' +
+                    '<div class="d-num">D' + r.day + '</div>' +
+                    '<div class="d-icon">' + r.icon + '</div>' +
+                    '<div class="d-amt">' + r.amt + '</div>' +
+                    '<div class="d-check">✓</div>' +
+                '</div>';
+            }).join('');
+            if (claimable) {
+                const reward = this.REWARDS[pending - 1];
+                let label = '🎁 Claim Day ' + pending + ' — +' + reward.coins + ' 🪙';
+                if (reward.boost === 'hs') label += ' + 🚀';
+                if (reward.boost === 'shield') label += ' + 🛡️';
+                if (reward.boost === 'both') label += ' + 🚀🛡️';
+                btn.textContent = label;
+                btn.disabled = false;
+                btn.classList.remove('claimed-today');
+            } else {
+                btn.textContent = '✅ Claimed today — come back tomorrow!';
+                btn.disabled = true;
+                btn.classList.add('claimed-today');
+            }
+            if (window.game && window.game.updateBoostChips) window.game.updateBoostChips();
+        },
+        onMenuOpen() { this.render(); }
+    };
+    window.DailyRewards = DailyRewards;
+    DailyRewards.load();
+    DailyRewards.render();
+    bindBtn('btn-daily-claim', () => { sound.init(); DailyRewards.claim(); });
 
     class SoundFX {
         constructor() { this.ctx = null; this.masterGain = null; this.muted = false; }
@@ -867,6 +1104,75 @@
             osc.type = 'sine'; osc.frequency.setValueAtTime(920, now);
             gain.gain.setValueAtTime(0.14, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
             osc.connect(gain); gain.connect(this.masterGain); osc.start(now); osc.stop(now + 0.08);
+        }
+        playWhoosh() {
+            if (!this.ctx || this.muted) return;
+            const now = this.ctx.currentTime;
+            const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(720, now);
+            osc.frequency.exponentialRampToValueAtTime(140, now + 0.16);
+            gain.gain.setValueAtTime(0.1, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.17);
+            osc.connect(gain); gain.connect(this.masterGain); osc.start(now); osc.stop(now + 0.18);
+        }
+        playComboTick(n) {
+            if (!this.ctx || this.muted) return;
+            const now = this.ctx.currentTime;
+            const f = 340 + Math.min(n, 22) * 42;
+            const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
+            osc.type = 'square'; osc.frequency.setValueAtTime(f, now);
+            gain.gain.setValueAtTime(0.055, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+            osc.connect(gain); gain.connect(this.masterGain); osc.start(now); osc.stop(now + 0.1);
+        }
+        playFever() {
+            if (!this.ctx || this.muted) return;
+            const base = this.ctx.currentTime;
+            [523.25, 659.25, 783.99, 1046.5, 1318.5].forEach((freq, i) => {
+                const t = base + i * 0.07;
+                const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(freq, t);
+                gain.gain.setValueAtTime(0.0001, t);
+                gain.gain.linearRampToValueAtTime(0.22, t + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+                osc.connect(gain); gain.connect(this.masterGain); osc.start(t); osc.stop(t + 0.23);
+            });
+        }
+        playGhost() {
+            if (!this.ctx || this.muted) return;
+            const now = this.ctx.currentTime;
+            const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
+            const lfo = this.ctx.createOscillator(); const lfoGain = this.ctx.createGain();
+            osc.type = 'sine'; osc.frequency.setValueAtTime(880, now);
+            osc.frequency.exponentialRampToValueAtTime(260, now + 0.5);
+            lfo.frequency.setValueAtTime(9, now); lfoGain.gain.setValueAtTime(30, now);
+            lfo.connect(lfoGain); lfoGain.connect(osc.frequency);
+            gain.gain.setValueAtTime(0.12, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+            osc.connect(gain); gain.connect(this.masterGain);
+            osc.start(now); lfo.start(now); osc.stop(now + 0.56); lfo.stop(now + 0.56);
+        }
+        playMega() {
+            if (!this.ctx || this.muted) return;
+            const now = this.ctx.currentTime;
+            const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(190, now);
+            osc.frequency.exponentialRampToValueAtTime(640, now + 0.22);
+            gain.gain.setValueAtTime(0.16, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.26);
+            osc.connect(gain); gain.connect(this.masterGain); osc.start(now); osc.stop(now + 0.27);
+        }
+        playLand() {
+            if (!this.ctx || this.muted) return;
+            const now = this.ctx.currentTime;
+            const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(110, now);
+            osc.frequency.exponentialRampToValueAtTime(55, now + 0.09);
+            gain.gain.setValueAtTime(0.14, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+            osc.connect(gain); gain.connect(this.masterGain); osc.start(now); osc.stop(now + 0.11);
         }
         playLevelUp() {
             if (!this.ctx || this.muted) return;
@@ -980,6 +1286,17 @@
     const LEVEL_STEP = 1000;
     const COIN_VALUE_CAP = 5;
     const REJUMP_BUFFER = 0.3;
+    const BOOST_COST_HS = 200;
+    const BOOST_COST_SHIELD = 150;
+    const BOOST_HS_DISTANCE = 250;
+    const BOOST_SHIELD_TIME = 12;
+    const COMBO_WINDOW = 1.7;
+    const FEVER_COMBO = 15;
+    const FEVER_TIME = 6;
+    const GHOST_TIME = 5.5;
+    const MEGA_TIME = 9;
+    const MEGA_JUMP_MULT = 1.42;
+    const RUSH_TIME = 9;
 
     class GameEngine {
         constructor() {
@@ -1000,6 +1317,10 @@
             this.magnetTimer = 0;
             this.multTimer = 0;
             this.shieldActive = false;
+            this.shieldTimer = 0;
+            this.shieldFromStart = false;
+            this.boostHeadStart = Store.get('subway_dash_boost_hs', '0') === '1';
+            this.boostShield = Store.get('subway_dash_boost_shield', '0') === '1';
             this.nextMilestone = 500;
             this.diffLevel = 1;
             this.gameOverShownAt = 0;
@@ -1033,13 +1354,15 @@
             this.puGeo = new THREE.OctahedronGeometry(0.45);
             this.puRingGeo = new THREE.TorusGeometry(0.68, 0.05, 10, 36);
             const puMat = (c) => new THREE.MeshStandardMaterial({ color: c, emissive: c, emissiveIntensity: 0.8, metalness: 0.35, roughness: 0.25 });
-            this.puMats = { MAGNET: puMat(0xff3355), MULT: puMat(0xffd700), SHIELD: puMat(0x00f0ff) };
-            this._coinSize = new THREE.Vector3(0.85, 0.85, 0.85);
+            this.puMats = { MAGNET: puMat(0xff3355), MULT: puMat(0xffd700), SHIELD: puMat(0x00f0ff), GHOST: puMat(0x9b59ff), MEGA: puMat(0x4cd137) };
+            this._shockGeo = new THREE.TorusGeometry(1, 0.07, 8, 42);
+            this._coinSize = new THREE.Vector3(0.5, 0.5, 0.5); // fixed smaller hitbox
             this._puSize = new THREE.Vector3(1.6, 1.6, 1.6);
             this._magnetTmp = new THREE.Vector3();
             this.uiScore = document.getElementById('hud-score');
             this.uiMult = document.getElementById('hud-mult');
             this.uiCoins = document.getElementById('hud-coins');
+            this.uiDist = document.getElementById('hud-dist');
             this.uiSpeedBar = document.getElementById('speed-bar-fill');
             this.hudContainer = document.getElementById('hud');
             this.speedBarContainer = document.getElementById('speed-bar-container');
@@ -1052,6 +1375,13 @@
             this.badgeMagnet = document.getElementById('pu-magnet');
             this.badgeMult = document.getElementById('pu-mult');
             this.badgeShield = document.getElementById('pu-shield');
+            this.badgeGhost = document.getElementById('pu-ghost');
+            this.badgeMega = document.getElementById('pu-mega');
+            this.comboBadge = document.getElementById('combo-badge');
+            this.comboLabel = document.getElementById('combo-label');
+            this.comboFill = document.getElementById('combo-fill');
+            this.feverOverlay = document.getElementById('fever-overlay');
+            this.flashOverlay = document.getElementById('flash-overlay');
             this.toastWrap = document.getElementById('toast-wrap');
             this.countdownOverlay = document.getElementById('countdown-overlay');
             this.countdownNum = document.getElementById('countdown-num');
@@ -1070,12 +1400,15 @@
             this.maxSpeed = diffCfg.maxSpeed;
             this.speedAccel = diffCfg.speedAccel;
             this.speed = this.baseSpeed;
+            this.initFXState();
+            this.initTrail();
             this.initThree();
             this.initLights();
             this.createEnvironment();
             this.createPlayer();
             this.createPedestal();
             this.createShieldMesh();
+            this.initSpeedFX();
             this.setupCustomizerUI();
             this.setupControls();
             this.setupEvents();
@@ -1098,6 +1431,81 @@
             if (b) b.innerText = this.highScore.toLocaleString();
             if (c) c.innerText = this.bank.toLocaleString();
             if (d) d.innerText = this.bestDist + 'm';
+            this.updateBoostChips();
+        }
+        updateBoostChips() {
+            const hs = document.getElementById('boost-headstart');
+            const sh = document.getElementById('boost-shield');
+            const freeHS = Store.get('metro_free_hs', '0') === '1';
+            const freeSH = Store.get('metro_free_shield', '0') === '1';
+            if (hs) {
+                hs.classList.toggle('active', this.boostHeadStart);
+                hs.classList.toggle('free', !this.boostHeadStart && freeHS);
+                hs.classList.toggle('disabled', !this.boostHeadStart && !freeHS && this.bank < BOOST_COST_HS);
+                const c = hs.querySelector('.b-cost');
+                if (c) { c.classList.toggle('free-cost', freeHS); c.textContent = freeHS ? '🎁 FREE · next run' : '200 🪙 · +250m boost'; }
+            }
+            if (sh) {
+                sh.classList.toggle('active', this.boostShield);
+                sh.classList.toggle('free', !this.boostShield && freeSH);
+                sh.classList.toggle('disabled', !this.boostShield && !freeSH && this.bank < BOOST_COST_SHIELD);
+                const c = sh.querySelector('.b-cost');
+                if (c) { c.classList.toggle('free-cost', freeSH); c.textContent = freeSH ? '🎁 FREE · next run' : '150 🪙 · 12s shield'; }
+            }
+        }
+        toggleBoost(key, cost, label) {
+            const freeKey = key === 'boostHeadStart' ? 'metro_free_hs' : 'metro_free_shield';
+            const hasFree = Store.get(freeKey, '0') === '1';
+            if (!this[key] && !hasFree && this.bank < cost) {
+                sound.playClick();
+                this.showToast('🪙 Not enough coins for ' + label, true);
+                return;
+            }
+            this[key] = !this[key];
+            Store.set(key === 'boostHeadStart' ? 'subway_dash_boost_hs' : 'subway_dash_boost_shield', this[key] ? '1' : '0');
+            sound.playClick();
+            this.blurUI();
+            this.updateBoostChips();
+        }
+        applyStartBoosts() {
+            if (this.boostHeadStart) {
+                if (Store.get('metro_free_hs', '0') === '1') {
+                    Store.set('metro_free_hs', '0');
+                    this.distance = BOOST_HS_DISTANCE;
+                    this.score = 300;
+                    this.showToast('🎁 Free Head Start +' + BOOST_HS_DISTANCE + 'm!');
+                } else if (this.bank >= BOOST_COST_HS) {
+                    this.bank -= BOOST_COST_HS;
+                    Store.set('subway_dash_bank', String(this.bank));
+                    this.distance = BOOST_HS_DISTANCE;
+                    this.score = 300;
+                    this.showToast('🚀 Head Start +' + BOOST_HS_DISTANCE + 'm!');
+                } else {
+                    this.boostHeadStart = false;
+                    Store.set('subway_dash_boost_hs', '0');
+                }
+            }
+            if (this.boostShield) {
+                if (Store.get('metro_free_shield', '0') === '1') {
+                    Store.set('metro_free_shield', '0');
+                    this.shieldActive = true;
+                    this.shieldMesh.visible = true;
+                    this.shieldTimer = BOOST_SHIELD_TIME;
+                    this.shieldFromStart = true;
+                    this.showToast('🎁 Free Shield for ' + BOOST_SHIELD_TIME + 's!');
+                } else if (this.bank >= BOOST_COST_SHIELD) {
+                    this.bank -= BOOST_COST_SHIELD;
+                    Store.set('subway_dash_bank', String(this.bank));
+                    this.shieldActive = true;
+                    this.shieldMesh.visible = true;
+                    this.shieldTimer = BOOST_SHIELD_TIME;
+                    this.shieldFromStart = true;
+                    this.showToast('🛡️ Shield for ' + BOOST_SHIELD_TIME + 's!');
+                } else {
+                    this.boostShield = false;
+                    Store.set('subway_dash_boost_shield', '0');
+                }
+            }
         }
         showToast(msg, hot = false) {
             if (!this.toastWrap) return;
@@ -1127,6 +1535,7 @@
         coinValue() {
             return Math.min(COIN_VALUE_CAP, 1 + Math.floor((this.diffLevel - 1) / 2));
         }
+        scoreMult() { return 1 + (this.multTimer > 0 ? 1 : 0) + (this.feverTimer > 0 ? 1 : 0); }
         clearCountdown() {
             if (this._cdTimer) { clearTimeout(this._cdTimer); this._cdTimer = null; }
             if (this.countdownOverlay) this.countdownOverlay.classList.remove('active');
@@ -1135,8 +1544,54 @@
             this.obstacles.forEach(o => this.scene.remove(o.mesh));
             this.coinsList.forEach(c => this.scene.remove(c.mesh));
             this.powerups.forEach(p => this.scene.remove(p.mesh));
-            this.particles.forEach(p => this.scene.remove(p.system));
+            this.particles.forEach(p => { this.scene.remove(p.system); p.system.geometry.dispose(); p.system.material.dispose(); });
             this.obstacles = []; this.coinsList = []; this.powerups = []; this.particles = [];
+            this.clearFX();
+        }
+        clearFX() {
+            this.trail.forEach(t => { this.scene.remove(t.s); t.s.material.dispose(); });
+            this.popups.forEach(p => { this.scene.remove(p.sp); p.sp.material.map.dispose(); p.sp.material.dispose(); });
+            this.shockwaves.forEach(s => { this.scene.remove(s.m); s.m.material.dispose(); });
+            this.trail = []; this.popups = []; this.shockwaves = [];
+            this.speedStreaks.forEach(s => { s.mat.opacity = 0; });
+        }
+        initFXState() {
+            this.fxNeon = []; this.fxWindows = [];
+            this.trail = []; this.trailCd = 0; this.trailTex = null;
+            this.popups = []; this.shockwaves = [];
+            this.speedStreaks = [];
+            this.weather = null;
+            this.comboCount = 0; this.comboTimer = 0;
+            this.feverTimer = 0;
+            this.ghostTimer = 0;
+            this.megaTimer = 0;
+            this.rushTimer = 0; this.rushCd = 24 + Math.random() * 14;
+            this.fovKick = 0; this.shakeTime = 0; this.shakeAmp = 0;
+            this.nmCooldown = 0;
+            this.squashTimer = 0; this.squashType = 'land';
+        }
+        makeGlowTexture() {
+            const c = document.createElement('canvas'); c.width = 64; c.height = 64;
+            const ctx = c.getContext('2d');
+            const g = ctx.createRadialGradient(32, 32, 2, 32, 32, 30);
+            g.addColorStop(0, 'rgba(255,255,255,1)');
+            g.addColorStop(0.35, 'rgba(255,255,255,0.55)');
+            g.addColorStop(1, 'rgba(255,255,255,0)');
+            ctx.fillStyle = g; ctx.fillRect(0, 0, 64, 64);
+            return new THREE.CanvasTexture(c);
+        }
+        initTrail() {
+            this.trailTex = this.makeGlowTexture();
+        }
+        initSpeedFX() {
+            const geo = new THREE.BoxGeometry(0.05, 0.05, 5.5);
+            for (let i = 0; i < 18; i++) {
+                const mat = new THREE.MeshBasicMaterial({ color: 0x9be8ff, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false });
+                const m = new THREE.Mesh(geo, mat);
+                m.position.set((Math.random() - 0.5) * 16, 0.5 + Math.random() * 6.5, -30 - Math.random() * 60);
+                this.scene.add(m);
+                this.speedStreaks.push({ mesh: m, mat: mat });
+            }
         }
 
         applyDifficultyUI() {
@@ -1219,8 +1674,19 @@
             this.scene.add(pinkPoint);
         }
 
+        disposeGroup(g) {
+            g.traverse(o => {
+                if (o.geometry) o.geometry.dispose();
+                if (o.material) {
+                    if (Array.isArray(o.material)) o.material.forEach(m => m.dispose());
+                    else o.material.dispose();
+                }
+            });
+        }
+
         createEnvironment() {
-            if (this.trackSegments) this.trackSegments.forEach(seg => this.scene.remove(seg));
+            if (this.trackSegments) this.trackSegments.forEach(seg => { this.scene.remove(seg); this.disposeGroup(seg); });
+            this.fxNeon = []; this.fxWindows = [];
             const segmentLength = 42;
             const segmentCount = 6;
             this.trackSegments = [];
@@ -1229,6 +1695,53 @@
                 seg.position.z = -i * segmentLength;
                 this.scene.add(seg);
                 this.trackSegments.push(seg);
+            }
+            this.createWeather();
+        }
+        createWeather() {
+            if (this.weather) { this.scene.remove(this.weather.pts); this.weather.pts.geometry.dispose(); this.weather.pts.material.dispose(); this.weather = null; }
+            if (!this.trailTex) return;
+            const map = this.selectedMap;
+            const count = 130;
+            const positions = new Float32Array(count * 3);
+            const vel = []; const phases = [];
+            for (let i = 0; i < count; i++) {
+                positions[i * 3] = (Math.random() - 0.5) * 26;
+                positions[i * 3 + 1] = Math.random() * 11;
+                positions[i * 3 + 2] = -75 + Math.random() * 84;
+                if (map === 'snow') vel.push(-0.9 - Math.random() * 1.6);
+                else if (map === 'desert') vel.push(0.5 + Math.random() * 1.1);
+                else vel.push(0.25 + Math.random() * 0.5);
+                phases.push(Math.random() * 6.28);
+            }
+            const geom = new THREE.BufferGeometry();
+            geom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            const color = map === 'snow' ? 0xffffff : (map === 'desert' ? 0xffa548 : 0x7fe9ff);
+            const mat = new THREE.PointsMaterial({ color: color, size: map === 'snow' ? 0.22 : 0.16, map: this.trailTex, transparent: true, opacity: 0.75, depthWrite: false, blending: THREE.AdditiveBlending });
+            const pts = new THREE.Points(geom, mat);
+            this.scene.add(pts);
+            this.weather = { pts: pts, vel: vel, phases: phases };
+        }
+        updateWeather(dt, time) {
+            if (!this.weather) return;
+            const w = this.weather;
+            const arr = w.pts.geometry.attributes.position.array;
+            for (let i = 0; i < w.vel.length; i++) {
+                arr[i * 3 + 1] += w.vel[i] * dt;
+                arr[i * 3] += Math.sin(time * 1.3 + w.phases[i]) * 0.35 * dt;
+                if (arr[i * 3 + 1] < 0) arr[i * 3 + 1] = 11;
+                if (arr[i * 3 + 1] > 11.5) arr[i * 3 + 1] = 0;
+            }
+            w.pts.geometry.attributes.position.needsUpdate = true;
+        }
+        updateEnvFX(time) {
+            for (let i = 0; i < this.fxNeon.length; i++) {
+                const n = this.fxNeon[i];
+                n.mat.color.copy(n.base).multiplyScalar(0.72 + 0.28 * Math.sin(time * 2.2 + n.phase));
+            }
+            for (let i = 0; i < this.fxWindows.length; i++) {
+                const w = this.fxWindows[i];
+                w.mat.opacity = 0.2 + 0.24 * Math.max(0, Math.sin(time * 1.6 + w.phase));
             }
         }
 
@@ -1263,6 +1776,7 @@
                 neonStrip.rotation.x = Math.PI / 2;
                 neonStrip.position.set(side * (LANE_WIDTH * 1.7 + 0.5), 0.4, 0);
                 group.add(neonStrip);
+                this.fxNeon.push({ mat: neonStripMat, base: new THREE.Color(stripColor), phase: Math.random() * 6.28 });
             });
             const objCount = 5;
             for (let i = 0; i < objCount; i++) {
@@ -1285,6 +1799,7 @@
                         win.position.set(wall.position.x - (side * (width / 2 + 0.02)), height / 2, bZ);
                         win.rotation.y = side * Math.PI / 2;
                         group.add(win);
+                        this.fxWindows.push({ mat: windowMat, phase: Math.random() * 6.28 });
                     } else if (theme.side === 'desert') {
                         const height = 6 + Math.random() * 8;
                         const width = 6.0 + Math.random() * 4.0;
@@ -1778,9 +2293,9 @@
             } else if (type === 'BARRIER_HIGH') {
                 mesh = T.barrier.clone();
                 bounds = { width: LANE_WIDTH * 0.94, height: 1.2, depth: 0.3, minY: 1.25 };
-            } else {
+            } else { // HURDLE_LOW
                 mesh = T.hurdle.clone();
-                bounds = { width: LANE_WIDTH * 0.92, height: 0.7, depth: 0.3, minY: 0 };
+                bounds = { width: LANE_WIDTH * 0.92, height: 0.72, depth: 0.3, minY: 0 }; // hitbox matches visual (0 → 0.72)
             }
             mesh.position.set(x, 0, zPos);
             this.scene.add(mesh);
@@ -1789,9 +2304,10 @@
 
         spawnCoinArc(lane, startZ, count = 4, arc = false) {
             const x = LANES[lane];
+            if (count < 2) arc = false;
             for (let i = 0; i < count; i++) {
                 const coin = new THREE.Mesh(this.coinGeo, this.coinMat);
-                coin.rotation.x = Math.PI / 2; coin.castShadow = true;
+                coin.rotation.x = Math.PI / 2;
                 let y = 0.85;
                 if (arc) { const t = (i / (count - 1)) * 2 - 1; y += (1 - t * t) * 1.8; }
                 coin.position.set(x, y, startZ - i * 2.2);
@@ -1802,12 +2318,18 @@
 
         spawnPowerup(lane, z) {
             const r = Math.random();
-            const type = r < 0.4 ? 'MAGNET' : r < 0.75 ? 'MULT' : 'SHIELD';
+            const type = r < 0.3 ? 'MAGNET' : r < 0.55 ? 'MULT' : r < 0.74 ? 'SHIELD' : r < 0.88 ? 'GHOST' : 'MEGA';
             const g = new THREE.Group();
             const core = new THREE.Mesh(this.puGeo, this.puMats[type]);
             core.castShadow = true; g.add(core);
             const ring = new THREE.Mesh(this.puRingGeo, this.puMats[type]);
             ring.rotation.x = Math.PI / 2; g.add(ring);
+            const glowColor = type === 'MAGNET' ? 0xff3355 : type === 'MULT' ? 0xffd700 : type === 'SHIELD' ? 0x00f0ff : type === 'GHOST' ? 0x9b59ff : 0x4cd137;
+            if (this.trailTex) {
+                const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: this.trailTex, color: glowColor, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false }));
+                glow.scale.setScalar(2.6);
+                g.add(glow);
+            }
             g.position.set(LANES[lane], 1.1, z);
             this.scene.add(g);
             this.powerups.push({ type: type, mesh: g, baseY: g.position.y, phase: Math.random() * 6.28, box: new THREE.Box3() });
@@ -1816,8 +2338,12 @@
         applyPowerup(type) {
             if (type === 'MAGNET') { this.magnetTimer = 8; this.showToast('🧲 Coin Magnet!'); }
             else if (type === 'MULT') { this.multTimer = 10; this.showToast('✨ Double Score!'); }
-            else { this.shieldActive = true; this.shieldMesh.visible = true; this.showToast('🛡️ Shield Up!'); }
-            sound.playPowerup();
+            else if (type === 'GHOST') { this.ghostTimer = GHOST_TIME; this.setGhostVisual(true); this.showToast('👻 Phantom Mode — pass through!'); }
+            else if (type === 'MEGA') { this.megaTimer = MEGA_TIME; this.showToast('👟 Mega Jump!'); }
+            else { this.shieldActive = true; this.shieldMesh.visible = true; this.shieldTimer = 0; this.shieldFromStart = false; this.showToast('🛡️ Shield Up!'); }
+            if (type === 'GHOST') sound.playGhost();
+            else if (type === 'MEGA') sound.playMega();
+            else sound.playPowerup();
         }
 
         updatePowerupHUD() {
@@ -1829,11 +2355,41 @@
                 this.badgeMult.classList.add('on');
                 this.badgeMult.querySelector('.pu-fill').style.width = (this.multTimer / 10 * 100) + '%';
             } else this.badgeMult.classList.remove('on');
-            this.badgeShield.classList.toggle('on', this.shieldActive);
+            if (this.shieldActive) {
+                this.badgeShield.classList.add('on');
+                const fill = this.shieldFromStart ? Math.max(0, (this.shieldTimer / BOOST_SHIELD_TIME) * 100) : 100;
+                this.badgeShield.querySelector('.pu-fill').style.width = fill + '%';
+            } else this.badgeShield.classList.remove('on');
+            if (this.badgeGhost) {
+                if (this.ghostTimer > 0) {
+                    this.badgeGhost.classList.add('on');
+                    this.badgeGhost.querySelector('.pu-fill').style.width = (this.ghostTimer / GHOST_TIME * 100) + '%';
+                } else this.badgeGhost.classList.remove('on');
+            }
+            if (this.badgeMega) {
+                if (this.megaTimer > 0) {
+                    this.badgeMega.classList.add('on');
+                    this.badgeMega.querySelector('.pu-fill').style.width = (this.megaTimer / MEGA_TIME * 100) + '%';
+                } else this.badgeMega.classList.remove('on');
+            }
+            if (this.comboBadge) {
+                const showCombo = this.feverTimer > 0 || this.comboCount >= 2;
+                this.comboBadge.classList.toggle('on', showCombo);
+                this.comboBadge.classList.toggle('fever', this.feverTimer > 0);
+                if (showCombo) {
+                    if (this.feverTimer > 0) {
+                        this.comboLabel.textContent = '🌟 FEVER ×' + this.scoreMult();
+                        this.comboFill.style.width = (this.feverTimer / FEVER_TIME * 100) + '%';
+                    } else {
+                        this.comboLabel.textContent = 'COMBO x' + this.comboCount;
+                        this.comboFill.style.width = (Math.max(0, this.comboTimer) / COMBO_WINDOW * 100) + '%';
+                    }
+                }
+            }
         }
 
-        createSparks(pos, colorHex = 0x00f0ff) {
-            const count = 12;
+        createSparks(pos, colorHex = 0x00f0ff, count = 12) {
+            count = Math.max(4, Math.min(48, count | 0));
             const geom = new THREE.BufferGeometry();
             const positions = new Float32Array(count * 3);
             const velocities = [];
@@ -1860,10 +2416,15 @@
                     else if (e.code === 'Escape' || e.code === 'KeyP') this.pauseGame();
                 } else if (this.state === STATE.PAUSED) {
                     if (e.code === 'Escape' || e.code === 'KeyP' || e.code === 'Enter' || e.code === 'Space') this.resumeFromPause();
+                } else if (this.state === STATE.COUNTDOWN) {
+                    if (e.code === 'Escape' || e.code === 'KeyP') this.pauseFromCountdown();
                 } else if (this.state === STATE.MENU) {
-                    if (e.code === 'Enter' || e.code === 'Space') { sound.init(); this.startGame(); }
+                    const ae = document.activeElement;
+                    if ((e.code === 'Enter' || e.code === 'Space') && !(ae && ae.tagName === 'BUTTON' && ae.id !== 'btn-start')) { sound.init(); this.startGame(); }
                 } else if (this.state === STATE.GAMEOVER) {
-                    if ((e.code === 'Enter' || e.code === 'Space' || e.code === 'KeyR') && performance.now() - this.gameOverShownAt > 900) {
+                    const ae2 = document.activeElement;
+                    const onBtn = ae2 && ae2.tagName === 'BUTTON';
+                    if ((e.code === 'Enter' || e.code === 'Space' || e.code === 'KeyR') && !onBtn && performance.now() - this.gameOverShownAt > 900) {
                         sound.init(); this.startGame();
                     }
                 }
@@ -1915,6 +2476,8 @@
                     sound.playClick();
                 });
             });
+            on('boost-headstart', () => this.toggleBoost('boostHeadStart', BOOST_COST_HS, 'Head Start'));
+            on('boost-shield', () => this.toggleBoost('boostShield', BOOST_COST_SHIELD, 'Shield Start'));
             on('btn-start', () => { sound.init(); this.startGame(); });
             on('btn-restart', () => { sound.init(); this.startGame(); });
             on('btn-main-menu', () => { sound.playClick(); this.goToMainMenu(); });
@@ -1946,6 +2509,15 @@
             this.startModal.classList.remove('hidden');
             this.setHudVisible(false);
             this.magnetTimer = 0; this.multTimer = 0; this.shieldActive = false;
+            this.shieldTimer = 0; this.shieldFromStart = false;
+            this.feverTimer = 0; this.comboCount = 0; this.comboTimer = 0;
+            this.ghostTimer = 0; this.megaTimer = 0; this.rushTimer = 0;
+            this.fovKick = 0; this.shakeTime = 0; this.shakeAmp = 0;
+            this.setGhostVisual(false);
+            if (this.feverOverlay) this.feverOverlay.classList.remove('on');
+            if (this.comboBadge) this.comboBadge.classList.remove('on', 'fever');
+            this.playerGroup.visible = true;
+            this.clearFX();
             if (this.shieldMesh) this.shieldMesh.visible = false;
             this.playerGroup.visible = true;
             this.playerGroup.position.set(0, 0, 0);
@@ -1963,6 +2535,7 @@
             this.camera.lookAt(0, 1.4, -5);
             this.refreshMenuStats();
             refreshAuthUI();
+            if (window.DailyRewards) window.DailyRewards.onMenuOpen();
         }
 
         setupVisibilityHandler() {
@@ -1970,6 +2543,7 @@
                 if (document.hidden) {
                     sound.mute();
                     if (this.state === STATE.PLAYING) this.pauseGame();
+                    else if (this.state === STATE.COUNTDOWN) this.pauseFromCountdown();
                 } else {
                     this.restoreSound();
                     this.clock.getDelta();
@@ -1988,7 +2562,7 @@
             if (ps) ps.innerText = Math.floor(this.score).toLocaleString();
             if (pc) pc.innerText = this.coins.toLocaleString();
             this.pauseModal.classList.remove('hidden');
-            if (this.crazyGamesSDK && this.crazyGamesSDK.game) this.crazyGamesSDK.game.gameplayStop();
+            if (this.crazyGamesSDK?.game) this.crazyGamesSDK.game.gameplayStop();
         }
 
         resumeFromPause() {
@@ -1999,8 +2573,18 @@
             this.startCountdown(() => {
                 this.state = STATE.PLAYING;
                 this.clock.getDelta();
-                if (this.crazyGamesSDK && this.crazyGamesSDK.game) this.crazyGamesSDK.game.gameplayStart();
+                if (this.crazyGamesSDK?.game) this.crazyGamesSDK.game.gameplayStart();
             });
+        }
+
+        pauseFromCountdown() {
+            if (this.state !== STATE.COUNTDOWN) return;
+            this.clearCountdown();
+            this.state = STATE.PAUSED;
+            const ps = document.getElementById('pause-score'), pc = document.getElementById('pause-coins');
+            if (ps) ps.innerText = Math.floor(this.score).toLocaleString();
+            if (pc) pc.innerText = this.coins.toLocaleString();
+            this.pauseModal.classList.remove('hidden');
         }
 
         startCountdown(cb) {
@@ -2030,18 +2614,28 @@
             if (next >= 0 && next <= 2) { this.currentLane = next; this.targetX = LANES[this.currentLane]; }
         }
         jump() {
-            if (this.isGrounded) { this.playerVelY = JUMP_VELOCITY; this.isGrounded = false; this.isSliding = false; sound.playJump(); }
+            if (this.isGrounded) {
+                this.playerVelY = JUMP_VELOCITY * (this.megaTimer > 0 ? MEGA_JUMP_MULT : 1);
+                this.isGrounded = false; this.isSliding = false;
+                this.squashTimer = 0.16; this.squashType = 'jump';
+                if (this.megaTimer > 0) {
+                    this.createSparks(new THREE.Vector3(this.playerGroup.position.x, 0.15, this.playerGroup.position.z), 0x4cd137, 10);
+                    this.spawnShockwave(new THREE.Vector3(this.playerGroup.position.x, 0.1, this.playerGroup.position.z), 0x4cd137, 1.6, 0.4);
+                }
+                sound.playJump();
+            }
         }
         slide() {
             if (!this.isSliding) {
                 this.isSliding = true; this.slideTimer = SLIDE_DURATION;
                 if (!this.isGrounded) this.playerVelY = -GRAVITY * 0.45;
+                else this.createSparks(new THREE.Vector3(this.playerGroup.position.x, 0.12, this.playerGroup.position.z), 0xb8c4d8, 8);
                 sound.playSlide();
             }
         }
 
         requestMidrollAd(callback) {
-            if (this.crazyGamesSDK && this.crazyGamesSDK.ad) {
+            if (this.crazyGamesSDK?.ad) {
                 this.state = STATE.AD_PAUSED; sound.mute(); this.adOverlay.classList.add('active');
                 const callbacks = {
                     adFinished: () => { this.adOverlay.classList.remove('active'); this.restoreSound(); if (callback) callback(); },
@@ -2057,7 +2651,7 @@
             sound.playClick();
             this.blurUI();
             if (this.hasRevivedThisRun) return;
-            if (this.crazyGamesSDK && this.crazyGamesSDK.ad) {
+            if (this.crazyGamesSDK?.ad) {
                 this.state = STATE.AD_PAUSED; sound.mute(); this.adOverlay.classList.add('active');
                 const callbacks = {
                     adFinished: () => { this.adOverlay.classList.remove('active'); this.restoreSound(); this.revivePlayer(); },
@@ -2083,11 +2677,18 @@
             this.isGrounded = true; this.isSliding = false; this.slideTimer = 0;
             this.invincibleTimer = 3.0;
             this.invincibleBadge.style.opacity = '1';
+            this.feverTimer = 0; this.comboCount = 0; this.comboTimer = 0;
+            this.ghostTimer = 0; this.megaTimer = 0; this.rushTimer = 0;
+            this.setGhostVisual(false);
+            if (this.feverOverlay) this.feverOverlay.classList.remove('on');
+            if (this.comboBadge) this.comboBadge.classList.remove('on', 'fever');
+            this.playerGroup.visible = true;
+            this.clearFX();
             this.state = STATE.PLAYING;
             this.gameoverModal.classList.add('hidden');
             this.setHudVisible(true);
             sound.playRevive();
-            if (this.crazyGamesSDK && this.crazyGamesSDK.game) { this.crazyGamesSDK.game.gameplayStart(); this.crazyGamesSDK.game.happytime(); }
+            if (this.crazyGamesSDK?.game) { this.crazyGamesSDK.game.gameplayStart(); this.crazyGamesSDK.game.happytime(); }
         }
 
         startGame() {
@@ -2105,12 +2706,24 @@
             this.hasRevivedThisRun = false;
             this.invincibleTimer = 0;
             this.magnetTimer = 0; this.multTimer = 0;
+            this.feverTimer = 0; this.comboCount = 0; this.comboTimer = 0;
+            this.ghostTimer = 0; this.megaTimer = 0;
+            this.rushTimer = 0; this.rushCd = 24 + Math.random() * 14;
+            this.fovKick = 0; this.shakeTime = 0; this.shakeAmp = 0;
+            this.nmCooldown = 0; this.squashTimer = 0;
+            this.setGhostVisual(false);
+            if (this.feverOverlay) this.feverOverlay.classList.remove('on');
+            if (this.comboBadge) this.comboBadge.classList.remove('on', 'fever');
+            this.playerGroup.visible = true;
+            this.clearFX();
             if (this.shieldActive) { this.shieldActive = false; this.shieldMesh.visible = false; }
             this.nextMilestone = 500;
             this.diffLevel = 1;
             this.updateLevelBadge();
             this.badgeMagnet.classList.remove('on'); this.badgeMult.classList.remove('on'); this.badgeShield.classList.remove('on');
             this.invincibleBadge.style.opacity = '0';
+            this.shieldTimer = 0; this.shieldFromStart = false;
+            this.applyStartBoosts();
             this.btnRevive.style.display = 'inline-flex';
             this.newRecordBadge.style.display = 'none';
             this.playerGroup.visible = true;
@@ -2133,14 +2746,27 @@
             this.gameoverModal.classList.add('hidden');
             this.customizeModal.classList.add('hidden');
             this.setHudVisible(true);
-            if (this.crazyGamesSDK && this.crazyGamesSDK.game) this.crazyGamesSDK.game.gameplayStart();
+            if (this.crazyGamesSDK?.game) this.crazyGamesSDK.game.gameplayStart();
         }
 
         gameOver() {
             if (this.state === STATE.GAMEOVER || this.state === STATE.AD_PAUSED) return;
             this.state = STATE.GAMEOVER;
             sound.playCrash();
-            if (this.crazyGamesSDK && this.crazyGamesSDK.game) this.crazyGamesSDK.game.gameplayStop();
+            const crashPos = this.playerGroup.position.clone().add(new THREE.Vector3(0, 1.0, 0));
+            this.createSparks(crashPos, 0xff3355, 18);
+            this.createSparks(crashPos, 0xffa500, 14);
+            this.createSparks(crashPos, 0x00f0ff, 10);
+            this.spawnShockwave(crashPos, 0xff3355, 4.4, 0.7);
+            this.spawnShockwave(new THREE.Vector3(crashPos.x, 0.12, crashPos.z), 0xffa500, 3.2, 0.6);
+            this.flashScreen('red');
+            this.feverTimer = 0; this.comboCount = 0; this.comboTimer = 0;
+            this.ghostTimer = 0; this.megaTimer = 0; this.rushTimer = 0;
+            this.setGhostVisual(false);
+            this.playerGroup.visible = true;
+            if (this.feverOverlay) this.feverOverlay.classList.remove('on');
+            if (this.comboBadge) this.comboBadge.classList.remove('on', 'fever');
+            if (this.crazyGamesSDK?.game) this.crazyGamesSDK.game.gameplayStop();
             let shakeFrames = 16;
             const originalCamY = this.camera.position.y;
             const shake = () => {
@@ -2157,7 +2783,7 @@
             if (totalScore > this.highScore) {
                 this.highScore = totalScore;
                 Store.set('subway_dash_hi', this.highScore.toString());
-                if (this.crazyGamesSDK && this.crazyGamesSDK.game) this.crazyGamesSDK.game.happytime();
+                if (this.crazyGamesSDK?.game) this.crazyGamesSDK.game.happytime();
             }
             this.newRecordBadge.style.display = (totalScore > prevHigh && totalScore > 0) ? 'block' : 'none';
             const runCoins = this.coins;
@@ -2201,6 +2827,7 @@
             if (this.safeLane === undefined) this.safeLane = 1;
             if (this.lastSafeHurdleZ === undefined) this.lastSafeHurdleZ = null;
             const intensity = this.getIntensity();
+            const rush = this.rushTimer > 0;
 
             const neighbors = [this.safeLane - 1, this.safeLane + 1].filter(l => l >= 0 && l <= 2);
             const free = (neighbors.length && Math.random() < 0.65)
@@ -2259,11 +2886,12 @@
                         break;
                 }
             }
+            if (rush) coinCount += 4;
             this.spawnCoinArc(coinLane, coinZ, coinCount, coinArc);
-            if (Math.random() < 0.3 + intensity * 0.3) {
-                this.spawnCoinArc(free, z - 14, 4 + Math.min(3, this.diffLevel), false);
+            if (Math.random() < (rush ? 0.9 : 0.3 + intensity * 0.3)) {
+                this.spawnCoinArc(free, z - 14, 4 + Math.min(3, this.diffLevel) + (rush ? 3 : 0), false);
             }
-            if (Math.random() < 0.13) this.spawnPowerup(free, z + 9);
+            if (Math.random() < (rush ? 0.25 : 0.13)) this.spawnPowerup(free, z + 9);
             this.safeLane = free;
 
             const reaction = REACTION_START - intensity * (REACTION_START - REACTION_END);
@@ -2274,10 +2902,18 @@
         animate() {
             requestAnimationFrame(this.animate);
             const dt = Math.min(this.clock.getDelta(), 0.1);
-            if (this.state === STATE.PLAYING) this.updatePlaying(dt);
+            const isPlaying = this.state === STATE.PLAYING;
+            if (isPlaying) this.updatePlaying(dt);
             else if (this.state === STATE.MENU) this.updateMenu(dt);
             else if (this.state === STATE.CUSTOMIZE) this.updateCustomize(dt);
+            const worldMove = isPlaying ? this.speed * dt : 0;
+            const nowT = this.clock.getElapsedTime();
             this.updateParticles(dt);
+            this.updateTrail(dt, worldMove);
+            this.updatePopups(dt, worldMove);
+            this.updateShockwaves(dt);
+            this.updateWeather(dt, nowT);
+            this.updateEnvFX(nowT);
             this.renderer.render(this.scene, this.camera);
         }
 
@@ -2288,10 +2924,13 @@
             this.head.rotation.y = Math.sin(time * 2.0) * 0.15;
             this.torso.position.y = 1.15 + Math.sin(time * 3.5) * 0.025;
             this.updateBlink();
-            this.playerGroup.rotation.y += (Math.PI - this.playerGroup.rotation.y) * 2.5 * dt;
+            this.playerGroup.rotation.y += 0.55 * dt;
             const sway = Math.sin(time * 2.8) * 0.02;
             this.leftArmPivot.rotation.z = -ARM_TILT - sway;
             this.rightArmPivot.rotation.z = ARM_TILT + sway;
+            this.camera.position.x += (Math.sin(time * 0.22) * 1.5 - this.camera.position.x) * 1.2 * dt;
+            this.camera.position.y += ((4.2 + Math.sin(time * 0.35) * 0.25) - this.camera.position.y) * 1.2 * dt;
+            this.camera.lookAt(0, 1.35, -4.5);
         }
 
         updateCustomize(dt) {
@@ -2318,16 +2957,63 @@
             }
             if (this.magnetTimer > 0) this.magnetTimer = Math.max(0, this.magnetTimer - dt);
             if (this.multTimer > 0) this.multTimer = Math.max(0, this.multTimer - dt);
+            if (this.ghostTimer > 0) {
+                this.ghostTimer -= dt;
+                if (this.ghostTimer <= 0) {
+                    this.ghostTimer = 0;
+                    this.setGhostVisual(false);
+                    this.playerGroup.visible = true;
+                    this.showToast('👻 Phantom ended');
+                } else if (this.invincibleTimer <= 0) {
+                    this.playerGroup.visible = (this.ghostTimer < 1.2) ? (Math.floor(Date.now() / 100) % 2 === 0) : true;
+                }
+            }
+            if (this.megaTimer > 0) this.megaTimer = Math.max(0, this.megaTimer - dt);
+            if (this.feverTimer > 0) {
+                this.feverTimer = Math.max(0, this.feverTimer - dt);
+                if (this.feverTimer <= 0) {
+                    if (this.feverOverlay) this.feverOverlay.classList.remove('on');
+                    this.showToast('🌟 Fever ended');
+                }
+            }
+            if (this.comboTimer > 0) { this.comboTimer -= dt; if (this.comboTimer <= 0) { this.comboTimer = 0; this.comboCount = 0; } }
+            if (this.nmCooldown > 0) this.nmCooldown -= dt;
+            if (this.shakeTime > 0) this.shakeTime = Math.max(0, this.shakeTime - dt);
+            if (this.fovKick > 0) this.fovKick = Math.max(0, this.fovKick - 16 * dt);
+            if (this.rushTimer > 0) {
+                this.rushTimer -= dt;
+                if (this.rushTimer <= 0) { this.rushTimer = 0; this.showToast('🪙 Coin Rush ended'); }
+            } else {
+                this.rushCd -= dt;
+                if (this.rushCd <= 0) {
+                    this.rushTimer = RUSH_TIME;
+                    this.rushCd = 46 + Math.random() * 22;
+                    this.showToast('🪙 COIN RUSH! Grab them all!', true);
+                    this.spawnPopup('COIN RUSH!', new THREE.Vector3(this.playerGroup.position.x, 2.5, this.playerGroup.position.z), '#ffd700', 1.3);
+                    this.flashScreen('gold');
+                    sound.playFever();
+                }
+            }
+            if (this.shieldTimer > 0) {
+                this.shieldTimer = Math.max(0, this.shieldTimer - dt);
+                if (this.shieldTimer <= 0 && this.shieldFromStart) {
+                    this.shieldActive = false;
+                    this.shieldMesh.visible = false;
+                    this.shieldFromStart = false;
+                    this.showToast('🛡️ Start shield expired');
+                }
+            }
             const intensity = this.getIntensity();
             if (this.speed < this.maxSpeed) this.speed += this.speedAccel * (1 + intensity * 1.1) * dt;
             const moveDist = this.speed * dt;
             this.distance += moveDist;
-            const scoreMult = this.multTimer > 0 ? 2 : 1;
+            const scoreMult = this.scoreMult();
             this.score += (moveDist * 1.2) * (1 + (this.speed - this.baseSpeed) / 22) * scoreMult;
             if (this.distance >= this.nextMilestone) {
                 const bonus = 100 * scoreMult;
                 this.score += bonus;
                 this.showToast(`🏁 ${this.nextMilestone}m   +${bonus}`);
+                this.spawnPopup('+' + bonus, new THREE.Vector3(this.playerGroup.position.x, 2.6, this.playerGroup.position.z), '#00f0ff', 1.1);
                 sound.playCoin();
                 this.nextMilestone += 500;
             }
@@ -2338,15 +3024,18 @@
                 const bonusCoins = Math.min(COIN_VALUE_CAP, newLevel) * 2;
                 this.coins += bonusCoins;
                 this.showToast(`🔥 Level ${newLevel}! +${bonusCoins} 🪙`, true);
+                this.flashScreen('cyan');
+                this.spawnShockwave(new THREE.Vector3(this.playerGroup.position.x, 0.12, this.playerGroup.position.z), 0x00f0ff, 3.2, 0.55);
                 sound.playLevelUp();
             }
             this.uiScore.innerText = Math.floor(this.score).toLocaleString();
             const sm = (1 + (this.speed - this.baseSpeed) * 0.08) * scoreMult;
             this.uiMult.innerText = `${sm.toFixed(1)}x`;
             this.uiCoins.innerText = this.coins;
+            if (this.uiDist) this.uiDist.innerText = Math.floor(this.distance) + 'm';
             const speedPct = ((this.speed - this.baseSpeed) / (this.maxSpeed - this.baseSpeed)) * 100;
             this.uiSpeedBar.style.width = `${Math.min(100, speedPct)}%`;
-            const targetFov = 55 + Math.min(1, speedPct / 100) * 9;
+            const targetFov = 55 + Math.min(1, speedPct / 100) * 9 + this.fovKick;
             if (Math.abs(this.camera.fov - targetFov) > 0.05) {
                 this.camera.fov += (targetFov - this.camera.fov) * 3 * dt;
                 this.camera.updateProjectionMatrix();
@@ -2358,13 +3047,28 @@
             if (!this.isGrounded) {
                 this.playerVelY -= GRAVITY * dt;
                 this.playerY += this.playerVelY * dt;
-                if (this.playerY <= 0) { this.playerY = 0; this.playerVelY = 0; this.isGrounded = true; }
+                if (this.playerY <= 0) {
+                    const impact = -this.playerVelY;
+                    this.playerY = 0; this.playerVelY = 0; this.isGrounded = true;
+                    if (impact > 7) {
+                        this.squashTimer = 0.18; this.squashType = 'land';
+                        this.createSparks(new THREE.Vector3(this.playerGroup.position.x, 0.1, this.playerGroup.position.z), 0xb8c4d8, 10);
+                        if (this.megaTimer > 0) this.spawnShockwave(new THREE.Vector3(this.playerGroup.position.x, 0.08, this.playerGroup.position.z), 0x4cd137, 2.0, 0.4);
+                        sound.playLand();
+                    }
+                }
             }
             if (this.isSliding) { this.slideTimer -= dt; if (this.slideTimer <= 0) this.isSliding = false; }
             this.playerGroup.position.y = this.playerY;
             if (this.shieldMesh.visible) {
                 const s = 1 + Math.sin(time * 6) * 0.05;
                 this.shieldMesh.scale.setScalar(s);
+            }
+            this.trailCd -= dt;
+            if (this.trailCd <= 0) {
+                this.trailCd = this.feverTimer > 0 ? 0.022 : 0.032;
+                const trailColor = this.feverTimer > 0 ? 0xffd700 : this.ghostTimer > 0 ? 0x9b59ff : this.megaTimer > 0 ? 0x4cd137 : this.shieldActive ? 0x00f0ff : 0x18c8ff;
+                this.spawnTrail(trailColor);
             }
             this.animatePlayerMesh(dt);
             this.updateBlink();
@@ -2377,6 +3081,12 @@
             this.camera.position.x += (this.playerGroup.position.x * 0.35 - this.camera.position.x) * 6.0 * dt;
             this.camera.position.y = 4.2 + (this.playerY * 0.3);
             this.camera.lookAt(this.playerGroup.position.x * 0.18, 1.4 + this.playerY * 0.2, -6);
+            this.updateSpeedStreaks(dt, Math.min(1, speedPct / 100));
+            if (this.shakeTime > 0) {
+                const k = (this.shakeTime / 0.22) * this.shakeAmp;
+                this.camera.position.x += (Math.random() - 0.5) * k * 2;
+                this.camera.position.y += (Math.random() - 0.5) * k * 2;
+            }
         }
 
         animatePlayerMesh(dt) {
@@ -2404,6 +3114,16 @@
                 this.rightArmPivot.rotation.x = Math.sin(time) * 1.1;
                 this.leftArmPivot.rotation.z = -0.1; this.rightArmPivot.rotation.z = 0.1;
             }
+            if (this.squashTimer > 0) {
+                this.squashTimer = Math.max(0, this.squashTimer - dt);
+                const p = this.squashTimer / 0.18;
+                let sy = 1, sx = 1;
+                if (this.squashType === 'jump') { sy = 1 + 0.16 * p; sx = 1 - 0.1 * p; }
+                else { sy = 1 - 0.2 * p; sx = 1 + 0.14 * p; }
+                this.playerGroup.scale.set(PLAYER_SCALE * sx, PLAYER_SCALE * sy, PLAYER_SCALE * sx);
+            } else {
+                this.playerGroup.scale.set(PLAYER_SCALE, PLAYER_SCALE, PLAYER_SCALE);
+            }
         }
 
         scrollTracks(moveDist) {
@@ -2429,13 +3149,14 @@
                 const obs = this.obstacles[i];
                 obs.mesh.position.z += moveDist;
                 const b = obs.bounds;
-                const minY = b.minY !== undefined ? b.minY : 0;
+                let minY = b.minY !== undefined ? b.minY : 0;
                 obs.box.min.set(obs.mesh.position.x - b.width / 2 + 0.08, obs.mesh.position.y + minY, obs.mesh.position.z - b.depth / 2 + 0.08);
                 obs.box.max.set(obs.mesh.position.x + b.width / 2 - 0.08, obs.mesh.position.y + minY + b.height, obs.mesh.position.z + b.depth / 2 - 0.08);
-                if (this.invincibleTimer <= 0 && this.playerBox.intersectsBox(obs.box)) {
+                if (this.invincibleTimer <= 0 && this.ghostTimer <= 0 && this.playerBox.intersectsBox(obs.box)) {
                     if (this.shieldActive) {
                         this.shieldActive = false;
                         this.shieldMesh.visible = false;
+                        this.shieldTimer = 0; this.shieldFromStart = false;
                         this.invincibleTimer = 1.5;
                         this.invincibleBadge.style.opacity = '1';
                         for (let j = this.obstacles.length - 1; j >= 0; j--) {
@@ -2451,6 +3172,19 @@
                     }
                     this.gameOver();
                     return;
+                }
+                if (!obs.passDone && obs.mesh.position.z > 0.35) {
+                    obs.passDone = true;
+                    const dxn = Math.abs(obs.mesh.position.x - this.playerGroup.position.x);
+                    if (dxn < LANE_WIDTH * 0.5) {
+                        if (this.ghostTimer > 0 || this.invincibleTimer > 0) {
+                            this.createSparks(new THREE.Vector3(obs.mesh.position.x, 1.0, 0.2), 0x9b59ff, 8);
+                        } else if (this.nmCooldown <= 0) {
+                            const cleared = obs.type === 'HURDLE_LOW' ? (this.playerY > 0.45)
+                                : (obs.type === 'BARRIER_HIGH' && this.isSliding);
+                            if (cleared) this.awardNearMiss(obs);
+                        }
+                    }
                 }
                 if (obs.mesh.position.z > REMOVE_DISTANCE + (b.depth || 0)) { this.scene.remove(obs.mesh); this.obstacles.splice(i, 1); }
             }
@@ -2469,8 +3203,10 @@
                 }
                 c.box.setFromCenterAndSize(c.mesh.position, this._coinSize);
                 if (this.playerBox.intersectsBox(c.box)) {
-                    this.coins += coinValue;
-                    this.score += 50 * (this.multTimer > 0 ? 2 : 1);
+                    const feverCoin = this.feverTimer > 0 ? 2 : 1;
+                    this.coins += coinValue * feverCoin;
+                    this.score += 50 * coinValue * this.scoreMult();
+                    this.registerCombo(c.mesh.position);
                     sound.playCoin();
                     this.createSparks(c.mesh.position, 0x00f0ff);
                     this.scene.remove(c.mesh);
@@ -2524,6 +3260,151 @@
                 p.system.material.opacity = p.life / p.maxLife;
             }
         }
+
+        registerCombo(pos) {
+            this.comboCount++;
+            this.comboTimer = COMBO_WINDOW;
+            sound.playComboTick(this.comboCount);
+            if (this.comboCount >= FEVER_COMBO && this.feverTimer <= 0) {
+                this.feverTimer = FEVER_TIME;
+                if (this.feverOverlay) this.feverOverlay.classList.add('on');
+                this.showToast('🌟 FEVER MODE! ×' + this.scoreMult() + ' Score', true);
+                this.spawnPopup('FEVER!', new THREE.Vector3(this.playerGroup.position.x, 2.4, this.playerGroup.position.z), '#ffd700', 1.6);
+                this.spawnShockwave(new THREE.Vector3(this.playerGroup.position.x, 0.15, this.playerGroup.position.z), 0xffd700, 3.4, 0.6);
+                this.createSparks(new THREE.Vector3(this.playerGroup.position.x, 1.2, this.playerGroup.position.z), 0xffd700, 22);
+                this.flashScreen('gold');
+                sound.playFever();
+            } else if (this.comboCount >= 5 && this.comboCount % 5 === 0) {
+                this.spawnPopup('x' + this.comboCount, new THREE.Vector3(pos.x, pos.y + 0.5, pos.z), '#7ff3ff', 0.9);
+            }
+        }
+
+        awardNearMiss(obs) {
+            this.nmCooldown = 0.6;
+            const bonus = 100 + this.diffLevel * 25;
+            this.score += bonus * this.scoreMult();
+            this.spawnPopup('⚡ +' + bonus, new THREE.Vector3(this.playerGroup.position.x, 1.9, -0.5), '#ffd700', 1.0);
+            this.createSparks(new THREE.Vector3(obs.mesh.position.x, 1.0, 0.3), 0xffd700, 10);
+            this.fovKick = 7;
+            this.shakeTime = 0.22; this.shakeAmp = 0.14;
+            sound.playWhoosh();
+        }
+
+        spawnTrail(colorHex) {
+            if (!this.trailTex) return;
+            const mat = new THREE.SpriteMaterial({ map: this.trailTex, color: colorHex, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false });
+            const s = new THREE.Sprite(mat);
+            s.position.set(
+                this.playerGroup.position.x + (Math.random() - 0.5) * 0.35,
+                this.playerGroup.position.y + 0.55 + Math.random() * 0.55,
+                this.playerGroup.position.z + 0.15
+            );
+            s.scale.setScalar(0.75 + Math.random() * 0.4);
+            this.scene.add(s);
+            this.trail.push({ s: s, life: 0.38, maxLife: 0.38 });
+            if (this.trail.length > 46) { const old = this.trail.shift(); this.scene.remove(old.s); old.s.material.dispose(); }
+        }
+
+        updateTrail(dt, moveDist) {
+            for (let i = this.trail.length - 1; i >= 0; i--) {
+                const t = this.trail[i];
+                t.life -= dt;
+                if (t.life <= 0) { this.scene.remove(t.s); t.s.material.dispose(); this.trail.splice(i, 1); continue; }
+                t.s.material.opacity = (t.life / t.maxLife) * 0.5;
+                t.s.position.z += moveDist * 0.85;
+                t.s.position.y += 0.25 * dt;
+                t.s.scale.multiplyScalar(1 - 0.8 * dt);
+            }
+        }
+
+        spawnPopup(text, pos, color = '#ffd700', scale = 1) {
+            try {
+                const c = document.createElement('canvas'); c.width = 256; c.height = 96;
+                const ctx = c.getContext('2d');
+                ctx.font = '900 52px "Segoe UI", Roboto, Arial, sans-serif';
+                ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.lineWidth = 9; ctx.strokeStyle = 'rgba(4,10,20,0.95)';
+                ctx.strokeText(text, 128, 48);
+                ctx.fillStyle = color;
+                ctx.fillText(text, 128, 48);
+                const tex = new THREE.CanvasTexture(c);
+                const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
+                const sp = new THREE.Sprite(mat);
+                sp.position.copy(pos);
+                sp.scale.set(2.3 * scale, 0.86 * scale, 1);
+                this.scene.add(sp);
+                this.popups.push({ sp: sp, life: 0.9, maxLife: 0.9 });
+            } catch (e) {}
+        }
+
+        updatePopups(dt, moveDist) {
+            for (let i = this.popups.length - 1; i >= 0; i--) {
+                const p = this.popups[i];
+                p.life -= dt;
+                if (p.life <= 0) { this.scene.remove(p.sp); p.sp.material.map.dispose(); p.sp.material.dispose(); this.popups.splice(i, 1); continue; }
+                p.sp.position.y += 1.5 * dt;
+                p.sp.position.z += moveDist;
+                const lp = p.life / p.maxLife;
+                p.sp.material.opacity = Math.min(1, lp * 2.2);
+            }
+        }
+
+        spawnShockwave(pos, colorHex = 0x00f0ff, maxR = 3, dur = 0.55) {
+            const mat = new THREE.MeshBasicMaterial({ color: colorHex, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+            const m = new THREE.Mesh(this._shockGeo, mat);
+            m.position.copy(pos);
+            m.rotation.x = Math.PI / 2;
+            m.scale.setScalar(0.2);
+            this.scene.add(m);
+            this.shockwaves.push({ m: m, life: dur, maxLife: dur, maxR: maxR });
+        }
+
+        updateShockwaves(dt) {
+            for (let i = this.shockwaves.length - 1; i >= 0; i--) {
+                const s = this.shockwaves[i];
+                s.life -= dt;
+                if (s.life <= 0) { this.scene.remove(s.m); s.m.material.dispose(); this.shockwaves.splice(i, 1); continue; }
+                const p = 1 - s.life / s.maxLife;
+                s.m.scale.setScalar(0.2 + p * s.maxR);
+                s.m.material.opacity = 0.85 * (1 - p);
+            }
+        }
+
+        updateSpeedStreaks(dt, intensity) {
+            for (let i = 0; i < this.speedStreaks.length; i++) {
+                const s = this.speedStreaks[i];
+                if (i / this.speedStreaks.length < intensity) {
+                    s.mat.opacity = 0.26 + 0.2 * intensity;
+                    s.mesh.position.z += this.speed * 2.6 * dt;
+                    if (s.mesh.position.z > 12) {
+                        s.mesh.position.set((Math.random() - 0.5) * 18, 0.4 + Math.random() * 7, -70 - Math.random() * 30);
+                    }
+                } else {
+                    s.mat.opacity = Math.max(0, s.mat.opacity - 2 * dt);
+                    if (s.mat.opacity > 0) s.mesh.position.z += this.speed * 2.6 * dt;
+                }
+            }
+        }
+
+        setGhostVisual(on) {
+            const target = on ? 0.42 : 1.0;
+            this.playerGroup.traverse(o => {
+                if (o.isMesh && o.material && o.material.depthWrite !== false) {
+                    o.material.transparent = on;
+                    o.material.opacity = target;
+                }
+            });
+        }
+
+        flashScreen(cls) {
+            if (!this.flashOverlay) return;
+            this.flashOverlay.className = '';
+            void this.flashOverlay.offsetWidth;
+            this.flashOverlay.classList.add(cls);
+            this.flashOverlay.style.opacity = '1';
+            setTimeout(() => { this.flashOverlay.style.opacity = '0'; }, 90);
+            setTimeout(() => { this.flashOverlay.className = ''; }, 700);
+        }
     }
 
     function bootEngine() {
@@ -2542,6 +3423,7 @@
             try {
                 window.game = new GameEngine();
                 if (statusEl) statusEl.textContent = '✅ Engine ready — all systems go!';
+                if (window.DailyRewards) window.DailyRewards.render();
             } catch (err) {
                 console.error(err);
                 if (statusEl) statusEl.textContent = '❌ Engine error: ' + err.message;
