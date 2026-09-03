@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
-    <title>Metro Dash - Robot Edition</title>
+    <title>Cyber Dash - Robot Edition</title>
     <script src="https://sdk.crazygames.com/crazygames-sdk-v2.js"></script>
     <script>
     function __showFatal(msg){
@@ -117,9 +117,14 @@
         .map-selector, .difficulty-selector { margin-bottom: 16px; text-align: left; }
         .map-selector-label, .difficulty-selector-label { font-size: 11px; font-weight: 800; color: #38bdf8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
         .map-options, .difficulty-options { display: flex; gap: 10px; }
-        .map-btn, .difficulty-btn { flex: 1; padding: 10px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 6px; }
-        .map-btn:hover, .difficulty-btn:hover { background: rgba(255, 255, 255, 0.12); }
+        .map-options { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+        .map-btn, .difficulty-btn, .gfx-btn { flex: 1; padding: 10px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .map-btn:hover, .difficulty-btn:hover, .gfx-btn:hover { background: rgba(255, 255, 255, 0.12); }
         .map-btn.active { border-color: #00f0ff; background: rgba(0, 240, 255, 0.15); box-shadow: 0 0 12px rgba(0, 240, 255, 0.3); }
+        .gfx-btn.active { border-color: #ffd76a; background: rgba(255, 215, 106, 0.14); box-shadow: 0 0 12px rgba(255, 215, 106, 0.3); }
+        .gfx-selector { margin-bottom: 16px; text-align: left; }
+        .gfx-options { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 9px; }
+        .gfx-hint { font-size: 9px; color: rgba(255,255,255,0.5); margin-top: 4px; text-align: center; }
         .difficulty-btn.easy.active { border-color: #10b981; background: rgba(16, 185, 129, 0.2); box-shadow: 0 0 12px rgba(16, 185, 129, 0.4); color: #10b981; }
         .difficulty-btn.normal.active { border-color: #f59e0b; background: rgba(245, 158, 11, 0.2); box-shadow: 0 0 12px rgba(245, 158, 11, 0.4); color: #f59e0b; }
         .difficulty-btn.hard.active { border-color: #ef4444; background: rgba(239, 68, 68, 0.2); box-shadow: 0 0 12px rgba(239, 68, 68, 0.4); color: #ef4444; }
@@ -139,10 +144,15 @@
         .stat-box { background: rgba(255,255,255,0.04); border-radius: 14px; padding: 10px; border: 1px solid rgba(255,255,255,0.08); }
         .stat-box .title { font-size: 10px; color: #38bdf8; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 3px; }
         .stat-box .val { font-size: 20px; font-weight: 900; color: #fff; }
+        /* ── RGB credit — top-left of the menu, animated rainbow text ── */
+        .credit-rgb { position: absolute; top: 18px; left: 20px; z-index: 5; padding: 9px 18px; border-radius: 50px; background: rgba(4, 8, 18, 0.42); border: 1px solid rgba(255, 255, 255, 0.14); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 8px 26px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08); font-size: 14px; font-weight: 900; letter-spacing: 0.5px; white-space: nowrap; pointer-events: none; }
+        .credit-rgb .rgb-text { background: linear-gradient(90deg, #00f0ff, #7000ff, #ff007f, #00f0ff); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.35)); animation: creditFlow 6s linear infinite; }
+        @keyframes creditFlow { 0% { background-position: 200% 50%; } 100% { background-position: 0% 50%; } }
+        @media (max-width: 768px), (orientation: portrait) { .credit-rgb { top: auto; bottom: 6px; left: 50%; transform: translateX(-50%); padding: 3px 10px; font-size: 9.5px; letter-spacing: 1px; } }
         #customize-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: transparent !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; z-index: 25; pointer-events: none; transition: opacity 0.3s ease, visibility 0.3s ease; }
         #customize-modal.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         /* ── v7 Robot Studio — same glass language as the menu Player Hub ── */
-        .style-studio-panel { position: fixed !important; top: 50% !important; right: 4% !important; transform: translateY(-50%) !important; width: 372px !important; max-width: 90vw !important; max-height: 86vh !important; height: auto !important; background: linear-gradient(168deg, rgba(10, 16, 32, 0.88), rgba(7, 11, 22, 0.8)); border: 1px solid rgba(0, 240, 255, 0.22); border-radius: 22px; padding: 18px 18px 14px; box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06); display: flex; flex-direction: column; gap: 13px; overflow-y: auto !important; -webkit-overflow-scrolling: touch; touch-action: pan-y !important; pointer-events: auto !important; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
+        .style-studio-panel { position: fixed !important; top: 50% !important; right: 4% !important; transform: translateY(-50%) !important; width: 372px !important; max-width: 90vw !important; max-height: 86vh !important; height: auto !important; background: linear-gradient(168deg, rgba(10, 16, 32, 0.48), rgba(7, 11, 22, 0.4)); border: 1px solid rgba(0, 240, 255, 0.26); border-radius: 22px; padding: 18px 18px 14px; box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1); display: flex; flex-direction: column; gap: 13px; overflow-y: auto !important; -webkit-overflow-scrolling: touch; touch-action: pan-y !important; pointer-events: auto !important; backdrop-filter: blur(24px) saturate(165%); -webkit-backdrop-filter: blur(24px) saturate(165%); }
         .style-studio-panel::before { content: ''; position: absolute; top: -1px; left: 26px; right: 26px; height: 1px; background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.55), transparent); pointer-events: none; }
         .style-studio-panel::-webkit-scrollbar { width: 5px; }
         .style-studio-panel::-webkit-scrollbar-thumb { background: rgba(0, 240, 255, 0.4); border-radius: 10px; }
@@ -150,7 +160,9 @@
         .lab-live { margin-left: auto; font-size: 9px; color: #4cd137; letter-spacing: 1.5px; font-weight: 800; text-transform: uppercase; }
         .customizer-header { display: flex; align-items: center; gap: 9px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; flex-shrink: 0; }
         .customizer-title { font-size: 12.5px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: rgba(255, 255, 255, 0.8); }
-        .custom-section { display: flex; flex-direction: column; gap: 7px; text-align: left; flex-shrink: 0; }
+        .custom-section { position: relative; display: flex; flex-direction: column; gap: 7px; text-align: left; flex-shrink: 0; background: linear-gradient(155deg, rgba(255, 255, 255, 0.085), rgba(255, 255, 255, 0.03) 52%, rgba(0, 240, 255, 0.05)); border: 1px solid rgba(255, 255, 255, 0.16); border-radius: 16px; padding: 11px 12px 12px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 8px 22px rgba(0, 0, 0, 0.22); overflow: hidden; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+        .custom-section::before { content: ''; position: absolute; top: 0; left: 12%; right: 12%; height: 1px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent); pointer-events: none; }
+        .custom-section::after { content: ''; position: absolute; top: -40%; right: -12%; width: 55%; height: 80%; background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.07), transparent 65%); pointer-events: none; }
         .custom-label { display: flex; align-items: baseline; justify-content: space-between; font-size: 10.5px; font-weight: 800; color: #38bdf8; text-transform: uppercase; letter-spacing: 1px; }
         .swatch-current { font-size: 9px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; opacity: 0.95; }
         .preset-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
@@ -161,10 +173,27 @@
         .preset-strip i { flex: 1; }
         .preset-name { font-size: 8.8px; font-weight: 800; letter-spacing: 0.7px; text-transform: uppercase; color: rgba(255, 255, 255, 0.62); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .swatch-group { display: flex; gap: 9px; flex-wrap: wrap; }
-        .swatch-btn { width: 36px; height: 36px; border-radius: 12px; border: 2px solid rgba(255, 255, 255, 0.18); cursor: pointer; transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); outline: none; position: relative; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25); touch-action: manipulation; }
+        .swatch-btn { width: 36px; height: 36px; border-radius: 12px; border: 2px solid rgba(255, 255, 255, 0.18); cursor: pointer; transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); outline: none; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.45), inset 0 -6px 12px rgba(0, 0, 0, 0.18); touch-action: manipulation; }
+        .swatch-btn::before { content: ''; position: absolute; top: 2px; left: 3px; right: 3px; height: 42%; border-radius: 8px; background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.04)); pointer-events: none; }
         .swatch-btn:hover { transform: translateY(-3px) scale(1.08); border-color: #fff; }
-        .swatch-btn.active { transform: scale(1.12); border-color: #00f0ff; box-shadow: 0 0 16px rgba(0, 240, 255, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.25); }
-        .swatch-btn.active::after { content: '✓'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900; color: #fff; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9); }
+        .swatch-btn.active { transform: scale(1.12); border-color: #00f0ff; box-shadow: 0 0 16px rgba(0, 240, 255, 0.75), inset 0 1px 1px rgba(255, 255, 255, 0.45), inset 0 -6px 12px rgba(0, 0, 0, 0.18); }
+        .swatch-btn.active::after { content: '✓'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900; color: #fff; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9); z-index: 2; }
+        /* ---------- Task 21: character shop ---------- */
+        .char-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .char-card { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 6px 8px; border-radius: 14px; border: 2px solid rgba(255, 255, 255, 0.14); background: linear-gradient(170deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.02)); cursor: pointer; transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); outline: none; touch-action: manipulation; }
+        .char-card:hover { transform: translateY(-3px); border-color: rgba(0, 240, 255, 0.5); }
+        .char-card .cc-emoji { font-size: 22px; line-height: 1.15; filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.35)); }
+        .char-card .cc-name { font-size: 10.5px; font-weight: 800; letter-spacing: 0.8px; color: #eaf6ff; }
+        .char-card .cc-sub { font-size: 7.5px; opacity: 0.55; letter-spacing: 0.5px; text-transform: uppercase; color: #cfe8ff; }
+        .char-card .cc-price { font-size: 8.5px; font-weight: 700; margin-top: 3px; color: #ffd76a; letter-spacing: 0.4px; white-space: nowrap; }
+        .char-card.equipped { border-color: #00f0ff; box-shadow: 0 0 18px rgba(0, 240, 255, 0.45), inset 0 0 14px rgba(0, 240, 255, 0.12); }
+        .char-card.equipped .cc-price { color: #00f0ff; }
+        .char-card.owned .cc-price { color: #7dffa8; }
+        .char-card.locked .cc-emoji { filter: grayscale(0.65) brightness(0.8); }
+        .char-card.poor .cc-price { color: #ff7b8a; }
+        .char-card.shake { animation: cardShake 0.4s; }
+        @keyframes cardShake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-5px); } 40% { transform: translateX(5px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(3px); } }
+        .char-note { font-size: 9px; color: rgba(255, 215, 106, 0.9); background: rgba(255, 215, 106, 0.08); border: 1px dashed rgba(255, 215, 106, 0.32); border-radius: 10px; padding: 5px 9px; display: none; text-align: center; letter-spacing: 0.3px; }
         .btn-random-custom, .cust-act-random { background: rgba(112, 0, 255, 0.2) !important; border: 1px solid rgba(168, 85, 247, 0.5) !important; color: #e9d5ff !important; box-shadow: 0 4px 14px rgba(112, 0, 255, 0.3) !important; }
         .customizer-actions { display: flex; gap: 8px; margin-top: 6px; width: 100%; padding-bottom: 2px; flex-shrink: 0; }
         .customizer-badge { position: absolute; top: 24px; left: 28px; background: rgba(10, 16, 32, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 50px; padding: 8px 18px; color: #f1f5f9; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; pointer-events: none; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); display: flex; align-items: center; gap: 8px; }
@@ -172,7 +201,7 @@
         .cust-hero { display: none; }
         #ad-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 7, 18, 0.94); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #00f0ff; font-size: 17px; font-weight: 800; letter-spacing: 1px; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.2s ease; }
         #ad-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
-        .difficulty-hint { font-size: 9px; color: rgba(255,255,255,0.5); margin-top: 4px; text-align: center; }
+        .difficulty-hint, .gfx-hint { font-size: 9px; color: rgba(255,255,255,0.5); margin-top: 4px; text-align: center; }
         .user-section { background: rgba(0, 240, 255, 0.06); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 16px; padding: 14px; margin-bottom: 16px; }
         .auth-form-inline { display: none; flex-direction: column; gap: 10px; }
         .auth-form-inline.active { display: flex; }
@@ -214,6 +243,10 @@
         .lb-username { color: #fff; font-weight: 700; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .lb-date { color: #38bdf8; font-size: 9px; }
         .lb-score { color: #ffd700; font-weight: 900; font-size: 12px; flex-shrink: 0; }
+        /* 👑 crown for the king account */
+        .lb-crown { display: inline-block; font-size: 12px; line-height: 1; margin-left: 4px; filter: drop-shadow(0 0 6px rgba(255, 200, 0, 0.85)); animation: crownFloat 2.4s ease-in-out infinite; }
+        @keyframes crownFloat { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-1.5px) scale(1.12); } }
+        .lb-username.is-king { color: #ffd700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
         /* ── Gameplay FX HUD (v3) ── */
         #powerup-bar { flex-wrap: wrap; justify-content: center; max-width: 94vw; }
         #pu-ghost { border-color: rgba(155, 89, 255, 0.6); } #pu-ghost .pu-icon { color: #b18cff; } #pu-ghost .pu-fill { background: #b18cff; }
@@ -304,6 +337,7 @@
         .menu-col-right .menu-stats { order: 5; }
         .menu-col-center .map-selector { order: 6; }
         .menu-col-center .difficulty-selector { order: 7; }
+        .menu-col-center .gfx-selector { order: 8; }
         .menu-col-right .boost-selector { order: 8; }
         .menu-col-right .daily-selector { order: 9; }
         .menu-col-right .controls-guide { order: 10; }
@@ -323,7 +357,7 @@
             #start-modal #engine-status { display: inline-flex; align-self: flex-start; align-items: center; padding: 6px 14px; border-radius: 50px; background: rgba(16, 185, 129, 0.09); border: 1px solid rgba(16, 185, 129, 0.3); color: rgba(255, 255, 255, 0.6); font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; font-weight: 800; margin: 18px 0 34px; }
             #start-modal .map-selector { margin-bottom: 22px; }
             #start-modal .map-selector-label, #start-modal .difficulty-selector-label { color: rgba(255, 255, 255, 0.4); font-size: 10px; margin-bottom: 10px; }
-            #start-modal .map-btn { padding: 14px 10px; font-size: 13px; border-radius: 14px; background: rgba(12, 18, 34, 0.62); border-color: rgba(255, 255, 255, 0.13); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+            #start-modal .map-btn, #start-modal .gfx-btn { padding: 14px 10px; font-size: 13px; border-radius: 14px; background: rgba(12, 18, 34, 0.62); border-color: rgba(255, 255, 255, 0.13); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
             #start-modal .map-btn.active { border-color: rgba(0, 240, 255, 0.85); background: linear-gradient(135deg, rgba(0, 240, 255, 0.17), rgba(112, 0, 255, 0.15)); box-shadow: 0 0 0 1px rgba(0, 240, 255, 0.28), 0 10px 28px rgba(0, 240, 255, 0.16); }
             #start-modal .difficulty-selector { margin-bottom: 30px; }
             #start-modal .difficulty-btn { padding: 11px; font-size: 12px; border-radius: 12px; background: rgba(12, 18, 34, 0.62); border-color: rgba(255, 255, 255, 0.13); }
@@ -368,11 +402,24 @@
             .cust-actions .btn-action { flex: 1; padding: 15px 12px; font-size: 13px; }
             .cust-actions .cust-act-save { flex: 1.4; }
             .style-studio-panel { position: relative !important; top: auto !important; right: auto !important; bottom: auto !important; transform: none !important; flex: 0 0 clamp(430px, 34vw, 570px); width: auto !important; max-width: none !important; max-height: 100%; align-self: center; gap: 14px; padding: 20px 22px 16px; }
+            .custom-section { gap: 6px; padding: 10px 12px 11px; border-radius: 15px; }
             .style-studio-panel .customizer-actions { display: none; }
             /* short desktop screens: compact the studio panel too */
             @media (max-height: 700px) {
                 #customize-modal { padding: 2.5vh 4.5vw; }
-                .style-studio-panel { gap: 9px; padding: 14px 18px 12px; }
+                .style-studio-panel { gap: 6px; padding: 12px 18px 10px; }
+                .customizer-header { padding-bottom: 6px; }
+                .custom-section { gap: 4px; padding: 5px 9px 6px; border-radius: 13px; }
+                .swatch-btn { width: 30px; height: 30px; border-radius: 9px; }
+                .swatch-btn::before { border-radius: 6px; left: 2.5px; right: 2.5px; }
+                .swatch-group { gap: 8px; }
+                .char-grid { gap: 6px; }
+                .char-card { padding: 8px 4px 7px; border-radius: 11px; }
+                .char-card .cc-emoji { font-size: 18px; }
+                .char-card .cc-name { font-size: 9.5px; }
+                .char-card .cc-price { font-size: 8px; }
+                .preset-chip { padding: 4px 5px 3px; gap: 3px; }
+                .preset-strip { height: 7px; }
                 .cust-title { margin-bottom: 10px; }
                 .cust-actions { margin-top: 22px; }
                 .cust-actions .btn-action { padding: 12px 10px; }
@@ -392,15 +439,17 @@
             #powerup-bar { top: 118px; }
             #toast-wrap { bottom: 102px; }
             #countdown-num { font-size: 80px; }
-            .style-studio-panel { top: auto !important; bottom: 0 !important; left: 0 !important; right: 0 !important; transform: none !important; width: 100% !important; max-width: 100% !important; height: 44vh !important; max-height: 44vh !important; border-radius: 20px 20px 0 0 !important; padding: 14px 16px 12px !important; gap: 10px !important; background: linear-gradient(168deg, rgba(10, 16, 32, 0.97), rgba(7, 11, 22, 0.96)) !important; }
+            .style-studio-panel { top: auto !important; bottom: 0 !important; left: 0 !important; right: 0 !important; transform: none !important; width: 100% !important; max-width: 100% !important; height: 44vh !important; max-height: 44vh !important; border-radius: 20px 20px 0 0 !important; padding: 14px 16px 12px !important; gap: 10px !important; background: linear-gradient(168deg, rgba(10, 16, 32, 0.8), rgba(7, 11, 22, 0.76)) !important; backdrop-filter: blur(22px) saturate(150%) !important; -webkit-backdrop-filter: blur(22px) saturate(150%) !important; }
             .customizer-actions { padding-bottom: 0 !important; }
             .customizer-badge { top: 14px; left: 50%; transform: translateX(-50%); font-size: 10.5px; padding: 5px 12px; white-space: nowrap; }
             .swatch-btn { width: 31px; height: 31px; border-radius: 10px; }
+            .swatch-btn::before { border-radius: 6px; left: 2.5px; right: 2.5px; }
+            .custom-section { padding: 9px 10px 10px; border-radius: 14px; }
             .preset-grid { gap: 6px; }
             .preset-chip { padding: 6px 6px 5px; border-radius: 10px; }
             .preset-name { font-size: 8.2px; }
             .btn-action { font-size: 12px; padding: 10px 14px; }
-            .map-btn, .difficulty-btn { font-size: 10px; padding: 8px; }
+            .map-btn, .difficulty-btn, .gfx-btn { font-size: 10px; padding: 8px; }
             .modal-content { padding: 20px 16px; }
             h1.game-title { font-size: 26px; }
             .user-section { padding: 10px; }
@@ -411,6 +460,12 @@
             .day-chip .d-icon { font-size: 11px; }
             .day-chip .d-amt { font-size: 7.5px; }
         }
+
+        /* FPS meter chip (Task 18 — performance HUD) */
+        #fps-chip { position: absolute; left: 12px; bottom: 24px; z-index: 30; display: none; font-family: 'Segoe UI', Roboto, Arial, sans-serif; font-size: 10.5px; font-weight: 800; letter-spacing: 0.9px; color: #7ff3ff; background: rgba(7, 11, 22, 0.6); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 999px; padding: 4px 11px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 0 12px rgba(0, 240, 255, 0.12), inset 0 0 8px rgba(0, 240, 255, 0.07); pointer-events: none; user-select: none; transition: opacity 0.3s ease; }
+        #fps-chip.ok { color: #ffd700; border-color: rgba(255, 215, 0, 0.32); box-shadow: 0 0 12px rgba(255, 215, 0, 0.1), inset 0 0 8px rgba(255, 215, 0, 0.06); }
+        #fps-chip.bad { color: #ff5a7a; border-color: rgba(255, 90, 122, 0.36); box-shadow: 0 0 12px rgba(255, 90, 122, 0.12), inset 0 0 8px rgba(255, 90, 122, 0.06); }
+        @media (max-width: 768px), (orientation: portrait) { #fps-chip { left: 8px; bottom: 16px; font-size: 9px; padding: 3px 8px; } }
     </style>
 </head>
 <body>
@@ -451,6 +506,7 @@
         </div>
         <div id="toast-wrap"></div>
         <div id="speed-bar-container"><div id="speed-bar-fill"></div></div>
+        <div id="fps-chip">⚡ 60 FPS</div>
     </div>
 
     <div id="fever-overlay"></div>
@@ -459,6 +515,7 @@
     <div id="ad-overlay"><div>Loading Advertisement...</div></div>
 
     <div id="start-modal" class="modal">
+        <div class="credit-rgb"><span class="rgb-text">MADE BY MATIN</span></div>
         <div class="modal-content">
             <div class="menu-orb orb1"></div>
             <div class="menu-orb orb2"></div>
@@ -468,7 +525,7 @@
             
 
             <div class="menu-col menu-col-center">
-            <h1 class="game-title">Metro Dash</h1>
+            <h1 class="game-title">Cyber Dash</h1>
             <p class="subtitle">Robot Runner Edition</p>
             <div id="engine-status">⏳ Loading 3D engine…</div>
             <div class="map-selector">
@@ -477,6 +534,7 @@
                     <button class="map-btn active" data-map="city">🏙️ Neon City</button>
                     <button class="map-btn" data-map="desert">🏜️ Desert Oasis</button>
                     <button class="map-btn" data-map="snow">❄️ Frost Peak</button>
+                    <button class="map-btn" data-map="jungle">🌳 Amazon Jungle</button>
                 </div>
             </div>
             <div class="difficulty-selector">
@@ -486,7 +544,16 @@
                     <button class="difficulty-btn normal active" data-difficulty="normal"> Normal</button>
                     <button class="difficulty-btn hard" data-difficulty="hard"> Hard</button>
                 </div>
-                <div class="difficulty-hint" id="difficulty-hint">🟡 Balanced speed & obstacles</div>
+                <div class="difficulty-hint" id="difficulty-hint">🟡 Balanced — ramps up every level</div>
+            </div>
+            <div class="gfx-selector">
+                <div class="map-selector-label">🖥️ Graphics</div>
+                <div class="gfx-options">
+                    <button class="gfx-btn active" data-gfx="sharp">✨ Sharp</button>
+                    <button class="gfx-btn" data-gfx="auto">⚖️ Auto</button>
+                    <button class="gfx-btn" data-gfx="fast">⚡ Fast</button>
+                </div>
+                <div class="gfx-hint" id="gfx-hint">✨ Maximum clarity — renders at full retina</div>
             </div>
             <div class="btn-stack">
                 <button id="btn-start" class="btn-action" style="width:100%;">🏃 Start Run</button>
@@ -595,7 +662,7 @@
         <div class="cust-hero">
             <div class="cust-status">✓ Style Engine — Live Preview</div>
             <h1 class="cust-title">ROBOT<br>STUDIO</h1>
-            <div class="cust-sub">Paint Your Runner · 5 Zones</div>
+            <div class="cust-sub">Buy Bots · Paint · 5 Zones</div>
             <div class="cust-hint">Every tap repaints the bot <b>instantly</b> — grab a Quick Style, roll a random loadout with 🎲, then save to keep it forever.</div>
             <div class="cust-actions">
                 <button class="btn-action btn-cancel-custom cust-act-cancel">✕ Cancel</button>
@@ -605,6 +672,8 @@
         </div>
         <div class="style-studio-panel">
             <div class="customizer-header"><span class="lab-dot"></span><div class="customizer-title">Style Lab</div><span class="lab-live">● Live</span></div>
+            <div class="custom-section"><div class="custom-label"><span>🛒 Characters</span><span class="swatch-current" id="char-bank">🪙 0</span></div><div class="char-grid" id="char-grid"></div></div>
+            <div class="char-note" id="char-note">🎨 Paint & 🎲 Random apply to CLASSIC only</div>
             <div class="custom-section"><div class="custom-label"><span>⚡ Quick Styles</span></div><div class="preset-grid" id="preset-grid"></div></div>
             <div class="custom-section"><div class="custom-label"><span>🤖 Head</span><span class="swatch-current" id="swatch-cur-skin"></span></div><div class="swatch-group" id="swatches-skin"></div></div>
             <div class="custom-section"><div class="custom-label"><span>🧥 Hoodie</span><span class="swatch-current" id="swatch-cur-suit"></span></div><div class="swatch-group" id="swatches-suit"></div></div>
@@ -681,7 +750,7 @@
         };
     })();
     if (!Store.ok) {
-        __showNotice('⚠️ Limited preview mode: storage & 3D engine may not work here.\n✅ For the full game: save this code as MetroDash.html and open it directly in Chrome/Edge.');
+        __showNotice('⚠️ Limited preview mode: storage & 3D engine may not work here.\n✅ For the full game: save this code as CyberDash.html and open it directly in Chrome/Edge.');
     }
 
     function bindBtn(id, fn) {
@@ -759,7 +828,7 @@
         startRealtimeSync() {
             firebaseDB.ref('.info/connected').on('value', (snap) => {
                 this.firebaseOnline = snap.val() === true;
-                if (this.firebaseOnline) this.backfillLocalScores();
+                if (this.firebaseOnline) { this.processPendingDelete(); this.backfillLocalScores(); }   // Task 23: queued leaderboard removals first
                 lbVpnCheck();
             }, () => {
                 this.firebaseOnline = false;
@@ -828,8 +897,13 @@
                 return { success: false, error: 'Username already exists' };
             this.users.push({ username: u, pass: await hashPassword(password), createdAt: new Date().toISOString() });
             Store.set('metro_users', JSON.stringify(this.users));
+            const wasLoggedIn = !!this.currentUser;
+            await this._handleAccountSwitch(u);   // Task 23: switching accounts wipes the old one
+            if (!wasLoggedIn) this.wipeProgress();   // Task 23+24: brand-new account = 100% fresh (guest progress never carries over)
             this.currentUser = { username: u };
             this.saveSession();
+            await this.restoreAccountData(u);     // Task 24: fresh names have no save — but a re-created name recovers its cloud save
+            this.syncGameFromStore();
             return { success: true };
         },
         async login(username, password) {
@@ -844,11 +918,172 @@
             } else {
                 return { success: false, error: 'Invalid username or password' };
             }
+            await this._handleAccountSwitch(user.username);   // Task 23: switching accounts wipes the old one
             this.currentUser = { username: user.username };
             this.saveSession();
+            const restored = await this.restoreAccountData(user.username);   // Task 24: my coins/bots/records come back
+            this.syncGameFromStore();
+            if (restored) this.gameToast('💾 Welcome back, ' + user.username + ' — progress restored ✅');
             return { success: true };
         },
-        logout() { this.currentUser = null; this.saveSession(); },
+        // ---- Task 23: logout = leaderboard removal + FULL progress wipe ----
+        PROGRESS_KEYS: ['subway_dash_bank', 'subway_dash_chars', 'subway_dash_char', 'subway_dash_colors_v2', 'subway_dash_hi', 'subway_dash_bestdist', 'subway_dash_boost_hs', 'subway_dash_boost_shield', 'metro_free_hs', 'metro_free_shield', 'metro_daily_v1'],
+        wipeProgress() {
+            this.PROGRESS_KEYS.forEach(k => Store.remove(k));
+        },
+        // ---- Task 24: per-account save slots — logout stashes progress under the account, login brings it back ----
+        SAVE_PREFIX: 'metro_save_',
+        slotKey(username) { return this.SAVE_PREFIX + (username || '').trim().toLowerCase(); },
+        snapshotAccount(username) {
+            const name = (username || '').trim();
+            if (!name) return null;
+            const low = name.toLowerCase();
+            try {
+                const data = {};
+                this.PROGRESS_KEYS.forEach(k => {
+                    const v = Store.get(k, null);
+                    if (v !== null && v !== undefined) data[k] = v;
+                });
+                const entry = this.localScores.find(e => e.username && e.username.toLowerCase() === low) || null;
+                const snap = {
+                    v: 1, savedAt: new Date().toISOString(), user: name,
+                    data: data,
+                    lb: entry ? { username: entry.username, score: entry.score, date: entry.date } : null
+                };
+                Store.set(this.slotKey(name), JSON.stringify(snap));   // local vault — instant, survives the logout wipe
+                return snap;
+            } catch (e) { return null; }
+        },
+        _applySnapshot(snap) {
+            if (!snap || !snap.data || typeof snap.data !== 'object') return false;
+            Object.keys(snap.data).forEach(k => {
+                if (this.PROGRESS_KEYS.indexOf(k) === -1) return;   // whitelist — never inject foreign keys
+                const v = snap.data[k];
+                if (typeof v !== 'string') return;                  // Store values are raw strings
+                try { Store.set(k, v); } catch (e) {}
+            });
+            this.PROGRESS_KEYS.forEach(k => { if (!(k in snap.data)) Store.remove(k); });   // the save beats stale locals
+            return true;
+        },
+        async restoreAccountData(username) {
+            const low = (username || '').trim().toLowerCase();
+            if (!low) return false;
+            const pend = Store.get('metro_lb_delete', null);
+            if (pend && pend.trim().toLowerCase() === low) Store.remove('metro_lb_delete');   // they are back — cancel queued leaderboard removal
+            let local = null;
+            try { local = JSON.parse(Store.get(this.slotKey(username), 'null')); } catch (e) {}
+            if (!local || !local.data || typeof local.data !== 'object') return false;   // no vault yet — brand-new account stays fresh
+            const applied = this._applySnapshot(local);
+            const lb = local.lb;
+            if (applied && lb && lb.username && typeof lb.score === 'number') {   // their leaderboard spot comes home too
+                const entry = this.localScores.find(e => e.username && e.username.toLowerCase() === lb.username.toLowerCase());
+                if (entry) {
+                    if (lb.score > entry.score) { entry.score = lb.score; entry.date = lb.date || entry.date; }
+                } else {
+                    this.localScores.push({ username: lb.username, score: lb.score, date: lb.date || new Date().toISOString() });
+                }
+                try { Store.set('metro_leaderboard', JSON.stringify(this.localScores)); } catch (e) {}
+                this.rebuild();
+                renderLeaderboard();
+                if (firebaseReady) {
+                    try {
+                        firebaseDB.ref('leaderboard/' + lb.username.replace(/[.#$\[\]]/g, '_')).set({
+                            username: lb.username, score: lb.score, date: lb.date || new Date().toISOString()
+                        }).catch(() => {});
+                    } catch (e) {}
+                }
+            }
+            return applied;
+        },
+        syncGameFromStore() {   // Task 24: push restored Store values into the running game (no reload needed)
+            const g = window.game;
+            if (!g) return;
+            try {
+                g.bank = parseInt(Store.get('subway_dash_bank', '0'), 10) || 0;
+                g.highScore = parseInt(Store.get('subway_dash_hi', '0'), 10) || 0;
+                g.bestDist = parseInt(Store.get('subway_dash_bestdist', '0'), 10) || 0;
+                let owned = [];
+                try { owned = JSON.parse(Store.get('subway_dash_chars', '["classic"]')); } catch (e) {}
+                if (!Array.isArray(owned) || !owned.length) owned = ['classic'];
+                if (!owned.includes('classic')) owned.unshift('classic');
+                g.ownedChars = owned;
+                const savedChar = Store.get('subway_dash_char', 'classic');
+                const wantChar = (savedChar === 'police' || savedChar === 'ninja' || savedChar === 'classic') ? savedChar : 'classic';
+                if (!g.ownedChars.includes(wantChar)) g.ownedChars.push(wantChar);
+                let swapped = false;
+                if (wantChar !== g.selectedChar) {
+                    g.selectedChar = wantChar;
+                    if (g.state === STATE.MENU || g.state === STATE.CUSTOMIZE) { try { g.swapCharacter(wantChar); swapped = true; } catch (e) {} }
+                }
+                try { g.loadSavedColors(); } catch (e) {}
+                if (!swapped && g.selectedChar === 'classic' && g.playerMaterials && g.customColors) {
+                    Object.keys(g.customColors).forEach(cat => {   // repaint classic in place, no rebuild
+                        const m = g.playerMaterials[cat];
+                        if (m && g.customColors[cat]) {
+                            try { m.color.setStyle(g.customColors[cat]); if (cat === 'visor' && m.emissive) m.emissive.setStyle(g.customColors[cat]); } catch (e) {}
+                        }
+                    });
+                }
+                g.refreshMenuStats();
+                g.renderCharacterShop();
+                if (window.DailyRewards) { try { window.DailyRewards.load(); window.DailyRewards.render(); } catch (e) {} }
+            } catch (e) {}
+        },
+        async removeFromLeaderboards(username) {
+            const low = (username || '').toLowerCase();
+            if (!low) return;
+            this.localScores = this.localScores.filter(e => e.username.toLowerCase() !== low);
+            try { Store.set('metro_leaderboard', JSON.stringify(this.localScores)); } catch (e) {}
+            this.rebuild();
+            renderLeaderboard();
+            const safe = username.replace(/[.#$\[\]]/g, '_');
+            if (firebaseReady) {
+                try {
+                    await Promise.race([
+                        firebaseDB.ref('leaderboard/' + safe).remove(),
+                        new Promise((_, rej) => setTimeout(() => rej(new Error('lb-remove-timeout')), 2500))
+                    ]);
+                    Store.remove('metro_lb_delete');
+                } catch (e) { try { Store.set('metro_lb_delete', username); } catch (e2) {} }   // queued — removed on next connect
+            } else {
+                try { Store.set('metro_lb_delete', username); } catch (e) {}   // queued — removed on next connect
+            }
+        },
+        processPendingDelete() {
+            const pend = Store.get('metro_lb_delete', null);
+            if (!pend || !firebaseReady) return;
+            const safe = pend.replace(/[.#$\[\]]/g, '_');
+            firebaseDB.ref('leaderboard/' + safe).remove()
+                .then(() => Store.remove('metro_lb_delete'))
+                .catch(() => {});
+        },
+        async _handleAccountSwitch(newUsername) {
+            const next = (newUsername || '').trim().toLowerCase();
+            if (this.currentUser && this.currentUser.username.toLowerCase() !== next) {
+                // switching away = the old account logs out: stash its save, leave leaderboards, wipe locally
+                const old = this.currentUser.username;
+                this.snapshotAccount(old);   // Task 24: this vault brings the old account back on its next login
+                await this.removeFromLeaderboards(old);
+                this.wipeProgress();
+                return true;
+            }
+            if (this.currentUser) Store.remove('metro_lb_delete');   // same user back in — cancel queued removal
+            return false;
+        },
+        async logout() {
+            if (this._loggingOut) return;
+            this._loggingOut = true;
+            const u = this.currentUser ? this.currentUser.username : null;
+            this.currentUser = null;
+            this.saveSession();
+            if (u) {
+                this.snapshotAccount(u);   // Task 24: progress is stashed in the account vault — next login restores it
+                await this.removeFromLeaderboards(u);   // Task 23: leave the leaderboard while logged out
+            }
+            this.wipeProgress();   // local reset — logging back in brings everything home
+            this.gameToast('💾 Progress saved — logging out 👋', true);
+            setTimeout(() => { try { location.reload(); } catch (e) {} }, 400);
+        },
         isLoggedIn() { return this.currentUser !== null; },
 
         async updateLeaderboard(username, score) {
@@ -919,11 +1154,12 @@
             const rank = i + 1;
             const rankClass = rank === 1 ? 'r1' : rank === 2 ? 'r2' : rank === 3 ? 'r3' : 'rother';
             const isMe = Auth.currentUser && Auth.currentUser.username.toLowerCase() === entry.username.toLowerCase();
+            const isKing = entry.username.trim().toLowerCase() === 'matin';
             const dateStr = entry.date ? new Date(entry.date).toLocaleDateString() : '';
             return `<div class="lb-entry ${isMe ? 'is-me' : ''}">
                 <div class="lb-rank ${rankClass}">${rank}</div>
                 <div class="lb-user-info">
-                    <div class="lb-username">${escHtml(entry.username)}${isMe ? ' (You)' : ''}</div>
+                    <div class="lb-username${isKing ? ' is-king' : ''}">${isKing ? '<span class="lb-crown">👑</span>' : ''}${escHtml(entry.username)}${isMe ? ' (You)' : ''}</div>
                     <div class="lb-date">${dateStr}</div>
                 </div>
                 <div class="lb-score">${entry.score.toLocaleString()}</div>
@@ -1000,7 +1236,15 @@
             errEl.style.display = 'block';
         }
     });
-    bindBtn('do-logout-btn', () => { Auth.logout(); refreshAuthUI(); });
+    bindBtn('do-logout-btn', () => {
+        const btn = document.getElementById('do-logout-btn');
+        if (btn && !btn.dataset.arm) {   // Task 24: 2-step confirm — logout saves progress under the account and resets locally
+            btn.dataset.arm = '1'; btn.textContent = '⚠️ Sure? Save & exit';
+            setTimeout(() => { if (btn) { btn.dataset.arm = ''; btn.textContent = 'Logout'; } }, 3000);
+            return;
+        }
+        Auth.logout();
+    });
     refreshAuthUI();
 
     /* ── Daily Rewards — 7-day welcome calendar (v4) ── */
@@ -1386,15 +1630,22 @@
         { name: 'Bubblegum', colors: { skin: '#ffb8a8', suit: '#ff7675', pants: '#2d3436', shoe: '#fdcb6e', visor: '#ff6b81' } },
         { name: 'Shadow', colors: { skin: '#a29bfe', suit: '#2d3436', pants: '#2d3436', shoe: '#b515d6', visor: '#a55eea' } }
     ];
+    // ---------- Task 21: CHARACTER SHOP — buy bots with banked coins ----------
+    const CHARACTERS = [
+        { id: 'classic', name: 'CLASSIC', emoji: '🤖', badge: 'The Original', price: 0, desc: 'Neon runner' },
+        { id: 'police',  name: 'POLICE',  emoji: '👮', badge: 'Unit-734',  price: 35000, desc: 'Law of the neon streets' },
+        { id: 'ninja',   name: 'NINJA',   emoji: '🥷', badge: 'Shadow',    price: 50000, desc: 'Silent · Deadly · Glossy' }
+    ];
     const DIFFICULTY_CONFIG = {
-        easy: { baseSpeed: 16.0, maxSpeed: 48.0, speedAccel: 0.35, doubleObstacleChance: 0.06, hint: ' Relaxed pace, fewer obstacles' },
-        normal: { baseSpeed: 22.0, maxSpeed: 68.0, speedAccel: 0.55, doubleObstacleChance: 0.18, hint: '🟡 Balanced speed & obstacles' },
-        hard: { baseSpeed: 28.0, maxSpeed: 85.0, speedAccel: 0.75, doubleObstacleChance: 0.28, hint: '🔴 Fast & furious, always an escape!' }
+        easy:   { baseSpeed: 16.0, maxSpeed: 48.0, absMax: 58.0,  speedAccel: 0.35, doubleObstacleChance: 0.06, doubleCap: 0.45, hardCap: 0.12, lvlSpeed: 1.0, lvlDouble: 0.012, lvlHard: 0.005, lvlReact: 0.004, reactFloor: 0.30, hint: '🟢 Relaxed pace, gentle ramp' },
+        normal: { baseSpeed: 22.0, maxSpeed: 68.0, absMax: 82.0,  speedAccel: 0.55, doubleObstacleChance: 0.18, doubleCap: 0.62, hardCap: 0.22, lvlSpeed: 1.8, lvlDouble: 0.025, lvlHard: 0.012, lvlReact: 0.008, reactFloor: 0.22, hint: '🟡 Balanced — ramps up every level' },
+        hard:   { baseSpeed: 28.0, maxSpeed: 85.0, absMax: 115.0, speedAccel: 0.85, doubleObstacleChance: 0.30, doubleCap: 0.80, hardCap: 0.38, lvlSpeed: 2.6, lvlDouble: 0.040, lvlHard: 0.020, lvlReact: 0.013, reactFloor: 0.12, hint: '🔴 Brutal — levels push it past human limits!' }
     };
     const THEMES = {
         city:   { bg: 0x0a0f1d, fog: 0x0a0f1d, fogD: 0.012, road: 0x1e293b, roadRough: 0.8, curb: 0x334155, laneOp: 0.75, neonL: 0x00f0ff, neonR: 0xff007f, side: 'city',   gantry: 0x334155 },
         desert: { bg: 0xf4a261, fog: 0xf4a261, fogD: 0.010, road: 0xe9c46a, roadRough: 0.9, curb: 0xd4a373, laneOp: 0.4,  neonL: 0xe76f51, neonR: 0xf4a261, side: 'desert', gantry: 0x8d99ae },
-        snow:   { bg: 0xa9c9e8, fog: 0xa9c9e8, fogD: 0.011, road: 0x9db4cc, roadRough: 0.7, curb: 0xe8f1f8, laneOp: 0.85, neonL: 0x38bdf8, neonR: 0xf0abfc, side: 'snow',   gantry: 0x64748b }
+        snow:   { bg: 0xa9c9e8, fog: 0xa9c9e8, fogD: 0.011, road: 0x9db4cc, roadRough: 0.7, curb: 0xe8f1f8, laneOp: 0.85, neonL: 0x38bdf8, neonR: 0xf0abfc, side: 'snow',   gantry: 0x64748b },
+        jungle: { bg: 0x14301f, fog: 0x14301f, fogD: 0.0125, road: 0x2f4a38, roadRough: 0.88, curb: 0x517058, laneOp: 0.5, neonL: 0x39ff9c, neonR: 0xc8ff4d, side: 'jungle', gantry: 0x4a5f43 }
     };
     const LANE_WIDTH = 2.4;
     const LANES = [-LANE_WIDTH, 0, LANE_WIDTH];
@@ -1427,6 +1678,14 @@
     const MEGA_JUMP_MULT = 1.42;
     const RUSH_TIME = 9;
 
+    // ---------- Task 20: QUALITY RESTORE ----------
+    // Task 19 blanket-converted EVERY MeshStandardMaterial to Phong. Coins turned
+    // muddy brown, the robot washed out, the scene went flat — user feedback:
+    // "quality got much worse". The constructor patch is GONE: materials are PBR
+    // again at creation. Cost is recovered in bakeSegment(), which converts only
+    // BAKED static geometry (env + obstacle templates) to a richly-tuned Phong —
+    // hero objects the player stares at (robot, coins, powerups) stay full PBR.
+
     class GameEngine {
         constructor() {
             this.state = STATE.MENU;
@@ -1441,6 +1700,9 @@
             this.bank = parseInt(Store.get('subway_dash_bank', '0'), 10) || 0;
             this.bestDist = parseInt(Store.get('subway_dash_bestdist', '0'), 10) || 0;
             this.mutedPref = Store.get('subway_dash_muted', '0') === '1';
+            // Task 23: user-controlled graphics mode — sharp (full retina) / auto / fast
+            const savedGfx = Store.get('cyberdash_gfx', 'sharp');
+            this.gfxMode = ['sharp', 'auto', 'fast'].includes(savedGfx) ? savedGfx : 'sharp';
             this.invincibleTimer = 0;
             this.magnetTimer = 0;
             this.multTimer = 0;
@@ -1461,6 +1723,13 @@
             this.customColors = Object.assign({}, DEFAULT_COLORS);
             this.savedColorsBackup = Object.assign({}, DEFAULT_COLORS);
             this.loadSavedColors();
+            // Task 21: character shop state (new keys — metro_* untouched)
+            try { this.ownedChars = JSON.parse(Store.get('subway_dash_chars', '["classic"]')); } catch (e) { this.ownedChars = ['classic']; }
+            if (!Array.isArray(this.ownedChars) || !this.ownedChars.length) this.ownedChars = ['classic'];
+            if (!this.ownedChars.includes('classic')) this.ownedChars.unshift('classic');
+            const savedChar = Store.get('subway_dash_char', 'classic');
+            this.selectedChar = (savedChar === 'police' || savedChar === 'ninja' || savedChar === 'classic') ? savedChar : 'classic';
+            if (!this.ownedChars.includes(this.selectedChar)) { this.ownedChars.push(this.selectedChar); this.saveOwnedChars(); }
             this.canvas = document.getElementById('game-canvas');
             this.clock = new THREE.Clock();
             this.currentLane = 1;
@@ -1479,6 +1748,9 @@
             this.tpl = {};
             this.coinGeo = new THREE.CylinderGeometry(0.32, 0.32, 0.08, 20);
             this.coinMat = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.95, roughness: 0.15, emissive: 0xffaa00, emissiveIntensity: 0.35 });
+            // Task 19: coins render as ONE InstancedMesh (was 1 draw call per coin)
+            this.coinMax = 140;
+            this.coinSpin = 0;
             this.puGeo = new THREE.OctahedronGeometry(0.45);
             this.puRingGeo = new THREE.TorusGeometry(0.68, 0.05, 10, 36);
             const puMat = (c) => new THREE.MeshStandardMaterial({ color: c, emissive: c, emissiveIntensity: 0.8, metalness: 0.35, roughness: 0.25 });
@@ -1511,6 +1783,7 @@
             this.feverOverlay = document.getElementById('fever-overlay');
             this.flashOverlay = document.getElementById('flash-overlay');
             this.toastWrap = document.getElementById('toast-wrap');
+            this.fpsChip = document.getElementById('fps-chip');
             this.countdownOverlay = document.getElementById('countdown-overlay');
             this.countdownNum = document.getElementById('countdown-num');
             this.pauseModal = document.getElementById('pause-modal');
@@ -1537,6 +1810,7 @@
             this.createShieldMesh();
             this.initSpeedFX();
             this.setupCustomizerUI();
+            this.setupCharacterShop();   // Task 21: character shop cards
             this.setupControls();
             this.setupEvents();
             this.setupVisibilityHandler();
@@ -1558,6 +1832,8 @@
             if (b) b.innerText = this.highScore.toLocaleString();
             if (c) c.innerText = this.bank.toLocaleString();
             if (d) d.innerText = this.bestDist + 'm';
+            const cb = document.getElementById('char-bank');
+            if (cb) cb.textContent = '🪙 ' + this.bank.toLocaleString();   // Task 21: studio bank chip
             this.updateBoostChips();
         }
         updateBoostChips() {
@@ -1650,6 +1926,7 @@
             if (this.speedBarContainer) this.speedBarContainer.style.opacity = o;
             if (this.powerupBar) this.powerupBar.style.opacity = o;
             if (this.levelBadge) this.levelBadge.style.opacity = o;
+            if (this.fpsChip) this.fpsChip.style.opacity = o;
             if (this.hudControls) {
                 if (visible) this.hudControls.classList.remove('off');
                 else this.hudControls.classList.add('off');
@@ -1669,15 +1946,20 @@
         }
         clearEntities() {
             this.obstacles.forEach(o => this.scene.remove(o.mesh));
-            this.coinsList.forEach(c => this.scene.remove(c.mesh));
+            this.coinsList = [];
+            if (this.coinInst) { this.coinInst.count = 0; this.coinInst.instanceMatrix.needsUpdate = true; }   // Task 19: instanced coins
             this.powerups.forEach(p => this.scene.remove(p.mesh));
-            this.particles.forEach(p => { this.scene.remove(p.system); p.system.geometry.dispose(); p.system.material.dispose(); });
+            this.particles.forEach(p => {
+                this.scene.remove(p.system);
+                if (p.pooled) { p.system.material.opacity = 0; this.sparkPool[p.count].push(p.pooled); }
+                else { p.system.geometry.dispose(); p.system.material.dispose(); }
+            });
             this.obstacles = []; this.coinsList = []; this.powerups = []; this.particles = [];
             this.clearFX();
         }
         clearFX() {
-            this.trail.forEach(t => { this.scene.remove(t.s); t.s.material.dispose(); });
-            this.popups.forEach(p => { this.scene.remove(p.sp); p.sp.material.map.dispose(); p.sp.material.dispose(); });
+            this.trail.forEach(t => { this.scene.remove(t.s); if (this.trailPool) this.trailPool.push(t.s); else t.s.material.dispose(); });
+            this.popups.forEach(p => { this.scene.remove(p.sp); if (!p.texCached) { if (p.sp.material.map) p.sp.material.map.dispose(); } p.sp.material.dispose(); });
             this.shockwaves.forEach(s => { this.scene.remove(s.m); s.m.material.dispose(); });
             this.trail = []; this.popups = []; this.shockwaves = [];
             this.speedStreaks.forEach(s => { s.mat.opacity = 0; });
@@ -1698,6 +1980,20 @@
             this.fovKick = 0; this.shakeTime = 0; this.shakeAmp = 0;
             this.nmCooldown = 0;
             this.squashTimer = 0; this.squashType = 'land';
+            // --- Task 18: smoothness & performance state ---
+            this.runPhase = 0;                 // accumulated run-cycle phase (rate follows speed without wall-clock jumps)
+            this.poseState = 'run';            // current animation state key
+            this.poseFrom = null;              // pose snapshot for buttery state transitions
+            this.poseBlend = 1;                // 0..1 transition progress
+            this.trailPool = [];               // recycled trail sprites (no per-frame material churn)
+            this.sparkPool = {};               // recycled spark particle systems keyed by count
+            this.popupTexCache = {};           // cached CanvasTextures for repeated popup texts
+            this.popupTexCount = 0;
+            this.time = 0;                     // elapsed time cached once per frame
+            this._hudT = 0; this._lastCoins = -1; this._lastBarPct = -99;
+            this.fpsAvg = 60; this.fpsSamples = 0; this.fpsSampleT = 0;
+            this._chipT = 0; this._chipShown = false;
+            this.fpsOn = (typeof Store !== 'undefined' && Store.get) ? Store.get('cyberdash_fpsmeter', '1') !== '0' : true;
         }
         makeGlowTexture() {
             const c = document.createElement('canvas'); c.width = 64; c.height = 64;
@@ -1767,14 +2063,24 @@
 
         initThree() {
             this.scene = new THREE.Scene();
-            this.camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 260);
+            this.camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 260);   // Task 20: 212→260, skyline depth back (tri cost is negligible)
             this.camera.position.set(0, 4.2, 6.2);
             this.camera.lookAt(0, 1.4, -5);
+            // Task 19: detect mobile BEFORE renderer creation so AA/shadows can be tuned per device
+            this.isMobile = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || ('ontouchstart' in window);
             this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: true, powerPreference: "high-performance" });
             this.renderer.setSize(window.innerWidth, window.innerHeight);
-            this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            this.renderer.shadowMap.enabled = true;
-            this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            // Task 18-22: adaptive resolution — starts at device cap, auto-steps down/up to hold ~60fps
+            // Task 23: caps now derive from the GRAPHICS mode selector — Sharp renders at FULL devicePixelRatio
+            //          (real retina, up to 3x) so a phone can never look blurry unless the user picks Fast
+            const gc = this.gfxCaps(this.gfxMode);
+            this.prCap = gc.cap; this.prMin = gc.min; this.prEmerg = gc.emerg;
+            this.adaptivePR = this.prCap;
+            this.trailCap = this.isMobile ? 36 : 72;   // Task 20: 24→36 — trail reads richer, overdraw still tiny
+            this.renderer.setPixelRatio(this.adaptivePR);
+            // Task 19: no shadow pass at all on phones — a cheap blob shadow replaces it
+            this.renderer.shadowMap.enabled = !this.isMobile;
+            this.renderer.shadowMap.type = THREE.PCFShadowMap;   // Task 19: PCF instead of PCFSoft (desktop)
             this.applyMapTheme(this.selectedMap);
         }
 
@@ -1791,9 +2097,15 @@
             this.scene.add(ambientLight);
             const sunLight = new THREE.DirectionalLight(0xe0f2fe, 1.4);
             sunLight.position.set(15, 45, 15);
-            sunLight.castShadow = true;
-            sunLight.shadow.mapSize.width = 2048;
-            sunLight.shadow.mapSize.height = 2048;
+            // Task 19: shadow pass runs on desktop only — phones get a blob shadow
+            sunLight.castShadow = !this.isMobile;
+            if (!this.isMobile) {
+                sunLight.shadow.mapSize.width = 1024;   // Task 19: 2048 → 1024 (tight frustum keeps it crisp)
+                sunLight.shadow.mapSize.height = 1024;
+                const sc = sunLight.shadow.camera;      // Task 20: frustum widened ±9→±16 — long building/gantry shadows return
+                sc.left = -16; sc.right = 16; sc.top = 20; sc.bottom = -12; sc.near = 20; sc.far = 120;
+                sunLight.shadow.bias = -0.0004;
+            }
             this.scene.add(sunLight);
             const bluePoint = new THREE.PointLight(0x00f0ff, 2.5, 35);
             bluePoint.position.set(-6, 4, -15);
@@ -1813,6 +2125,123 @@
             });
         }
 
+        // ---------- Task 19: static geometry baking (draw-call crusher) ----------
+        // Every building/deco mesh used to be its own draw call (~300-500 per frame).
+        // bakeSegment() merges all static meshes of a track segment that share the
+        // same material signature into ONE combined BufferGeometry each, collapsing
+        // hundreds of draw calls into ~8 per segment. Animated materials (window /
+        // neon / flame pulses) keep working because each merged bucket shares one
+        // surviving material instance that the FX loop still animates.
+        // ---------- Task 20: rich-tuned Phong conversion for BAKED geometry ----------
+        // Static env + obstacle templates are the bulk of on-screen pixels; they run
+        // on Phong (≈half the fragment cost of PBR) while hero objects stay PBR.
+        // Tuning is intentionally RICHER than the old blanket patch: metallic
+        // surfaces keep crisp wide highlights, emissives copy over untouched.
+        toPhong(mt) {
+            if (!mt || !mt.isMeshStandardMaterial) return mt;
+            const metal = mt.metalness !== undefined ? mt.metalness : 0;
+            const p = {
+                color: mt.color ? mt.color.clone() : new THREE.Color(0xffffff),
+                emissive: mt.emissive ? mt.emissive.clone() : new THREE.Color(0x000000),
+                emissiveIntensity: mt.emissiveIntensity !== undefined ? mt.emissiveIntensity : 1,
+                transparent: mt.transparent, opacity: mt.opacity,
+                side: mt.side, blending: mt.blending, depthWrite: mt.depthWrite,
+                fog: mt.fog, flatShading: !!mt.flatShading,
+                specular: metal > 0.5 ? 0x8f8f8f : (metal > 0.15 ? 0x4a4a4a : 0x181818),
+                shininess: metal > 0.5 ? 64 : (metal > 0.15 ? 36 : 16)
+            };
+            if (mt.map) p.map = mt.map;
+            const ph = new THREE.MeshPhongMaterial(p);
+            mt.dispose();
+            return ph;
+        }
+        remapFX(oldMat, newMat) {
+            // keep neon/window/flame pulses animating the SURVIVING material
+            const arrs = [this.fxNeon, this.fxWindows, this.fxFlames];
+            for (let a = 0; a < arrs.length; a++)
+                for (let i = 0; i < arrs[a].length; i++)
+                    if (arrs[a][i].mat === oldMat) arrs[a][i].mat = newMat;
+        }
+        mergeGeos(geos) {
+            let total = 0;
+            for (let i = 0; i < geos.length; i++) total += geos[i].attributes.position.count;
+            const hasN = geos[0].attributes.normal !== undefined;
+            const hasU = geos[0].attributes.uv !== undefined;
+            const pos = new Float32Array(total * 3);
+            const nor = hasN ? new Float32Array(total * 3) : null;
+            const uv = hasU ? new Float32Array(total * 2) : null;
+            let off = 0;
+            for (let i = 0; i < geos.length; i++) {
+                const g = geos[i], n = g.attributes.position.count;
+                pos.set(g.attributes.position.array, off * 3);
+                if (nor) nor.set(g.attributes.normal.array, off * 3);
+                if (uv) uv.set(g.attributes.uv.array, off * 2);
+                off += n;
+                g.dispose();
+            }
+            const out = new THREE.BufferGeometry();
+            out.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+            if (nor) out.setAttribute('normal', new THREE.BufferAttribute(nor, 3));
+            if (uv) out.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+            return out;
+        }
+        bakeSegment(seg) {
+            seg.updateMatrixWorld(true);
+            const inv = new THREE.Matrix4().copy(seg.matrixWorld).invert();
+            const items = [];
+            seg.traverse(o => { if (o !== seg && o.isMesh && !Array.isArray(o.material) && !(o.userData && o.userData.noBake)) items.push(o); });
+            const buckets = new Map();
+            const disposed = new Set();
+            for (let i = 0; i < items.length; i++) {
+                const m = items[i], mt = m.material, g0 = m.geometry;
+                if (!g0 || !g0.attributes || !g0.attributes.position) continue;
+                const attrs = Object.keys(g0.attributes).sort().join('+');
+                const key = [attrs, m.castShadow ? 1 : 0, m.receiveShadow ? 1 : 0,
+                    mt.type, mt.color ? mt.color.getHexString() : 'x', mt.map ? mt.map.uuid : 'x',
+                    mt.emissive ? mt.emissive.getHexString() : 'x', mt.emissiveIntensity,
+                    mt.opacity, mt.transparent ? 1 : 0, mt.side, mt.blending, mt.depthWrite ? 1 : 0,
+                    mt.fog ? 1 : 0, mt.flatShading ? 1 : 0].join('|');
+                let b = buckets.get(key);
+                if (!b) {
+                    b = { mat: this.toPhong(mt), src: mt, geos: [], cast: m.castShadow, recv: m.receiveShadow };
+                    buckets.set(key, b);
+                    this.remapFX(mt, b.mat);   // Task 20: pulses follow the converted material
+                } else if (mt !== b.src) {
+                    if (!disposed.has(mt)) { disposed.add(mt); mt.dispose(); }   // duplicate material instance
+                }
+                let g = g0.index ? g0.toNonIndexed() : g0.clone();
+                g.applyMatrix4(new THREE.Matrix4().multiplyMatrices(inv, m.matrixWorld));
+                b.geos.push(g);
+                if (!disposed.has(g0)) { disposed.add(g0); g0.dispose(); }       // original geometry no longer needed
+            }
+            // detach only the merged meshes — noBake children (drone props, laser
+            // beams) keep their place in the graph and keep animating
+            for (let i = 0; i < items.length; i++) { const m = items[i]; if (m.parent) m.parent.remove(m); }
+            buckets.forEach(b => {
+                if (!b.geos.length) return;
+                const mesh = new THREE.Mesh(this.mergeGeos(b.geos), b.mat);
+                mesh.castShadow = b.cast; mesh.receiveShadow = b.recv;
+                seg.add(mesh);
+            });
+            return buckets.size;
+        }
+        dedupeFX() {
+            // after baking, many FX entries point at discarded duplicate materials —
+            // keep exactly one entry per surviving material instance
+            const seen = new Set();
+            const ded = arr => {
+                const out = [];
+                for (let i = 0; i < arr.length; i++) {
+                    if (!seen.has(arr[i].mat)) { seen.add(arr[i].mat); out.push(arr[i]); }
+                }
+                return out;
+            };
+            this.fxNeon = ded(this.fxNeon);
+            this.fxWindows = ded(this.fxWindows);
+            this.fxFlames = ded(this.fxFlames);
+        }
+
+
         createEnvironment() {
             if (this.trackSegments) this.trackSegments.forEach(seg => { this.scene.remove(seg); this.disposeGroup(seg); });
             if (this.skyDome) { this.scene.remove(this.skyDome); this.disposeGroup(this.skyDome); this.skyDome = null; }
@@ -1830,13 +2259,25 @@
             this.buildSkyDome();
             if (this.selectedMap === 'city') this.spawnAirCars();
             this.createWeather();
+            // Task 19: bake every segment's static meshes into merged geometry —
+            // collapses ~300-500 draw calls into ~10 per segment (the #1 mobile FPS win)
+            this.trackSegments.reduce((a, seg) => a + this.bakeSegment(seg), 0);
+            this.dedupeFX();
+            // Task 18: freeze static matrices — merged meshes skip per-frame
+            // matrix recomputation (they only animate via material uniforms/opacity)
+            this.trackSegments.forEach(seg => {
+                seg.updateMatrixWorld(true);
+                seg.traverse(o => { if (o !== seg) o.matrixAutoUpdate = false; });
+            });
+            if (this.skyDome) { this.skyDome.matrixAutoUpdate = false; this.skyDome.updateMatrixWorld(true); }
+            if (this.weather) { this.weather.pts.matrixAutoUpdate = false; this.weather.pts.updateMatrixWorld(true); }
         }
         buildSkyDome() {
             const map = this.selectedMap;
             if (!this._skyCache) this._skyCache = {};
             if (!this._skyCache[map]) this._skyCache[map] = this.makeSkyTexture(map);
             const dome = new THREE.Mesh(
-                new THREE.SphereGeometry(230, 24, 16),
+                new THREE.SphereGeometry(230, 24, 16),   // Task 20: 200→230 with camera.far 260 — distant skyline no longer clipped
                 new THREE.MeshBasicMaterial({ map: this._skyCache[map], side: THREE.BackSide, fog: false, depthWrite: false })
             );
             dome.renderOrder = -10;
@@ -1854,6 +2295,9 @@
             } else if (map === 'snow') {
                 g.addColorStop(0, '#16324f'); g.addColorStop(0.5, '#3a6d9e');
                 g.addColorStop(0.8, '#a9c9e8'); g.addColorStop(1, '#d7e8f7');
+            } else if (map === 'jungle') {
+                g.addColorStop(0, '#07281c'); g.addColorStop(0.45, '#145232');
+                g.addColorStop(0.75, '#3f7d4e'); g.addColorStop(1, '#88b977');
             } else {
                 g.addColorStop(0, '#02030a'); g.addColorStop(0.5, '#0a0f2d');
                 g.addColorStop(0.8, '#1c1440'); g.addColorStop(1, '#3d1d5c');
@@ -1893,6 +2337,32 @@
                     ctx.quadraticCurveTo(b[0] - 3, b[1] - 7, b[0], b[1]);
                     ctx.quadraticCurveTo(b[0] + 3, b[1] - 7, b[0] + 9, b[1]);
                     ctx.stroke();
+                });
+            } else if (map === 'jungle') {
+                const sg = ctx.createRadialGradient(300, 170, 8, 300, 170, 120);
+                sg.addColorStop(0, 'rgba(240,255,220,0.95)');
+                sg.addColorStop(0.25, 'rgba(210,255,190,0.55)');
+                sg.addColorStop(1, 'rgba(190,255,170,0)');
+                ctx.fillStyle = sg;
+                ctx.beginPath(); ctx.arc(300, 170, 120, 0, Math.PI * 2); ctx.fill();
+                ctx.save(); ctx.translate(300, 170); ctx.rotate(-0.5);
+                for (let i = 0; i < 5; i++) {
+                    const rg = ctx.createLinearGradient(0, 0, 700, 0);
+                    rg.addColorStop(0, 'rgba(230,255,200,0.2)');
+                    rg.addColorStop(1, 'rgba(230,255,200,0)');
+                    ctx.fillStyle = rg;
+                    ctx.fillRect(0, -16 - i * 9, 700, 7 + i * 3);
+                }
+                ctx.restore();
+                [['#0a281a', 330, 62], ['#0e3420', 380, 50], ['#123c26', 418, 44]].forEach(l => {
+                    ctx.fillStyle = l[0];
+                    for (let x = -20; x <= 1044; x += l[2] * 0.9) {
+                        const r = l[2] * (0.7 + Math.random() * 0.6);
+                        ctx.beginPath();
+                        ctx.arc(x, l[1] + Math.random() * 14, r, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    ctx.fillRect(0, l[1], 1024, 512 - l[1]);
                 });
             } else {
                 const bands = [['rgba(52,211,153,', 55], ['rgba(96,220,255,', 95], ['rgba(167,139,250,', 135]];
@@ -1937,6 +2407,7 @@
                 car.position.set((Math.random() - 0.5) * 70, 13 + Math.random() * 7, -25 - Math.random() * 80);
                 car.userData.speed = (4 + Math.random() * 5) * (Math.random() < 0.5 ? 1 : -1);
                 if (car.userData.speed < 0) car.rotation.y = Math.PI;
+                this.bakeSegment(car);   // Task 19: 3 meshes → 1 per air car
                 this.scene.add(car);
                 this.airCars.push(car);
             }
@@ -1954,13 +2425,14 @@
                 positions[i * 3 + 2] = -75 + Math.random() * 84;
                 if (map === 'snow') vel.push(-0.9 - Math.random() * 1.6);
                 else if (map === 'desert') vel.push(0.5 + Math.random() * 1.1);
+                else if (map === 'jungle') vel.push(0.12 + Math.random() * 0.4);
                 else vel.push(0.25 + Math.random() * 0.5);
                 phases.push(Math.random() * 6.28);
             }
             const geom = new THREE.BufferGeometry();
             geom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            const color = map === 'snow' ? 0xffffff : (map === 'desert' ? 0xffa548 : 0x7fe9ff);
-            const mat = new THREE.PointsMaterial({ color: color, size: map === 'snow' ? 0.22 : 0.16, map: this.trailTex, transparent: true, opacity: 0.75, depthWrite: false, blending: THREE.AdditiveBlending });
+            const color = map === 'snow' ? 0xffffff : (map === 'desert' ? 0xffa548 : (map === 'jungle' ? 0xc8ff6a : 0x7fe9ff));
+            const mat = new THREE.PointsMaterial({ color: color, size: map === 'snow' ? 0.22 : (map === 'jungle' ? 0.17 : 0.16), map: this.trailTex, transparent: true, opacity: 0.75, depthWrite: false, blending: THREE.AdditiveBlending });
             const pts = new THREE.Points(geom, mat);
             this.scene.add(pts);
             this.weather = { pts: pts, vel: vel, phases: phases };
@@ -1978,6 +2450,8 @@
             w.pts.geometry.attributes.position.needsUpdate = true;
         }
         updateEnvFX(time, dt) {
+            // Task 20: pulses back to EVERY frame (Task 19's 30Hz gate made neon
+            // shimmer juddery on 60Hz displays) — post-dedupe lists are tiny, cost ≈0
             for (let i = 0; i < this.fxNeon.length; i++) {
                 const n = this.fxNeon[i];
                 n.mat.color.copy(n.base).multiplyScalar(0.72 + 0.28 * Math.sin(time * 2.2 + n.phase));
@@ -2116,6 +2590,39 @@
                             pyr.rotation.y = Math.PI / 4;
                             group.add(pyr);
                         }
+                    } else if (theme.side === 'jungle') {
+                        const roll = Math.random();
+                        if (roll < 0.34) {
+                            const tree = this.createJungleTree();
+                            tree.position.set(side * (9.2 + Math.random() * 2.5), 0, bZ);
+                            tree.scale.setScalar(0.85 + Math.random() * 0.5);
+                            group.add(tree);
+                        } else if (roll < 0.5) {
+                            const fern = this.createFern();
+                            fern.position.set(side * (8.3 + Math.random() * 3), 0, bZ + (Math.random() * 6 - 3));
+                            fern.scale.setScalar(0.8 + Math.random() * 0.7);
+                            group.add(fern);
+                        } else if (roll < 0.64) {
+                            const ruin = this.createTempleRuin();
+                            ruin.position.set(side * (9 + Math.random() * 3), 0, bZ);
+                            ruin.scale.setScalar(0.8 + Math.random() * 0.5);
+                            group.add(ruin);
+                        } else if (roll < 0.82) {
+                            const shroom = this.createGlowMushroom();
+                            shroom.position.set(side * (8.4 + Math.random() * 2.6), 0, bZ + (Math.random() * 5 - 2.5));
+                            shroom.scale.setScalar(0.8 + Math.random() * 0.7);
+                            group.add(shroom);
+                        } else {
+                            const pond = this.createJunglePond();
+                            pond.position.set(side * (10.5 + Math.random() * 3.5), 0.02, bZ + (Math.random() * 5 - 2.5));
+                            group.add(pond);
+                        }
+                        if (Math.random() < 0.45) {
+                            const giant = this.createJungleTree(true);
+                            giant.position.set(side * (26 + Math.random() * 16), 0, bZ - 8 - Math.random() * 14);
+                            giant.rotation.y = Math.random() * 3;
+                            group.add(giant);
+                        }
                     } else {
                         const roll = Math.random();
                         if (roll < 0.38) {
@@ -2167,9 +2674,9 @@
                     }
                 });
             }
-            if (theme.side === 'desert' || theme.side === 'snow') {
+            if (theme.side !== 'city') {
                 const groundGeo = new THREE.PlaneGeometry(260, length);
-                const groundMat = new THREE.MeshStandardMaterial({ color: theme.side === 'desert' ? 0xdfb15c : 0xeef4fb, roughness: 1, metalness: 0 });
+                const groundMat = new THREE.MeshStandardMaterial({ color: theme.side === 'desert' ? 0xdfb15c : (theme.side === 'jungle' ? 0x22452b : 0xeef4fb), roughness: 1, metalness: 0 });
                 const ground = new THREE.Mesh(groundGeo, groundMat);
                 ground.rotation.x = -Math.PI / 2;
                 ground.position.y = -0.06;
@@ -2186,6 +2693,12 @@
                             mesa.position.set(fx, mesaH / 2 - 0.8, fz);
                             mesa.rotation.y = Math.random() * 3;
                             group.add(mesa);
+                        }
+                    } else if (theme.side === 'jungle') {
+                        if (Math.random() < 0.75) {
+                            const big = this.createJungleTree(true);
+                            big.position.set(fx, 0, fz);
+                            group.add(big);
                         }
                     } else {
                         if (Math.random() < 0.65) {
@@ -2240,7 +2753,7 @@
         getBillTexes() {
             if (!this._billTexes) {
                 const cfgs = [
-                    { bg: '#12002b', t1: 'METRO', t2: 'DASH', c1: '#00f0ff', c2: '#ff007f' },
+                    { bg: '#12002b', t1: 'CYBER', t2: 'DASH', c1: '#00f0ff', c2: '#ff007f' },
                     { bg: '#001a1a', t1: 'NEON', t2: 'RUN!', c1: '#ffd700', c2: '#00f0ff' },
                     { bg: '#20000a', t1: 'ROBOT', t2: 'RACE', c1: '#ff007f', c2: '#ffd700' }
                 ];
@@ -2365,6 +2878,162 @@
             return g;
         }
 
+        createJungleTree(giant = false) {
+            const g = new THREE.Group();
+            const trunkH = giant ? 12 + Math.random() * 8 : 4.5 + Math.random() * 2.5;
+            const trunkR = giant ? 0.55 : 0.22 + Math.random() * 0.08;
+            const trunk = new THREE.Mesh(new THREE.CylinderGeometry(trunkR * 0.7, trunkR, trunkH, 8), new THREE.MeshStandardMaterial({ color: 0x5d4037, roughness: 0.95 }));
+            trunk.position.y = trunkH / 2;
+            trunk.castShadow = !giant;
+            g.add(trunk);
+            const leafCols = giant ? [0x1b5e20, 0x2e7d32, 0x33691e] : [0x2e7d32, 0x43a047, 0x1b5e20, 0x388e3c];
+            const blobCount = giant ? 3 : 2 + Math.floor(Math.random() * 2);
+            const spread = giant ? 5 : 1.2;
+            for (let i = 0; i < blobCount; i++) {
+                const r = giant ? 4.5 + Math.random() * 3.5 : 1.1 + Math.random() * 0.9;
+                const blob = new THREE.Mesh(new THREE.SphereGeometry(r, 8, 6), new THREE.MeshStandardMaterial({ color: leafCols[Math.floor(Math.random() * leafCols.length)], roughness: 0.95, flatShading: true }));
+                blob.position.set((Math.random() - 0.5) * spread, trunkH + (i === 0 ? r * 0.25 : r * 0.9 + Math.random() * 0.8), (Math.random() - 0.5) * spread);
+                blob.scale.y = 0.62 + Math.random() * 0.18;
+                blob.castShadow = !giant;
+                g.add(blob);
+            }
+            if (!giant) {
+                const vineMat = new THREE.MeshStandardMaterial({ color: 0x4c8c3f, roughness: 0.9 });
+                for (let i = 0; i < 2; i++) {
+                    const vl = 0.9 + Math.random() * 1.2;
+                    const vine = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.035, vl, 5), vineMat);
+                    vine.position.set((Math.random() - 0.5) * 0.9, trunkH - vl / 2 - 0.2, (Math.random() - 0.5) * 0.9);
+                    g.add(vine);
+                }
+            }
+            return g;
+        }
+        createFern() {
+            const g = new THREE.Group();
+            const frondCols = [0x43a047, 0x66bb6a, 0x2e7d32];
+            for (let i = 0; i < 6; i++) {
+                const a = (i / 6) * Math.PI * 2;
+                const fl = 0.85 + Math.random() * 0.7;
+                const frond = new THREE.Mesh(new THREE.ConeGeometry(0.16, fl, 5), new THREE.MeshStandardMaterial({ color: frondCols[i % 3], roughness: 0.9, flatShading: true }));
+                frond.position.set(Math.cos(a) * fl * 0.3, fl * 0.34, Math.sin(a) * fl * 0.3);
+                frond.rotation.x = Math.sin(a) * 0.85;
+                frond.rotation.z = -Math.cos(a) * 0.85;
+                frond.castShadow = true;
+                g.add(frond);
+            }
+            const flower = new THREE.Mesh(new THREE.SphereGeometry(0.09, 7, 6), new THREE.MeshBasicMaterial({ color: 0xff77a9 }));
+            flower.position.y = 0.42;
+            g.add(flower);
+            return g;
+        }
+        createTempleRuin() {
+            const g = new THREE.Group();
+            const stoneMats = [0x8a9a7b, 0x7c8d6e, 0x94a486].map(c => new THREE.MeshStandardMaterial({ color: c, roughness: 0.9 }));
+            let y = 0;
+            for (let i = 0; i < 3; i++) {
+                const s = 1.15 - i * 0.22;
+                const h = 0.5 + Math.random() * 0.2;
+                const block = new THREE.Mesh(createRoundedBox(s, h, s, 0.06, 1), stoneMats[i % 3]);
+                block.position.y = y + h / 2;
+                block.rotation.y = (Math.random() - 0.5) * 0.5;
+                block.castShadow = true;
+                g.add(block);
+                y += h;
+            }
+            const moss = new THREE.Mesh(new THREE.SphereGeometry(0.62, 8, 5), new THREE.MeshStandardMaterial({ color: 0x3f7d3a, roughness: 0.95, flatShading: true }));
+            moss.scale.y = 0.3;
+            moss.position.y = y - 0.02;
+            g.add(moss);
+            const runeMat = new THREE.MeshBasicMaterial({ color: 0x39ff9c, transparent: true, opacity: 0.85 });
+            const rune = new THREE.Mesh(new THREE.BoxGeometry(1.16, 0.06, 1.16), runeMat);
+            rune.position.y = 0.32;
+            g.add(rune);
+            this.fxNeon.push({ mat: runeMat, base: new THREE.Color(0x39ff9c), phase: Math.random() * 6.28 });
+            return g;
+        }
+        createGlowMushroom() {
+            const g = new THREE.Group();
+            const stemMat = new THREE.MeshStandardMaterial({ color: 0xd7e8d0, roughness: 0.7 });
+            const glowCols = [0x39ff9c, 0x4dffdf, 0xa4ff4d];
+            for (let i = 0; i < 3; i++) {
+                const h = 0.35 + Math.random() * 0.75;
+                const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.1, h, 7), stemMat);
+                stem.position.set((Math.random() - 0.5) * 0.5, h / 2, (Math.random() - 0.5) * 0.5);
+                g.add(stem);
+                const capMat = new THREE.MeshStandardMaterial({ color: glowCols[i % 3], emissive: new THREE.Color(glowCols[i % 3]), emissiveIntensity: 0.9, roughness: 0.4 });
+                const cap = new THREE.Mesh(new THREE.SphereGeometry(0.16 + h * 0.18, 9, 7), capMat);
+                cap.scale.y = 0.55;
+                cap.position.set(stem.position.x, h, stem.position.z);
+                cap.castShadow = true;
+                g.add(cap);
+            }
+            return g;
+        }
+        createJunglePond() {
+            const g = new THREE.Group();
+            const r = 1.5 + Math.random() * 0.9;
+            const water = new THREE.Mesh(new THREE.CircleGeometry(r, 18), new THREE.MeshStandardMaterial({ color: 0x1d5e52, roughness: 0.15, metalness: 0.25, emissive: 0x0a2e28, emissiveIntensity: 0.5 }));
+            water.rotation.x = -Math.PI / 2;
+            g.add(water);
+            const rim = new THREE.Mesh(new THREE.TorusGeometry(r + 0.05, 0.16, 7, 20), new THREE.MeshStandardMaterial({ color: 0x6b8e5a, roughness: 0.95 }));
+            rim.rotation.x = -Math.PI / 2;
+            rim.position.y = 0.06;
+            g.add(rim);
+            return g;
+        }
+        createTreeStump() {
+            const g = new THREE.Group();
+            const h = 2.4;
+            const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.8, h, 10), new THREE.MeshStandardMaterial({ color: 0x6d4c33, roughness: 0.9 }));
+            trunk.position.y = h / 2;
+            trunk.castShadow = true;
+            g.add(trunk);
+            const top = new THREE.Mesh(new THREE.CylinderGeometry(0.56, 0.56, 0.08, 10), new THREE.MeshStandardMaterial({ color: 0xa9784f, roughness: 0.8 }));
+            top.position.y = h + 0.04;
+            g.add(top);
+            const moss = new THREE.Mesh(new THREE.SphereGeometry(0.82, 9, 7), new THREE.MeshStandardMaterial({ color: 0x3f7d3a, roughness: 0.95, flatShading: true }));
+            moss.scale.y = 0.45;
+            moss.position.y = 0.15;
+            g.add(moss);
+            const rootMat = new THREE.MeshStandardMaterial({ color: 0x5d4037, roughness: 0.95 });
+            for (let i = 0; i < 4; i++) {
+                const a = (i / 4) * Math.PI * 2 + 0.4;
+                const root = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.7, 6), rootMat);
+                root.position.set(Math.cos(a) * 0.72, 0.2, Math.sin(a) * 0.72);
+                root.rotation.z = -Math.cos(a) * 1.2;
+                root.rotation.x = Math.sin(a) * 1.2;
+                g.add(root);
+            }
+            const capMat = new THREE.MeshStandardMaterial({ color: 0x4dffdf, emissive: new THREE.Color(0x4dffdf), emissiveIntensity: 0.8, roughness: 0.4 });
+            const cap = new THREE.Mesh(new THREE.SphereGeometry(0.12, 8, 6), capMat);
+            cap.scale.y = 0.55;
+            cap.position.set(0.62, 0.95, 0.1);
+            g.add(cap);
+            return g;
+        }
+        createJungleRock() {
+            const g = new THREE.Group();
+            const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(1.0, 0), new THREE.MeshStandardMaterial({ color: 0x7a8471, roughness: 0.9, flatShading: true }));
+            rock.scale.set(1.1, 1.5, 1.0);
+            rock.position.y = 1.05;
+            rock.rotation.y = Math.random() * 3;
+            rock.castShadow = true;
+            g.add(rock);
+            const mossMat = new THREE.MeshStandardMaterial({ color: 0x3f7d3a, roughness: 0.95, flatShading: true });
+            for (let i = 0; i < 3; i++) {
+                const moss = new THREE.Mesh(new THREE.SphereGeometry(0.3 + Math.random() * 0.2, 7, 5), mossMat);
+                moss.scale.y = 0.4;
+                const a = Math.random() * Math.PI * 2;
+                moss.position.set(Math.cos(a) * 0.55, 0.75 + Math.random() * 0.6, Math.sin(a) * 0.5);
+                g.add(moss);
+            }
+            const vine = new THREE.Mesh(new THREE.TorusGeometry(0.95, 0.05, 6, 18), new THREE.MeshStandardMaterial({ color: 0x4c8c3f, roughness: 0.9 }));
+            vine.position.y = 1.5;
+            vine.rotation.x = Math.PI / 2.4;
+            g.add(vine);
+            return g;
+        }
+
         createPedestal() {
             this.pedestalGroup = new THREE.Group();
             this.pedestalGroup.visible = false;
@@ -2384,35 +3053,67 @@
         createPlayer() {
             this.playerGroup = new THREE.Group();
             this.playerGroup.scale.setScalar(PLAYER_SCALE);
-            const toy = (hex) => new THREE.MeshStandardMaterial({ color: hex, roughness: 0.3, metalness: 0.05 });
-            this.playerMaterials = {
-                skin: toy(this.customColors.skin),
-                suit: toy(this.customColors.suit),
-                pants: toy(this.customColors.pants),
-                shoe: toy(this.customColors.shoe),
-                visor: new THREE.MeshStandardMaterial({ color: this.customColors.visor, emissive: new THREE.Color(this.customColors.visor), emissiveIntensity: 1.25, roughness: 0.25, metalness: 0.1 })
-            };
-            const faceMat = new THREE.MeshStandardMaterial({ color: 0x05070a, roughness: 0.12, metalness: 0.55 });
-            const whiteMat = new THREE.MeshStandardMaterial({ color: 0xf5f7fa, roughness: 0.45 });
+            // Task 21: swappable character root — pedestal & shield stay outside and survive swaps
+            this.robotRoot = new THREE.Group();
+            this.playerGroup.add(this.robotRoot);
+            this.buildCharacter(this.selectedChar || 'classic');
+            this.playerBox = new THREE.Box3();
+            // Task 19: mobile has no real shadow pass — draw a cheap blob shadow instead
+            if (this.isMobile) {
+                const blob = new THREE.Mesh(
+                    new THREE.CircleGeometry(0.52, 16),
+                    new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.3, depthWrite: false })
+                );
+                blob.rotation.x = -Math.PI / 2;
+                blob.renderOrder = 2;
+                this.scene.add(blob);
+                this.blobShadow = blob;
+            }
+            this.scene.add(this.playerGroup);
+        }
 
+        // ---------- Task 21: character builders ----------
+        // One proven biped rig, three skins. All builders: same pivot names
+        // (torso/head/leftArmPivot/rightArmPivot/leftLegPivot/rightLegPivot/eyes)
+        // so animatePlayerMesh, blink, ghost, shield & trails work unchanged.
+        buildCharacter(id) {
+            const o = id === 'police' ? this.buildPoliceBody() : id === 'ninja' ? this.buildNinjaBody() : this.buildClassicBody();
+            this.playerMaterials = o.mats;
+            this.selectedChar = id;
+        }
+        buildBodyMats(o) {
+            const M = (hex, rough, metal, em, ei) => new THREE.MeshStandardMaterial({ color: hex, roughness: rough, metalness: metal || 0, emissive: em || 0x000000, emissiveIntensity: ei || 0 });
+            return {
+                skin: M(o.skin, o.skinRough !== undefined ? o.skinRough : 0.3, 0.05),
+                suit: M(o.suit, o.suitRough !== undefined ? o.suitRough : 0.3, 0.05),
+                pants: M(o.pants, 0.45, 0.05),
+                shoe: M(o.shoe, o.shoeRough !== undefined ? o.shoeRough : 0.3, o.shoeMetal || 0.05),
+                sole: M(o.sole, 0.5, 0),
+                glove: M(o.glove, 0.35, 0.05),
+                visor: M(o.eye, 0.25, 0.1, o.eye, o.eyeInt || 1.25),
+                face: M(o.face || 0x05070a, 0.12, 0.55)
+            };
+        }
+        buildBiped(mats, o) {
+            const root = this.robotRoot;
             const torsoGeo = createRoundedBox(0.84, 0.8, 0.52, 0.24, 3);
-            this.torso = new THREE.Mesh(torsoGeo, this.playerMaterials.suit);
+            this.torso = new THREE.Mesh(torsoGeo, mats.suit);
             this.torso.position.y = 1.15;
             this.torso.castShadow = true;
-            this.playerGroup.add(this.torso);
+            root.add(this.torso);
 
             const headGeo = createRoundedBox(0.6, 0.58, 0.55, 0.2, 3);
-            this.head = new THREE.Mesh(headGeo, this.playerMaterials.skin);
+            this.head = new THREE.Mesh(headGeo, mats.skin);
             this.head.position.set(0, HEAD_Y, 0);
             this.head.castShadow = true;
             this.torso.add(this.head);
-            const screen = new THREE.Mesh(createRoundedBox(0.47, 0.37, 0.12, 0.1, 2), faceMat);
+            const screen = new THREE.Mesh(createRoundedBox(0.47, 0.37, 0.12, 0.1, 2), mats.face);
             screen.position.set(0, 0.01, -0.22);
             this.head.add(screen);
             this.eyes = [];
             const eyeGeo = createRoundedBox(0.1, 0.17, 0.06, 0.045, 2);
             [-0.115, 0.115].forEach(x => {
-                const eye = new THREE.Mesh(eyeGeo, this.playerMaterials.visor);
+                const eye = new THREE.Mesh(eyeGeo, mats.visor);
                 eye.position.set(x, 0.02, -0.065);
                 screen.add(eye);
                 this.eyes.push(eye);
@@ -2425,13 +3126,13 @@
             const makeArm = (side) => {
                 const pivot = new THREE.Group();
                 pivot.position.set(side * SHOULDER_X, 0.28, 0);
-                const cap = new THREE.Mesh(shoulderGeo, this.playerMaterials.suit);
+                const cap = new THREE.Mesh(shoulderGeo, mats.suit);
                 cap.castShadow = true;
                 pivot.add(cap);
-                const sleeve = new THREE.Mesh(sleeveGeo, this.playerMaterials.suit);
+                const sleeve = new THREE.Mesh(sleeveGeo, mats.suit);
                 sleeve.castShadow = true;
                 pivot.add(sleeve);
-                const hand = new THREE.Mesh(handGeo, this.playerMaterials.skin);
+                const hand = new THREE.Mesh(handGeo, mats.glove);
                 hand.position.set(0, -0.53, 0);
                 hand.castShadow = true;
                 pivot.add(hand);
@@ -2450,14 +3151,14 @@
             const makeLeg = (side) => {
                 const pivot = new THREE.Group();
                 pivot.position.set(side * 0.21, 0.72, 0);
-                const leg = new THREE.Mesh(legGeo, this.playerMaterials.pants);
+                const leg = new THREE.Mesh(legGeo, mats.pants);
                 leg.castShadow = true;
                 pivot.add(leg);
-                const shoe = new THREE.Mesh(shoeGeo, this.playerMaterials.shoe);
+                const shoe = new THREE.Mesh(shoeGeo, mats.shoe);
                 shoe.position.set(0, -0.63, -0.05);
                 shoe.castShadow = true;
                 pivot.add(shoe);
-                const sole = new THREE.Mesh(soleGeo, whiteMat);
+                const sole = new THREE.Mesh(soleGeo, mats.sole);
                 sole.position.set(0, -0.72, -0.05);
                 sole.castShadow = true;
                 pivot.add(sole);
@@ -2465,16 +3166,212 @@
             };
             this.leftLegPivot = makeLeg(-1);
             this.rightLegPivot = makeLeg(1);
-            this.playerGroup.add(this.leftLegPivot);
-            this.playerGroup.add(this.rightLegPivot);
+            this.robotRoot.add(this.leftLegPivot);   // Task 21: legs live in the swap root too
+            this.robotRoot.add(this.rightLegPivot);
 
-            this.playerBox = new THREE.Box3();
-            this.scene.add(this.playerGroup);
+            if (o && o.dress) o.dress({ head: this.head, torso: this.torso, screen: screen });
+            return { mats };
+        }
+        buildClassicBody() {
+            const mats = this.buildBodyMats({
+                skin: this.customColors.skin, suit: this.customColors.suit,
+                pants: this.customColors.pants, shoe: this.customColors.shoe,
+                sole: 0xf5f7fa, glove: this.customColors.skin,
+                eye: this.customColors.visor, eyeInt: 1.25
+            });
+            // classic keeps the soft white soles + skin-tone hands; visor keeps its own material identity
+            mats.visor.color.setStyle(this.customColors.visor);
+            mats.visor.emissive.setStyle(this.customColors.visor);
+            return this.buildBiped(mats, null);
+        }
+        buildPoliceBody() {
+            const mats = this.buildBodyMats({
+                skin: 0x2f6fd0, skinRough: 0.26,          // glossy blue robot head
+                suit: 0x1c2c54, suitRough: 0.55,          // navy uniform
+                pants: 0x16223f,
+                shoe: 0x101014, shoeRough: 0.16,          // glossy black boots
+                sole: 0x1a1a1f, glove: 0x0c0c10,          // black gloves
+                eye: 0x9ff3ff, eyeInt: 1.3, face: 0x03060c
+            });
+            const dress = ({ head, torso }) => {
+                const navy = new THREE.MeshStandardMaterial({ color: 0x182448, roughness: 0.5 });
+                const navyDark = new THREE.MeshStandardMaterial({ color: 0x111a33, roughness: 0.55 });
+                const gold = new THREE.MeshStandardMaterial({ color: 0xd9b34a, roughness: 0.3, metalness: 0.75, emissive: 0x8a6d1e, emissiveIntensity: 0.25 });
+                const silver = new THREE.MeshStandardMaterial({ color: 0xd7dee8, roughness: 0.35, metalness: 0.6 });
+                const belt = new THREE.MeshStandardMaterial({ color: 0x0c0c10, roughness: 0.5 });
+                // --- police cap (front is -Z like the face screen) ---
+                const capGrp = new THREE.Group();
+                const capTop = new THREE.Mesh(new THREE.CylinderGeometry(0.315, 0.345, 0.17, 20), navy);
+                capTop.position.y = 0.355; capTop.castShadow = true; capGrp.add(capTop);
+                const capBand = new THREE.Mesh(new THREE.CylinderGeometry(0.352, 0.352, 0.062, 20), navyDark);
+                capBand.position.y = 0.268; capGrp.add(capBand);
+                const brim = new THREE.Mesh(createRoundedBox(0.44, 0.045, 0.3, 0.05, 2), navyDark);
+                brim.position.set(0, 0.252, -0.3); brim.castShadow = true; capGrp.add(brim);
+                const badge = new THREE.Mesh(new THREE.CylinderGeometry(0.058, 0.058, 0.028, 14), gold);
+                badge.rotation.x = Math.PI / 2; badge.position.set(0, 0.36, -0.325); capGrp.add(badge);
+                head.add(capGrp);
+                // --- duty belt ---
+                const beltBand = new THREE.Mesh(new THREE.BoxGeometry(0.88, 0.11, 0.56), belt);
+                beltBand.position.y = -0.3; beltBand.castShadow = true; torso.add(beltBand);
+                const buckle = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.085, 0.045), silver);
+                buckle.position.set(0, -0.3, -0.29); torso.add(buckle);
+                [-0.24, 0.24].forEach(x => {
+                    const pouch = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.13, 0.06), navyDark);
+                    pouch.position.set(x, -0.3, -0.285); torso.add(pouch);
+                });
+                // --- chest badge + name plate ---
+                const chest = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.13, 0.032), gold);
+                chest.position.set(-0.18, 0.13, -0.272); torso.add(chest);
+                const plate = new THREE.Mesh(new THREE.BoxGeometry(0.17, 0.052, 0.028), silver);
+                plate.position.set(0.17, 0.18, -0.272); torso.add(plate);
+            };
+            return this.buildBiped(mats, { dress });
+        }
+        buildNinjaBody() {
+            const mats = this.buildBodyMats({
+                skin: 0x0d0d11, skinRough: 0.32,          // glossy black wrapped head
+                suit: 0x141419, suitRough: 0.6,           // matte-black fabric
+                pants: 0x101015,
+                shoe: 0x0c0c10, shoeRough: 0.15,          // glossy black boots
+                sole: 0x16161c, glove: 0x0b0b0f,          // black gloves
+                eye: 0xffe14d, eyeInt: 1.25, face: 0x08080b
+            });
+            const dress = ({ head, torso }) => {
+                const wrap = new THREE.MeshStandardMaterial({ color: 0x1c1c24, roughness: 0.65 });
+                const strap = new THREE.MeshStandardMaterial({ color: 0x1f1f28, roughness: 0.6 });
+                const steel = new THREE.MeshStandardMaterial({ color: 0x3a3e46, roughness: 0.28, metalness: 0.65 });
+                const hilt = new THREE.MeshStandardMaterial({ color: 0x14141a, roughness: 0.7 });
+                const guard = new THREE.MeshStandardMaterial({ color: 0x6b5b2a, roughness: 0.4, metalness: 0.55 });
+                // --- forehead wrap band (sits ABOVE the eye slot) + back knot ---
+                const band = new THREE.Mesh(createRoundedBox(0.64, 0.13, 0.59, 0.06, 2), wrap);
+                band.position.y = 0.215; band.castShadow = true; head.add(band);
+                const knot = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.08, 0.07), wrap);
+                knot.position.set(0.03, 0.215, 0.3); head.add(knot);
+                // --- crossed chest straps ---
+                [-1, 1].forEach(s => {
+                    const st = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.82, 0.022), strap);
+                    st.position.set(0, 0.02, -0.272); st.rotation.z = s * 0.55; torso.add(st);
+                });
+                // --- belt ---
+                const beltBand = new THREE.Mesh(new THREE.BoxGeometry(0.86, 0.085, 0.54), new THREE.MeshStandardMaterial({ color: 0x0a0a0d, roughness: 0.55 }));
+                beltBand.position.y = -0.31; torso.add(beltBand);
+                // --- crossed katanas on the back (+Z) ---
+                [1, -1].forEach(s => {
+                    const sw = new THREE.Group();
+                    const blade = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.92, 0.018), steel);
+                    blade.position.y = 0.28; blade.castShadow = true; sw.add(blade);
+                    const tip = new THREE.Mesh(new THREE.ConeGeometry(0.032, 0.12, 4), steel);
+                    tip.position.y = 0.8; tip.rotation.y = Math.PI / 4; sw.add(tip);
+                    const tsuba = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.026, 0.036), guard);
+                    tsuba.position.y = -0.2; sw.add(tsuba);
+                    const handle = new THREE.Mesh(new THREE.BoxGeometry(0.042, 0.24, 0.036), hilt);
+                    handle.position.y = -0.33; sw.add(handle);
+                    sw.position.set(s * 0.06, 0.06, 0.33);
+                    sw.rotation.z = s * 0.72;
+                    torso.add(sw);
+                });
+            };
+            return this.buildBiped(mats, { dress });
+        }
+        disposeRobot() {
+            if (!this.robotRoot) return;
+            const mats = new Set(), geos = new Set();
+            this.robotRoot.traverse(o => {
+                if (o.geometry) geos.add(o.geometry);
+                if (o.material) mats.add(o.material);
+            });
+            mats.forEach(m => m.dispose()); geos.forEach(g => g.dispose());
+            this.robotRoot.clear();
+        }
+        swapCharacter(id) {
+            this.disposeRobot();
+            this.buildCharacter(id);
+            // standing pose so no leftover slide/jump/squash leaks across the swap
+            this.poseState = 'custom';   // forces a fresh pose blend on the next animate tick
+            this.torso.position.set(0, 1.15, 0); this.torso.rotation.set(0, 0, 0);
+            this.head.position.set(0, HEAD_Y, 0); this.head.rotation.set(0, 0, 0);
+            this.leftArmPivot.rotation.set(0, 0, -ARM_TILT);
+            this.rightArmPivot.rotation.set(0, 0, ARM_TILT);
+            this.leftLegPivot.rotation.set(0, 0, 0);
+            this.rightLegPivot.rotation.set(0, 0, 0);
+            this.squashTimer = 0;
+        }
+        saveOwnedChars() { try { Store.set('subway_dash_chars', JSON.stringify(this.ownedChars)); } catch (e) {} }
+        setupCharacterShop() {
+            const grid = document.getElementById('char-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            CHARACTERS.forEach(c => {
+                const card = document.createElement('button');
+                card.className = 'char-card';
+                card.dataset.char = c.id;
+                card.title = c.desc;
+                const em = document.createElement('div'); em.className = 'cc-emoji'; em.textContent = c.emoji;
+                const nm = document.createElement('div'); nm.className = 'cc-name'; nm.textContent = c.name;
+                const sub = document.createElement('div'); sub.className = 'cc-sub'; sub.textContent = c.badge;
+                const pr = document.createElement('div'); pr.className = 'cc-price';
+                card.appendChild(em); card.appendChild(nm); card.appendChild(sub); card.appendChild(pr);
+                card.addEventListener('click', (e) => { e.stopPropagation(); this.onCharacterTap(c.id); });
+                grid.appendChild(card);
+            });
+            this.renderCharacterShop();
+        }
+        renderCharacterShop() {
+            const grid = document.getElementById('char-grid');
+            if (!grid) return;
+            const bank = document.getElementById('char-bank');
+            if (bank) bank.textContent = '🪙 ' + this.bank.toLocaleString();
+            grid.querySelectorAll('.char-card').forEach(card => {
+                const c = CHARACTERS.find(x => x.id === card.dataset.char);
+                if (!c) return;
+                const owned = this.ownedChars.includes(c.id);
+                const equipped = this.selectedChar === c.id;
+                const price = card.querySelector('.cc-price');
+                card.classList.toggle('equipped', equipped);
+                card.classList.toggle('owned', owned && !equipped);
+                card.classList.toggle('locked', !owned);
+                card.classList.toggle('poor', !owned && this.bank < c.price);
+                if (price) price.textContent = equipped ? '✓ EQUIPPED' : owned ? 'TAP TO EQUIP' : '🔒 ' + c.price.toLocaleString() + ' 🪙';
+            });
+            const note = document.getElementById('char-note');
+            if (note) note.style.display = this.selectedChar === 'classic' ? 'none' : 'block';
+        }
+        onCharacterTap(id) {
+            const c = CHARACTERS.find(x => x.id === id);
+            if (!c || this.selectedChar === id) return;
+            if (this.ownedChars.includes(id)) {
+                this.selectedChar = id;
+                Store.set('subway_dash_char', id);
+                this.swapCharacter(id);
+                sound.playClick();
+                this.showToast(c.emoji + ' ' + c.name + ' equipped!');
+                this.renderCharacterShop();
+                return;
+            }
+            if (this.bank < c.price) {
+                sound.playClick();
+                this.showToast('🪙 Not enough coins — ' + c.name + ' costs ' + c.price.toLocaleString());
+                const card = document.querySelector('.char-card[data-char="' + id + '"]');
+                if (card) { card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake'); }
+                return;
+            }
+            // purchase: deduct bank, own it, auto-equip, celebrate
+            this.bank -= c.price;
+            Store.set('subway_dash_bank', String(this.bank));
+            this.ownedChars.push(id);
+            this.saveOwnedChars();
+            Store.set('subway_dash_char', id);
+            this.swapCharacter(id);
+            this.refreshMenuStats();
+            this.renderCharacterShop();
+            sound.playLevelUp();
+            this.showToast('🎉 ' + c.name + ' unlocked & equipped!', true);
+            this.flashScreen('cyan');
         }
 
         updateBlink() {
             if (!this.eyes || !this.eyes.length) return;
-            const t = this.clock.getElapsedTime() % 3.4;
+            const t = this.time % 3.4;
             const s = (t > 3.18 && t < 3.32) ? 0.12 : 1;
             for (let i = 0; i < this.eyes.length; i++) {
                 if (this.eyes[i].scale.y !== s) this.eyes[i].scale.y = s;
@@ -2482,6 +3379,7 @@
         }
 
         setCustomColor(category, hexStr) {
+            if (this.selectedChar !== 'classic') { sound.playClick(); return; }   // Task 21: paint is CLASSIC-only
             this.customColors[category] = hexStr;
             if (this.playerMaterials[category]) {
                 this.playerMaterials[category].color.setStyle(hexStr);
@@ -2560,6 +3458,7 @@
 
         applyStylePreset(idx) {
             const p = STYLE_PRESETS[idx]; if (!p) return;
+            if (this.selectedChar !== 'classic') { sound.playClick(); return; }   // Task 21: paint is CLASSIC-only
             Object.keys(p.colors).forEach(cat => {
                 this.customColors[cat] = p.colors[cat];
                 const m = this.playerMaterials[cat];
@@ -2570,6 +3469,7 @@
         }
 
         randomizeStyle() {
+            if (this.selectedChar !== 'classic') { sound.playClick(); return; }   // Task 21: paint is CLASSIC-only
             Object.keys(CUSTOM_OPTIONS).forEach(cat => {
                 const hex = CUSTOM_OPTIONS[cat][Math.floor(Math.random() * CUSTOM_OPTIONS[cat].length)].hex;
                 this.customColors[cat] = hex;
@@ -2614,6 +3514,7 @@
             this.rightLegPivot.rotation.set(0, 0, 0);
             this.pedestalGroup.visible = true;
             this.updateCustomizerLayout();
+            this.renderCharacterShop();   // Task 21: bank may have changed since last visit
             this.updateSwatchActiveStates();
         }
 
@@ -2664,6 +3565,9 @@
             } else if (map === 'snow') {
                 t.trains = [this.createPine(), this.createPine(), this.buildIceBlock(), this.buildIceBlock()];
                 t.trainBounds = { width: 1.6, height: 3.0, depth: 1.6 };
+            } else if (map === 'jungle') {
+                t.trains = [this.createTreeStump(), this.createTreeStump(), this.createJungleRock(), this.createJungleRock()];
+                t.trainBounds = { width: 1.7, height: 2.8, depth: 1.7 };
             } else {
                 t.trains = [this.buildBus(), this.buildBus(), this.buildBus(), this.buildTruck(), this.buildTruck()];
                 t.trainBounds = { width: 2.2, height: 3.0, depth: 8.0 };
@@ -2674,6 +3578,13 @@
             t.crate = this.buildCrates();
             t.drone = this.buildDrone();
             t.laser = this.buildLaser();
+            // Task 19: bake every template into a few merged meshes — each spawned
+            // clone then costs 1-3 draw calls instead of 10-30 (buses had ~30 meshes!)
+            Object.keys(t).forEach(key => {
+                if (key === 'trainBounds') return;
+                const arr = Array.isArray(t[key]) ? t[key] : [t[key]];
+                arr.forEach(tpl => { if (tpl && tpl.isObject3D) this.bakeSegment(tpl); });
+            });
             return t;
         }
 
@@ -2777,7 +3688,7 @@
 
         buildHurdle(map) {
             const mesh = new THREE.Group();
-            const colors = { desert: [0x78350f, 0xfef3c7], snow: [0x93c5fd, 0x0f172a] };
+            const colors = { desert: [0x78350f, 0xfef3c7], snow: [0x93c5fd, 0x0f172a], jungle: [0x6d4c33, 0x86efac] };
             const c = colors[map] || [0xf59e0b, 0x0f172a];
             const log = new THREE.Mesh(createRoundedBox(LANE_WIDTH * 0.92, 0.7, 0.3, 0.08, 2), new THREE.MeshStandardMaterial({ color: c[0], roughness: 0.5 }));
             log.position.y = 0.35; log.castShadow = true; mesh.add(log);
@@ -2854,6 +3765,7 @@
                 const prop = new THREE.Mesh(propGeo, propMat);
                 prop.position.set(p[0], 2.0, p[1]);
                 prop.userData.spin = true;
+                prop.userData.noBake = true;   // Task 19: spinning rotor — keep it an individual mesh
                 mesh.add(prop);
                 const tip = new THREE.Mesh(new THREE.SphereGeometry(0.05, 6, 6), new THREE.MeshBasicMaterial({ color: 0x00f0ff }));
                 tip.position.set(p[0], 2.0, p[1]);
@@ -2883,11 +3795,13 @@
             beam.rotation.z = Math.PI / 2;
             beam.position.set(0, 1.7, 0);
             beam.userData.tag = 'beam';
+            beam.userData.noBake = true;   // Task 19: animated opacity — keep individual
             mesh.add(beam);
             const beamCore = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, LANE_WIDTH * 0.88, 8), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.9 }));
             beamCore.rotation.z = Math.PI / 2;
             beamCore.position.set(0, 1.7, 0);
             beamCore.userData.tag = 'beam';
+            beamCore.userData.noBake = true;
             mesh.add(beamCore);
             const warn = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.22, 8), new THREE.MeshBasicMaterial({ color: 0xffb020 }));
             warn.position.set(0, 0.12, 0.35);
@@ -3103,15 +4017,44 @@
         spawnCoinArc(lane, startZ, count = 4, arc = false) {
             const x = LANES[lane];
             if (count < 2) arc = false;
+            this.ensureCoinPool();
             for (let i = 0; i < count; i++) {
-                const coin = new THREE.Mesh(this.coinGeo, this.coinMat);
-                coin.rotation.x = Math.PI / 2;
+                if (this.coinInst.count >= this.coinMax) break;
                 let y = 0.85;
                 if (arc) { const t = (i / (count - 1)) * 2 - 1; y += (1 - t * t) * 1.8; }
-                coin.position.set(x, y, startZ - i * 2.2);
-                this.scene.add(coin);
-                this.coinsList.push({ mesh: coin, box: new THREE.Box3() });
+                const c = { pos: new THREE.Vector3(x, y, startZ - i * 2.2), slot: this.coinInst.count++, box: new THREE.Box3() };
+                this._coinMtx.compose(c.pos, this._coinQuat, this._coinScale);
+                this.coinInst.setMatrixAt(c.slot, this._coinMtx);
+                this.coinsList.push(c);
             }
+            this.coinInst.instanceMatrix.needsUpdate = true;
+        }
+        // ---------- Task 19: instanced coin pool (1 draw call for every coin) ----------
+        ensureCoinPool() {
+            if (this.coinInst) return;
+            this.coinInst = new THREE.InstancedMesh(this.coinGeo, this.coinMat, this.coinMax);
+            this.coinInst.count = 0;
+            this.coinInst.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+            this.coinInst.frustumCulled = false;   // instances span the whole track
+            this.scene.add(this.coinInst);
+            this._coinQuat = new THREE.Quaternion();
+            this._coinEuler = new THREE.Euler();
+            this._coinMtx = new THREE.Matrix4();
+            this._coinScale = new THREE.Vector3(1, 1, 1);
+        }
+        releaseCoin(c) {
+            const inst = this.coinInst;
+            if (!inst || c.slot < 0 || c.slot >= inst.count) return;
+            const last = inst.count - 1;
+            if (c.slot !== last) {
+                inst.getMatrixAt(last, this._coinMtx);          // swap-last: keep slots dense
+                inst.setMatrixAt(c.slot, this._coinMtx);
+                for (let j = 0; j < this.coinsList.length; j++) {
+                    if (this.coinsList[j] !== c && this.coinsList[j].slot === last) { this.coinsList[j].slot = c.slot; break; }
+                }
+            }
+            inst.count = last;
+            c.slot = -1;
         }
 
         spawnPowerup(lane, z) {
@@ -3188,24 +4131,35 @@
 
         createSparks(pos, colorHex = 0x00f0ff, count = 12) {
             count = Math.max(4, Math.min(48, count | 0));
-            const geom = new THREE.BufferGeometry();
-            const positions = new Float32Array(count * 3);
-            const velocities = [];
-            for (let i = 0; i < count; i++) {
-                positions[i * 3] = pos.x; positions[i * 3 + 1] = pos.y; positions[i * 3 + 2] = pos.z;
-                velocities.push(new THREE.Vector3((Math.random() - 0.5) * 8, Math.random() * 7 + 2, (Math.random() - 0.5) * 8));
+            if (this.isMobile) count = Math.max(4, Math.ceil(count * 0.7));   // Task 20: 0.5→0.7 — bursts read fuller again
+            // Task 18: pooled particle systems — zero geometry allocation on hot path
+            let pool = this.sparkPool[count];
+            if (!pool) pool = this.sparkPool[count] = [];
+            let entry = pool.pop();
+            if (!entry) {
+                const geom = new THREE.BufferGeometry();
+                geom.setAttribute('position', new THREE.BufferAttribute(new Float32Array(count * 3), 3));
+                const velocities = [];
+                for (let i = 0; i < count; i++) velocities.push(new THREE.Vector3());
+                entry = { system: new THREE.Points(geom, new THREE.PointsMaterial({ color: colorHex, size: 0.22, transparent: true, opacity: 1 })), velocities: velocities };
             }
-            geom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            const mat = new THREE.PointsMaterial({ color: colorHex, size: 0.22, transparent: true, opacity: 1 });
-            const pSystem = new THREE.Points(geom, mat);
-            this.scene.add(pSystem);
-            this.particles.push({ system: pSystem, velocities: velocities, life: 0.45, maxLife: 0.45 });
+            const arr = entry.system.geometry.attributes.position.array;
+            for (let i = 0; i < count; i++) {
+                arr[i * 3] = pos.x; arr[i * 3 + 1] = pos.y; arr[i * 3 + 2] = pos.z;
+                entry.velocities[i].set((Math.random() - 0.5) * 8, Math.random() * 7 + 2, (Math.random() - 0.5) * 8);
+            }
+            entry.system.geometry.attributes.position.needsUpdate = true;
+            entry.system.material.color.setHex(colorHex);
+            entry.system.material.opacity = 1;
+            this.scene.add(entry.system);
+            this.particles.push({ system: entry.system, velocities: entry.velocities, life: 0.45, maxLife: 0.45, pooled: entry, count: count });
         }
 
         setupControls() {
             window.addEventListener('keydown', (e) => {
                 const el = document.activeElement;
                 if (el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA')) return;
+                if (e.code === 'KeyF' && !e.repeat) this.toggleFpsMeter();   // Task 18: FPS meter toggle
                 if (this.state === STATE.PLAYING) {
                     if (e.code === 'ArrowLeft' || e.code === 'KeyA') this.moveLane(-1);
                     else if (e.code === 'ArrowRight' || e.code === 'KeyD') this.moveLane(1);
@@ -3272,6 +4226,18 @@
                     btn.classList.add('active');
                     this.saveDifficulty(btn.dataset.difficulty);
                     sound.playClick();
+                });
+            });
+            // Task 23: graphics mode selector
+            document.querySelectorAll('.gfx-btn').forEach(b => b.classList.toggle('active', b.dataset.gfx === this.gfxMode));
+            this.updateGfxHint();
+            document.querySelectorAll('.gfx-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.gfx-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    sound.playClick();
+                    this.applyGfxMode(btn.dataset.gfx);
+                    this.updateGfxHint();
                 });
             });
             on('boost-headstart', () => this.toggleBoost('boostHeadStart', BOOST_COST_HS, 'Head Start'));
@@ -3604,13 +4570,28 @@
             return Math.min(1, this.distance / RAMP_DISTANCE);
         }
 
+        // live difficulty = chosen tier + ENDLESS per-level ramp: every 1000m the
+        // speed ceiling rises, reaction window shrinks and patterns densify, up to
+        // a "barely controllable" cap (still guarantees every pattern is escapable)
+        getLiveConfig() {
+            const c = DIFFICULTY_CONFIG[this.selectedDifficulty];
+            const lvl = Math.max(0, this.diffLevel - 1);
+            const intensity = this.getIntensity();
+            return {
+                maxSpeed: Math.min(c.maxSpeed + lvl * c.lvlSpeed, c.absMax),
+                doubleChance: Math.min(c.doubleObstacleChance + intensity * 0.26 + lvl * c.lvlDouble, c.doubleCap),
+                hardHurdle: Math.min((this.selectedDifficulty === 'hard' ? 0.10 : 0) + intensity * 0.14 + lvl * c.lvlHard, c.hardCap),
+                reaction: Math.max(c.reactFloor, REACTION_START - intensity * (REACTION_START - REACTION_END) - lvl * c.lvlReact)
+            };
+        }
+
         spawnPattern() {
             const z = this.nextSpawnZ;
-            const diffConfig = DIFFICULTY_CONFIG[this.selectedDifficulty];
             if (this.safeLane === undefined) this.safeLane = 1;
             if (this.lastSafeHurdleZ === undefined) this.lastSafeHurdleZ = null;
             const intensity = this.getIntensity();
             const rush = this.rushTimer > 0;
+            const live = this.getLiveConfig();
 
             const neighbors = [this.safeLane - 1, this.safeLane + 1].filter(l => l >= 0 && l <= 2);
             const free = (neighbors.length && Math.random() < 0.65)
@@ -3619,8 +4600,8 @@
             const others = [0, 1, 2].filter(l => l !== free);
             const rand = Math.random();
 
-            const doubleChance = diffConfig.doubleObstacleChance + intensity * 0.26;
-            const hardHurdleChance = (this.selectedDifficulty === 'hard' ? 0.1 : 0) + intensity * 0.14;
+            const doubleChance = live.doubleChance;
+            const hardHurdleChance = live.hardHurdle;
 
             const minJumpGap = this.speed * (JUMP_AIR_TIME + REJUMP_BUFFER);
             const gapFromLastHurdle = (this.lastSafeHurdleZ !== null)
@@ -3677,33 +4658,159 @@
             if (Math.random() < (rush ? 0.25 : 0.13)) this.spawnPowerup(free, z + 9);
             this.safeLane = free;
 
-            const reaction = REACTION_START - intensity * (REACTION_START - REACTION_END);
+            const reaction = live.reaction;
             const spacing = 9 + this.speed * (reaction + Math.random() * 0.25) + 3;
             this.nextSpawnZ -= spacing;
         }
 
+        // ---------- Task 18: performance & smoothness helpers ----------
+        // frame-rate independent exponential damping (identical feel at 30/60/144fps)
+        dampF(cur, target, lambda, dt) {
+            return target + (cur - target) * Math.exp(-lambda * dt);
+        }
+        // ---------- Task 23: graphics quality modes ----------
+        gfxCaps(mode) {
+            const dpr = Math.min(window.devicePixelRatio || 1, 3.0);
+            if (mode === 'fast') return { cap: Math.min(dpr, 1.5), min: Math.min(dpr, 1.0), emerg: Math.min(dpr, 0.85) };
+            if (mode === 'auto') return { cap: dpr, min: Math.min(dpr, 1.2), emerg: Math.min(dpr, 1.0) };
+            return { cap: dpr, min: Math.min(dpr, 1.45), emerg: Math.min(dpr, 1.2) };   // sharp (default)
+        }
+        applyGfxMode(mode, silent) {
+            this.gfxMode = mode;
+            try { Store.set('cyberdash_gfx', mode); } catch (e) {}
+            const gc = this.gfxCaps(mode);
+            this.prCap = gc.cap; this.prMin = gc.min; this.prEmerg = gc.emerg;
+            this.adaptivePR = Math.max(gc.min, Math.min(gc.cap, this.adaptivePR || gc.cap));
+            this.applyPixelRatio(this.adaptivePR);
+            if (!silent) {
+                const hints = { sharp: '✨ Sharp — max clarity', auto: '⚖️ Auto — FPS/clarity balance', fast: '⚡ Fast — max FPS' };
+                this.showToast(hints[mode] || hints.sharp);
+            }
+        }
+        updateGfxHint() {
+            const el = document.getElementById('gfx-hint');
+            if (!el) return;
+            const hints = {
+                sharp: '✨ Maximum clarity — full retina rendering, sheds pixels only if FPS really struggles',
+                auto: '⚖️ Balanced — targets 60fps while staying as sharp as possible',
+                fast: '⚡ Maximum FPS — lighter image for weaker phones'
+            };
+            el.textContent = hints[this.gfxMode] || hints.sharp;
+        }
+        applyPixelRatio(pr) {
+            this.renderer.setPixelRatio(pr);
+            this.renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        adaptQualityStep(avg) {
+            this.prCooldown = (this.prCooldown || 0) - 1;
+            if (this.prCooldown > 0) return false;
+            let pr = this.adaptivePR;
+            // Task 23: tiered shed — at retina caps (up to 3x) drowning must descend fast,
+            // hovering descends gently; climbs back above 52fps. Floors keep the image readable.
+            if (avg < 30) { pr = Math.max(this.prEmerg, pr - 0.35); this.prCooldown = 2; }   // drowning → drop fast toward emergency floor
+            else if (avg < 35) { pr = Math.max(this.prMin, pr - 0.2); this.prCooldown = 2; }   // struggling → shed quicker
+            else if (avg < 42) { pr = Math.max(this.prMin, pr - 0.1); this.prCooldown = 3; }   // hovering → shed gently
+            else if (avg > 52 && pr < this.prCap) { pr = Math.min(this.prCap, pr + 0.1); this.prCooldown = 4; } // headroom → sharpen
+            if (Math.abs(pr - this.adaptivePR) > 0.001) { this.adaptivePR = pr; this.applyPixelRatio(pr); return true; }
+            return false;
+        }
+        toggleFpsMeter() {
+            this.fpsOn = !this.fpsOn;
+            try { Store.set('cyberdash_fpsmeter', this.fpsOn ? '1' : '0'); } catch (e) {}
+            this.showToast(this.fpsOn ? '⚡ FPS meter ON' : '⚡ FPS meter OFF');
+            this._chipT = 0;
+        }
+        updateFPSTick(rawDt) {
+            if (this.state === STATE.PLAYING) {
+                this.fpsSamples++; this.fpsSampleT += rawDt;
+                if (this.fpsSampleT >= 1.0) {
+                    this.fpsAvg = this.fpsSamples / this.fpsSampleT;
+                    this.fpsSamples = 0; this.fpsSampleT = 0;
+                    this.adaptQualityStep(this.fpsAvg);
+                }
+            }
+            this._chipT -= rawDt;
+            if (this._chipT > 0 || !this.fpsChip) return;
+            this._chipT = 0.25;
+            const show = this.fpsOn && (this.state === STATE.PLAYING || this.state === STATE.COUNTDOWN || this.state === STATE.PAUSED);
+            if (show) {
+                const f = Math.max(0, Math.round(this.fpsAvg));
+                const txt = '⚡ ' + f + ' FPS';
+                if (this.fpsChip.textContent !== txt) this.fpsChip.textContent = txt;
+                if (f < 40) { this.fpsChip.classList.add('bad'); this.fpsChip.classList.remove('ok'); }
+                else if (f < 55) { this.fpsChip.classList.add('ok'); this.fpsChip.classList.remove('bad'); }
+                else this.fpsChip.classList.remove('ok', 'bad');
+            }
+            const disp = show ? 'block' : 'none';
+            if (this._chipShown !== disp) { this.fpsChip.style.display = disp; this._chipShown = disp; }
+        }
+        // throttled HUD writes — DOM text updates at ~12Hz instead of every frame
+        updateHUD(dt, scoreMult, speedPct) {
+            this._hudT -= dt;
+            const barChanged = Math.abs(speedPct - this._lastBarPct) > 0.4;
+            if (this._hudT > 0 && !barChanged && this.coins === this._lastCoins) return;
+            if (this._hudT <= 0) this._hudT = 0.08;
+            this.uiScore.innerText = Math.floor(this.score).toLocaleString();
+            this.uiMult.innerText = scoreMult.toFixed(1) + 'x';
+            this.uiCoins.innerText = this.coins;
+            if (this.uiDist) this.uiDist.innerText = Math.floor(this.distance) + 'm';
+            this._lastCoins = this.coins;
+            if (barChanged) { this.uiSpeedBar.style.width = Math.min(100, speedPct) + '%'; this._lastBarPct = speedPct; }
+        }
+        // ---------- pose blending: buttery run/slide/jump transitions ----------
+        capturePose() {
+            return {
+                ty: this.torso.position.y, trx: this.torso.rotation.x, tryy: this.torso.rotation.y,
+                hrx: this.head.rotation.x, hry: this.head.rotation.y,
+                llx: this.leftLegPivot.rotation.x, rlx: this.rightLegPivot.rotation.x,
+                lax: this.leftArmPivot.rotation.x, rax: this.rightArmPivot.rotation.x,
+                laz: this.leftArmPivot.rotation.z, raz: this.rightArmPivot.rotation.z
+            };
+        }
+        applyPose(p) {
+            this.torso.position.y = p.ty; this.torso.rotation.x = p.trx; this.torso.rotation.y = p.tryy;
+            this.head.rotation.x = p.hrx; this.head.rotation.y = p.hry;
+            this.leftLegPivot.rotation.x = p.llx; this.rightLegPivot.rotation.x = p.rlx;
+            this.leftArmPivot.rotation.x = p.lax; this.rightArmPivot.rotation.x = p.rax;
+            this.leftArmPivot.rotation.z = p.laz; this.rightArmPivot.rotation.z = p.raz;
+        }
+
         animate() {
             requestAnimationFrame(this.animate);
-            const dt = Math.min(this.clock.getDelta(), 0.1);
+            const rawDt = this.clock.getDelta();
+            const dt = Math.min(rawDt, 0.1);
+            this.time = this.clock.getElapsedTime();   // cached once per frame (was queried 7x/frame)
             const isPlaying = this.state === STATE.PLAYING;
             if (isPlaying) this.updatePlaying(dt);
             else if (this.state === STATE.MENU) this.updateMenu(dt);
             else if (this.state === STATE.CUSTOMIZE) this.updateCustomize(dt);
             const worldMove = isPlaying ? this.speed * dt : 0;
-            const nowT = this.clock.getElapsedTime();
             this.updateParticles(dt);
             this.updateTrail(dt, worldMove);
             this.updatePopups(dt, worldMove);
             this.updateShockwaves(dt);
-            this.updateWeather(dt, nowT);
-            this.updateEnvFX(nowT, dt);
+            this.updateWeather(dt, this.time);
+            this.updateEnvFX(this.time, dt);
+            this.updateFPSTick(rawDt);
+            // Task 19: blob shadow follows the bot (mobile) — shrinks/fades with jump height
+            if (this.blobShadow) {
+                const b = this.blobShadow;
+                const vis = this.state !== STATE.CUSTOMIZE && this.playerGroup.visible;
+                b.visible = vis;
+                if (vis) {
+                    b.position.x = this.playerGroup.position.x;
+                    b.position.z = this.playerGroup.position.z;
+                    b.scale.setScalar(Math.max(0.45, 1 - this.playerY * 0.16));
+                    b.material.opacity = 0.3 * Math.max(0.3, 1 - this.playerY * 0.22);
+                }
+            }
             this.renderer.render(this.scene, this.camera);
         }
 
         updateMenu(dt) {
             const moveDist = 10.5 * dt;
             this.scrollTracks(moveDist);
-            const time = this.clock.getElapsedTime();
+            const time = this.time;
             this.updateBlink();
             // self-heal: in the menu the robot ALWAYS runs upright — whatever
             // slide/jump state a crashed run may have left behind
@@ -3712,27 +4819,28 @@
             let ry = this.playerGroup.rotation.y % (Math.PI * 2);
             if (ry > Math.PI) ry -= Math.PI * 2;
             else if (ry < -Math.PI) ry += Math.PI * 2;
-            this.playerGroup.rotation.y = ry + (0 - ry) * 4.5 * dt;
+            this.playerGroup.rotation.y = this.dampF(ry, 0, 4.5, dt);
             // full running cycle on the scrolling treadmill world
             this.animatePlayerMesh(dt);
-            this.camera.position.x += (Math.sin(time * 0.22) * 1.5 - this.camera.position.x) * 1.2 * dt;
-            this.camera.position.y += ((4.2 + Math.sin(time * 0.35) * 0.25) - this.camera.position.y) * 1.2 * dt;
+            this.camera.position.x = this.dampF(this.camera.position.x, Math.sin(time * 0.22) * 1.5, 1.2, dt);
+            this.camera.position.y = this.dampF(this.camera.position.y, 4.2 + Math.sin(time * 0.35) * 0.25, 1.2, dt);
             this.camera.lookAt(0, 1.35, -4.5);
         }
 
         updateCustomize(dt) {
+            this.poseState = 'custom';   // force a fresh pose blend when leaving the studio
             const isMobile = this.isMobileCustomizer();
             if (isMobile) { this.camera.position.set(0, 3.5, 10.5); this.camera.lookAt(0, 2.2, 0); }
             else {
                 // gentle showcase orbit — bot stays centered between hero and panel
-                const t = this.clock.getElapsedTime();
+                const t = this.time;
                 this.camera.position.set(Math.sin(t * 0.28) * 0.7, 2.05 + Math.sin(t * 0.4) * 0.06, 4.55 + Math.cos(t * 0.28) * 0.22);
                 this.camera.lookAt(0, 1.08, 0);
             }
-            this.playerGroup.rotation.y += (Math.PI - this.playerGroup.rotation.y) * 5 * dt;
+            this.playerGroup.rotation.y = this.dampF(this.playerGroup.rotation.y, Math.PI, 5, dt);
             this.playerGroup.rotation.x = 0;
             this.playerGroup.rotation.z = 0;
-            const time = this.clock.getElapsedTime();
+            const time = this.time;
             this.torso.position.y = 1.15 + Math.sin(time * 2.8) * 0.02;
             const sway = Math.sin(time * 2.8) * 0.025;
             this.leftArmPivot.rotation.z = -ARM_TILT - sway;
@@ -3741,7 +4849,7 @@
         }
 
         updatePlaying(dt) {
-            const time = this.clock.getElapsedTime();
+            const time = this.time;
             if (this.invincibleTimer > 0) {
                 this.invincibleTimer -= dt;
                 this.playerGroup.visible = Math.floor(Date.now() / 90) % 2 === 0;
@@ -3795,8 +4903,9 @@
                     this.showToast('🛡️ Start shield expired');
                 }
             }
+            const live = this.getLiveConfig();
             const intensity = this.getIntensity();
-            if (this.speed < this.maxSpeed) this.speed += this.speedAccel * (1 + intensity * 1.1) * dt;
+            if (this.speed < live.maxSpeed) this.speed += this.speedAccel * (1 + intensity * 1.1) * dt;
             const moveDist = this.speed * dt;
             this.distance += moveDist;
             const scoreMult = this.scoreMult();
@@ -3815,24 +4924,20 @@
                 this.updateLevelBadge();
                 const bonusCoins = Math.min(COIN_VALUE_CAP, newLevel) * 2;
                 this.coins += bonusCoins;
-                this.showToast(`🔥 Level ${newLevel}! +${bonusCoins} 🪙`, true);
+                this.showToast(`🔥 Level ${newLevel}! +${bonusCoins} 🪙 ⚡${Math.round(live.maxSpeed)}`, true);
                 this.flashScreen('cyan');
                 this.spawnShockwave(new THREE.Vector3(this.playerGroup.position.x, 0.12, this.playerGroup.position.z), 0x00f0ff, 3.2, 0.55);
                 sound.playLevelUp();
             }
-            this.uiScore.innerText = Math.floor(this.score).toLocaleString();
             const sm = (1 + (this.speed - this.baseSpeed) * 0.08) * scoreMult;
-            this.uiMult.innerText = `${sm.toFixed(1)}x`;
-            this.uiCoins.innerText = this.coins;
-            if (this.uiDist) this.uiDist.innerText = Math.floor(this.distance) + 'm';
-            const speedPct = ((this.speed - this.baseSpeed) / (this.maxSpeed - this.baseSpeed)) * 100;
-            this.uiSpeedBar.style.width = `${Math.min(100, speedPct)}%`;
+            const speedPct = ((this.speed - this.baseSpeed) / (live.maxSpeed - this.baseSpeed)) * 100;
+            this.updateHUD(dt, sm, speedPct);
             const targetFov = 55 + Math.min(1, speedPct / 100) * 9 + this.fovKick;
             if (Math.abs(this.camera.fov - targetFov) > 0.05) {
-                this.camera.fov += (targetFov - this.camera.fov) * 3 * dt;
+                this.camera.fov = this.dampF(this.camera.fov, targetFov, 3, dt);
                 this.camera.updateProjectionMatrix();
             }
-            this.playerGroup.position.x += (this.targetX - this.playerGroup.position.x) * 15.0 * dt;
+            this.playerGroup.position.x = this.dampF(this.playerGroup.position.x, this.targetX, 15.0, dt);
             const xDiff = this.targetX - this.playerGroup.position.x;
             this.playerGroup.rotation.z = -xDiff * 0.12;
             this.playerGroup.rotation.y = xDiff * 0.08;
@@ -3870,7 +4975,7 @@
             this.updatePowerups(moveDist, dt);
             this.updatePowerupHUD();
             if (this.nextSpawnZ > -SPAWN_DISTANCE) this.spawnPattern();
-            this.camera.position.x += (this.playerGroup.position.x * 0.35 - this.camera.position.x) * 6.0 * dt;
+            this.camera.position.x = this.dampF(this.camera.position.x, this.playerGroup.position.x * 0.35, 6.0, dt);
             this.camera.position.y = 4.2 + (this.playerY * 0.3);
             this.camera.lookAt(this.playerGroup.position.x * 0.18, 1.4 + this.playerY * 0.2, -6);
             this.updateSpeedStreaks(dt, Math.min(1, speedPct / 100));
@@ -3883,28 +4988,38 @@
 
         animatePlayerMesh(dt) {
             const runCadence = 8.5 + (this.speed - this.baseSpeed) * 0.15;
-            const time = this.clock.getElapsedTime() * runCadence;
-            if (this.isSliding) {
-                this.torso.position.y = 0.52; this.torso.rotation.x = 1.05;
-                this.head.rotation.x = -0.55;
-                this.leftLegPivot.rotation.x = -1.4; this.rightLegPivot.rotation.x = -0.2;
-                this.leftArmPivot.rotation.x = 1.25; this.rightArmPivot.rotation.x = 1.25;
-                this.leftArmPivot.rotation.z = -0.12; this.rightArmPivot.rotation.z = 0.12;
-            } else if (!this.isGrounded) {
-                this.torso.position.y = 1.25; this.torso.rotation.x = 0.22;
-                this.head.rotation.x = -0.1;
-                this.leftLegPivot.rotation.x = -0.85; this.rightLegPivot.rotation.x = 0.75;
-                this.leftArmPivot.rotation.x = 2.4; this.rightArmPivot.rotation.x = 2.4;
-                this.leftArmPivot.rotation.z = -0.3; this.rightArmPivot.rotation.z = 0.3;
+            // accumulated phase: cadence changes only bend the rate, never the phase (no stutter)
+            this.runPhase += dt * runCadence;
+            const ph = this.runPhase;
+            const key = this.isSliding ? 'slide' : (!this.isGrounded ? 'jump' : 'run');
+            if (key !== this.poseState) {
+                this.poseState = key;
+                this.poseFrom = this.capturePose();
+                this.poseBlend = 0;
+            }
+            let T;
+            if (key === 'slide') {
+                T = { ty: 0.52, trx: 1.05, tryy: 0, hrx: -0.55, hry: 0, llx: -1.4, rlx: -0.2, lax: 1.25, rax: 1.25, laz: -0.12, raz: 0.12 };
+            } else if (key === 'jump') {
+                T = { ty: 1.25, trx: 0.22, tryy: 0, hrx: -0.1, hry: 0, llx: -0.85, rlx: 0.75, lax: 2.4, rax: 2.4, laz: -0.3, raz: 0.3 };
             } else {
-                this.torso.position.y = 1.12 + Math.abs(Math.sin(time * 2.0)) * 0.08;
-                this.torso.rotation.x = 0.28; this.torso.rotation.y = Math.sin(time) * 0.08;
-                this.head.rotation.x = -0.08; this.head.rotation.y = 0;
-                this.leftLegPivot.rotation.x = Math.sin(time) * 1.1;
-                this.rightLegPivot.rotation.x = -Math.sin(time) * 1.1;
-                this.leftArmPivot.rotation.x = -Math.sin(time) * 1.1;
-                this.rightArmPivot.rotation.x = Math.sin(time) * 1.1;
-                this.leftArmPivot.rotation.z = -0.1; this.rightArmPivot.rotation.z = 0.1;
+                T = {
+                    ty: 1.12 + Math.abs(Math.sin(ph * 2.0)) * 0.08, trx: 0.28, tryy: Math.sin(ph) * 0.08,
+                    hrx: -0.08, hry: Math.sin(ph) * 0.05,
+                    llx: Math.sin(ph) * 1.1, rlx: -Math.sin(ph) * 1.1,
+                    lax: -Math.sin(ph) * 1.1, rax: Math.sin(ph) * 1.1,
+                    laz: -0.1, raz: 0.1
+                };
+            }
+            if (this.poseBlend < 1) {
+                // smoothstep blend from the captured pose into the new state (~130ms)
+                this.poseBlend = Math.min(1, this.poseBlend + dt / 0.13);
+                const b = this.poseBlend * this.poseBlend * (3 - 2 * this.poseBlend);
+                const F = this.poseFrom, out = {};
+                for (const k in T) out[k] = F[k] + (T[k] - F[k]) * b;
+                this.applyPose(out);
+            } else {
+                this.applyPose(T);
             }
             if (this.squashTimer > 0) {
                 this.squashTimer = Math.max(0, this.squashTimer - dt);
@@ -3992,30 +5107,36 @@
         }
 
         updateCoins(moveDist, dt) {
-            const rotSpeed = 3.2 * dt;
+            if (!this.coinsList.length) return;
             const coinValue = this.coinValue();
+            // Task 19: all coins spin in lockstep — one shared quaternion, per-instance position only
+            this.coinSpin += 3.2 * dt;
+            this._coinEuler.set(Math.PI / 2, 0, this.coinSpin);
+            this._coinQuat.setFromEuler(this._coinEuler);
             for (let i = this.coinsList.length - 1; i >= 0; i--) {
                 const c = this.coinsList[i];
-                c.mesh.position.z += moveDist;
-                c.mesh.rotation.z += rotSpeed;
-                if (this.magnetTimer > 0 && c.mesh.position.z > -22 && c.mesh.position.z < 6) {
+                c.pos.z += moveDist;
+                if (this.magnetTimer > 0 && c.pos.z > -22 && c.pos.z < 6) {
                     this._magnetTmp.set(this.playerGroup.position.x, 0.9, this.playerGroup.position.z);
-                    c.mesh.position.lerp(this._magnetTmp, Math.min(1, 10 * dt));
+                    c.pos.lerp(this._magnetTmp, 1 - Math.exp(-10 * dt));
                 }
-                c.box.setFromCenterAndSize(c.mesh.position, this._coinSize);
+                c.box.setFromCenterAndSize(c.pos, this._coinSize);
                 if (this.playerBox.intersectsBox(c.box)) {
                     const feverCoin = this.feverTimer > 0 ? 2 : 1;
                     this.coins += coinValue * feverCoin;
                     this.score += 50 * coinValue * this.scoreMult();
-                    this.registerCombo(c.mesh.position);
+                    this.registerCombo(c.pos);
                     sound.playCoin();
-                    this.createSparks(c.mesh.position, 0x00f0ff);
-                    this.scene.remove(c.mesh);
+                    this.createSparks(c.pos, 0x00f0ff);
+                    this.releaseCoin(c);
                     this.coinsList.splice(i, 1);
                     continue;
                 }
-                if (c.mesh.position.z > REMOVE_DISTANCE) { this.scene.remove(c.mesh); this.coinsList.splice(i, 1); }
+                if (c.pos.z > REMOVE_DISTANCE) { this.releaseCoin(c); this.coinsList.splice(i, 1); continue; }
+                this._coinMtx.compose(c.pos, this._coinQuat, this._coinScale);
+                this.coinInst.setMatrixAt(c.slot, this._coinMtx);
             }
+            this.coinInst.instanceMatrix.needsUpdate = true;
         }
 
         updatePowerups(moveDist, dt) {
@@ -4023,7 +5144,7 @@
                 const p = this.powerups[i];
                 p.mesh.position.z += moveDist;
                 p.mesh.rotation.y += 2.6 * dt;
-                p.mesh.position.y = p.baseY + Math.sin(this.clock.getElapsedTime() * 3 + p.phase) * 0.18;
+                p.mesh.position.y = p.baseY + Math.sin(this.time * 3 + p.phase) * 0.18;
                 p.mesh.children[1].rotation.z += 1.8 * dt;
                 p.box.setFromCenterAndSize(p.mesh.position, this._puSize);
                 if (this.playerBox.intersectsBox(p.box)) {
@@ -4044,8 +5165,8 @@
                 p.life -= dt;
                 if (p.life <= 0) {
                     this.scene.remove(p.system);
-                    p.system.geometry.dispose();
-                    p.system.material.dispose();
+                    if (p.pooled) { p.system.material.opacity = 0; this.sparkPool[p.count].push(p.pooled); }   // back to pool
+                    else { p.system.geometry.dispose(); p.system.material.dispose(); }
                     this.particles.splice(i, 1);
                     continue;
                 }
@@ -4093,8 +5214,11 @@
 
         spawnTrail(colorHex) {
             if (!this.trailTex) return;
-            const mat = new THREE.SpriteMaterial({ map: this.trailTex, color: colorHex, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false });
-            const s = new THREE.Sprite(mat);
+            // Task 18: sprite pool — no more 30 material allocations/sec (GC hiccups gone)
+            let s = this.trailPool.pop();
+            if (!s) s = new THREE.Sprite(new THREE.SpriteMaterial({ map: this.trailTex, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false }));
+            s.material.color.setHex(colorHex);
+            s.material.opacity = 0.5;
             s.position.set(
                 this.playerGroup.position.x + (Math.random() - 0.5) * 0.35,
                 this.playerGroup.position.y + 0.55 + Math.random() * 0.55,
@@ -4103,14 +5227,22 @@
             s.scale.setScalar(0.75 + Math.random() * 0.4);
             this.scene.add(s);
             this.trail.push({ s: s, life: 0.38, maxLife: 0.38 });
-            if (this.trail.length > 46) { const old = this.trail.shift(); this.scene.remove(old.s); old.s.material.dispose(); }
+            if (this.trail.length > (this.isMobile ? 26 : 46)) {
+                const old = this.trail.shift();
+                this.scene.remove(old.s);
+                if (this.trailPool.length < this.trailCap) this.trailPool.push(old.s); else old.s.material.dispose();
+            }
         }
 
         updateTrail(dt, moveDist) {
             for (let i = this.trail.length - 1; i >= 0; i--) {
                 const t = this.trail[i];
                 t.life -= dt;
-                if (t.life <= 0) { this.scene.remove(t.s); t.s.material.dispose(); this.trail.splice(i, 1); continue; }
+                if (t.life <= 0) {
+                    this.scene.remove(t.s);
+                    if (this.trailPool.length < this.trailCap) this.trailPool.push(t.s); else t.s.material.dispose();
+                    this.trail.splice(i, 1); continue;
+                }
                 t.s.material.opacity = (t.life / t.maxLife) * 0.5;
                 t.s.position.z += moveDist * 0.85;
                 t.s.position.y += 0.25 * dt;
@@ -4118,23 +5250,36 @@
             }
         }
 
+        makePopupTexture(text, color) {
+            const c = document.createElement('canvas'); c.width = 256; c.height = 96;
+            const ctx = c.getContext('2d');
+            ctx.font = '900 52px "Segoe UI", Roboto, Arial, sans-serif';
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.lineWidth = 9; ctx.strokeStyle = 'rgba(4,10,20,0.95)';
+            ctx.strokeText(text, 128, 48);
+            ctx.fillStyle = color;
+            ctx.fillText(text, 128, 48);
+            return new THREE.CanvasTexture(c);
+        }
+        getPopupTex(text, color) {
+            const key = text + '|' + color;
+            let tex = this.popupTexCache[key];
+            if (!tex) {
+                tex = this.makePopupTexture(text, color);   // Task 18: repeated texts reuse one GPU texture
+                if (this.popupTexCount < 40) { this.popupTexCache[key] = tex; this.popupTexCount++; }
+                else return { tex: tex, cached: false };
+            }
+            return { tex: tex, cached: true };
+        }
         spawnPopup(text, pos, color = '#ffd700', scale = 1) {
             try {
-                const c = document.createElement('canvas'); c.width = 256; c.height = 96;
-                const ctx = c.getContext('2d');
-                ctx.font = '900 52px "Segoe UI", Roboto, Arial, sans-serif';
-                ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                ctx.lineWidth = 9; ctx.strokeStyle = 'rgba(4,10,20,0.95)';
-                ctx.strokeText(text, 128, 48);
-                ctx.fillStyle = color;
-                ctx.fillText(text, 128, 48);
-                const tex = new THREE.CanvasTexture(c);
-                const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
+                const pt = this.getPopupTex(text, color);
+                const mat = new THREE.SpriteMaterial({ map: pt.tex, transparent: true, depthWrite: false });
                 const sp = new THREE.Sprite(mat);
                 sp.position.copy(pos);
                 sp.scale.set(2.3 * scale, 0.86 * scale, 1);
                 this.scene.add(sp);
-                this.popups.push({ sp: sp, life: 0.9, maxLife: 0.9 });
+                this.popups.push({ sp: sp, life: 0.9, maxLife: 0.9, texCached: pt.cached });
             } catch (e) {}
         }
 
@@ -4142,7 +5287,7 @@
             for (let i = this.popups.length - 1; i >= 0; i--) {
                 const p = this.popups[i];
                 p.life -= dt;
-                if (p.life <= 0) { this.scene.remove(p.sp); p.sp.material.map.dispose(); p.sp.material.dispose(); this.popups.splice(i, 1); continue; }
+                if (p.life <= 0) { this.scene.remove(p.sp); p.sp.material.dispose(); this.popups.splice(i, 1); continue; }  // cached map survives
                 p.sp.position.y += 1.5 * dt;
                 p.sp.position.z += moveDist;
                 const lp = p.life / p.maxLife;
@@ -4217,7 +5362,7 @@
                     '3D engine (three.js) could not load from any CDN.\n\n' +
                     'If you opened this inside a chat preview:\n' +
                     'that environment blocks external scripts & storage.\n\n' +
-                    '✅ Solution: save this code as MetroDash.html and open it directly in Chrome/Edge.'
+                    '✅ Solution: save this code as CyberDash.html and open it directly in Chrome/Edge.'
                 );
                 return;
             }
