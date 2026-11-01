@@ -110,30 +110,110 @@
         h1.game-title { font-size: 32px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 4px; background: linear-gradient(135deg, #00f0ff 0%, #7000ff 50%, #ff007f 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 4px 12px rgba(0, 240, 255, 0.4)); }
         .subtitle { color: #38bdf8; font-size: 13px; margin-bottom: 16px; font-weight: 500; }
         .menu-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
-        .menu-stat { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 8px 6px; }
+        .menu-stat { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 8px 6px; transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease; }
+        .menu-stat:hover { transform: translateY(-2px); border-color: rgba(0, 240, 255, 0.35); background: rgba(0, 240, 255, 0.05); }
         .menu-stat .t { font-size: 9px; color: #38bdf8; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; }
         .menu-stat .v { font-size: 15px; font-weight: 900; color: #fff; }
         #menu-best { color: #00f0ff !important; } #menu-bank { color: #ffd700 !important; }
-        .map-selector, .difficulty-selector { margin-bottom: 16px; text-align: left; }
         .map-selector-label, .difficulty-selector-label { font-size: 11px; font-weight: 800; color: #38bdf8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-        .map-options, .difficulty-options { display: flex; gap: 10px; }
-        .map-options { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
-        .map-btn, .difficulty-btn, .gfx-btn { flex: 1; padding: 10px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 6px; }
-        .map-btn:hover, .difficulty-btn:hover, .gfx-btn:hover { background: rgba(255, 255, 255, 0.12); }
-        .map-btn.active { border-color: #00f0ff; background: rgba(0, 240, 255, 0.15); box-shadow: 0 0 12px rgba(0, 240, 255, 0.3); }
-        .gfx-btn.active { border-color: #ffd76a; background: rgba(255, 215, 106, 0.14); box-shadow: 0 0 12px rgba(255, 215, 106, 0.3); }
-        .gfx-selector { margin-bottom: 16px; text-align: left; }
-        .gfx-options { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 9px; }
-        .gfx-hint { font-size: 9px; color: rgba(255,255,255,0.5); margin-top: 4px; text-align: center; }
-        .difficulty-btn.easy.active { border-color: #10b981; background: rgba(16, 185, 129, 0.2); box-shadow: 0 0 12px rgba(16, 185, 129, 0.4); color: #10b981; }
-        .difficulty-btn.normal.active { border-color: #f59e0b; background: rgba(245, 158, 11, 0.2); box-shadow: 0 0 12px rgba(245, 158, 11, 0.4); color: #f59e0b; }
-        .difficulty-btn.hard.active { border-color: #ef4444; background: rgba(239, 68, 68, 0.2); box-shadow: 0 0 12px rgba(239, 68, 68, 0.4); color: #ef4444; }
+        /* ── One-line settings row: Map · Level · Graphics ── */
+        .settings-row { display: flex; gap: 9px; margin-bottom: 16px; }
+        .settings-trigger { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; padding: 9px 11px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 13px; color: #fff; cursor: pointer; transition: all 0.2s ease; text-align: left; font-family: inherit; }
+        .settings-trigger:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(0, 240, 255, 0.45); }
+        .settings-trigger.open { border-color: rgba(0, 240, 255, 0.8); background: rgba(0, 240, 255, 0.1); box-shadow: 0 0 16px rgba(0, 240, 255, 0.25); }
+        .settings-trigger .st-icon { font-size: 15px; flex-shrink: 0; filter: drop-shadow(0 0 6px rgba(0, 240, 255, 0.35)); }
+        .settings-trigger .st-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.2; }
+        .st-cap { font-size: 8px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: rgba(255, 255, 255, 0.45); white-space: nowrap; }
+        .st-val { font-size: 11.5px; font-weight: 800; color: #eaf6ff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .st-caret { font-size: 9px; color: rgba(0, 240, 255, 0.85); flex-shrink: 0; transition: transform 0.25s ease; }
+        .settings-trigger.open .st-caret { transform: rotate(180deg); }
+        /* ── Make the settings row scream "tap me!" ── */
+        .settings-row-hint { display: flex; align-items: center; gap: 6px; order: 6; margin: 0 0 8px; font-size: 9.5px; font-weight: 800; letter-spacing: 1.4px; text-transform: uppercase; color: rgba(125, 243, 255, 0.9); pointer-events: none; }
+        .settings-row-hint .hint-hand { display: inline-block; font-size: 14px; animation: hintPoint 1.25s ease-in-out infinite; filter: drop-shadow(0 0 7px rgba(0, 240, 255, 0.6)); }
+        @keyframes hintPoint { 0%, 100% { transform: translateY(-2px) rotate(-8deg); } 50% { transform: translateY(3px) rotate(-8deg); } }
+        .settings-trigger .st-caret { animation: caretBob 1.7s ease-in-out infinite; text-shadow: 0 0 8px rgba(0, 240, 255, 0.75); }
+        @keyframes caretBob { 0%, 100% { transform: translateY(-1.5px); opacity: 0.7; } 50% { transform: translateY(2px); opacity: 1; } }
+        .settings-trigger { animation: trigIdleGlow 3.4s ease-in-out infinite; }
+        @keyframes trigIdleGlow { 0%, 100% { border-color: rgba(255, 255, 255, 0.15); box-shadow: none; } 50% { border-color: rgba(0, 240, 255, 0.5); box-shadow: 0 0 15px rgba(0, 240, 255, 0.22); } }
+        .settings-trigger:hover, .settings-trigger.open, .settings-trigger:active { animation: none; }
+        .settings-trigger.open .st-caret, .settings-trigger:hover .st-caret { animation: none; }
+        .st-tap { flex-shrink: 0; font-size: 7px; font-weight: 900; letter-spacing: 1px; color: #04101c; background: #00f0ff; border-radius: 6px; padding: 2px 5px; text-transform: uppercase; box-shadow: 0 0 10px rgba(0, 240, 255, 0.55); opacity: 0; transform: translateX(-4px); transition: opacity 0.2s ease, transform 0.2s ease; pointer-events: none; }
+        .settings-trigger:hover .st-tap { opacity: 1; transform: translateX(0); }
+        /* ── Top-left icon buttons — daily gift 🎁 · help 🎮 (each opens a window) ── */
+        .menu-top-btn { position: absolute; top: 15px; z-index: 6; width: 47px; height: 45px; border-radius: 14px; background: rgba(4, 8, 18, 0.55); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: #fff; font-size: 21px; cursor: pointer; pointer-events: auto; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 26px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08); transition: transform 0.15s ease, border-color 0.2s ease, box-shadow 0.2s ease; }
+        .menu-top-btn:hover { transform: translateY(-2px) scale(1.06); }
+        .menu-top-btn:active { transform: scale(0.94); }
+        #btn-daily-gift { left: 20px; border: 1px solid rgba(255, 215, 0, 0.4); }
+        #btn-daily-gift:hover { border-color: rgba(255, 215, 0, 0.85); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 215, 0, 0.4); }
+        #btn-help { left: 79px; border: 1px solid rgba(0, 240, 255, 0.38); }
+        #btn-help:hover { border-color: rgba(0, 240, 255, 0.85); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 240, 255, 0.35); }
+        #btn-daily-gift .gift-dot { position: absolute; top: -6px; right: -6px; min-width: 17px; height: 17px; border-radius: 9px; background: linear-gradient(135deg, #ff3355, #ff007f); color: #fff; font-size: 10px; font-weight: 900; display: none; align-items: center; justify-content: center; padding: 0 4px; box-shadow: 0 2px 8px rgba(255, 51, 85, 0.65); border: 1.5px solid rgba(255, 255, 255, 0.3); }
+        #btn-daily-gift.has-reward { border-color: rgba(255, 215, 0, 0.85); box-shadow: 0 8px 26px rgba(0, 0, 0, 0.35), 0 0 22px rgba(255, 215, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08); animation: giftBounce 1.7s ease-in-out infinite; }
+        #btn-daily-gift.has-reward .gift-dot { display: flex; animation: giftDotPulse 1.2s ease-in-out infinite; }
+        @keyframes giftBounce { 0%, 100% { transform: translateY(0) rotate(0deg); } 28% { transform: translateY(-3.5px) rotate(-5deg); } 62% { transform: translateY(0) rotate(4deg); } }
+        @keyframes giftDotPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.25); } }
+        /* ── Daily rewards popover ── */
+        .daily-popover .daily-row { margin: 12px 0 14px; }
+        .dp-week { color: #ffd700; letter-spacing: 1px; font-size: 11px; }
+        .dp-streak { display: inline-flex; align-items: center; gap: 6px; background: rgba(255, 215, 0, 0.08); border: 1px solid rgba(255, 215, 0, 0.32); border-radius: 50px; padding: 5px 14px; font-size: 10.5px; font-weight: 800; letter-spacing: 0.8px; color: #ffd700; }
+        /* ── Help / how-to-play popover ── */
+        .help-popover .controls-guide { margin-bottom: 14px; }
+        .help-sub { font-size: 10px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: #7ff3ff; margin: 2px 0 8px; }
+        .help-pu-grid { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+        .help-pu { display: flex; align-items: center; gap: 9px; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.09); border-radius: 10px; padding: 7px 10px; transition: background 0.2s ease, border-color 0.2s ease; }
+        .help-pu:hover { background: rgba(0, 240, 255, 0.06); border-color: rgba(0, 240, 255, 0.28); }
+        .help-pu .hp-ico { font-size: 15px; flex-shrink: 0; filter: drop-shadow(0 0 6px rgba(0, 240, 255, 0.3)); }
+        .help-pu .hp-txt { font-size: 10.5px; color: rgba(241, 245, 249, 0.85); line-height: 1.45; text-align: left; }
+        .help-pu .hp-txt b { color: #fff; }
+        /* ── Settings popovers (map previews / difficulty / graphics) ── */
+        #settings-backdrop { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 4, 10, 0.55); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); z-index: 39; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.25s ease, visibility 0.25s ease; }
+        #settings-backdrop.open { opacity: 1; visibility: visible; pointer-events: auto; }
+        .settings-popover { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.92); width: min(430px, 92vw); max-height: 84vh; overflow-y: auto; background: linear-gradient(168deg, rgba(13, 20, 38, 0.97), rgba(7, 11, 22, 0.98)); border: 1px solid rgba(0, 240, 255, 0.35); border-radius: 22px; padding: 16px 16px 14px; z-index: 40; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7), 0 0 44px rgba(0, 240, 255, 0.14); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.28s ease, visibility 0.28s ease, transform 0.28s cubic-bezier(0.34, 1.4, 0.64, 1); text-align: left; }
+        .settings-popover.open { opacity: 1; visibility: visible; pointer-events: auto; transform: translate(-50%, -50%) scale(1); }
+        .pop-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+        .pop-title { font-size: 12px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; color: #7ff3ff; }
+        .pop-close { width: 28px; height: 28px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(255, 255, 255, 0.07); color: #fff; cursor: pointer; font-size: 12px; line-height: 1; flex-shrink: 0; transition: all 0.2s ease; }
+        .pop-close:hover { background: rgba(239, 68, 68, 0.3); border-color: rgba(239, 68, 68, 0.5); }
+        /* map preview cards */
+        .map-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .map-btn { position: relative; display: flex; flex-direction: column; gap: 6px; padding: 7px 7px 6px; background: rgba(255, 255, 255, 0.045); border: 1.5px solid rgba(255, 255, 255, 0.14); border-radius: 14px; color: #fff; cursor: pointer; transition: all 0.2s ease; overflow: hidden; font-family: inherit; }
+        .map-btn:hover { transform: translateY(-2px); border-color: rgba(0, 240, 255, 0.5); }
+        .map-btn canvas { width: 100%; display: block; border-radius: 9px; }
+        .map-btn .mb-name { font-size: 11px; font-weight: 800; letter-spacing: 0.4px; text-align: center; }
+        .map-btn.active { border-color: #00f0ff; background: rgba(0, 240, 255, 0.12); box-shadow: 0 0 18px rgba(0, 240, 255, 0.3); }
+        .map-btn.active::after { content: '✓'; position: absolute; top: 12px; right: 12px; width: 20px; height: 20px; border-radius: 50%; background: #00f0ff; color: #04101c; font-size: 11px; font-weight: 900; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(0, 240, 255, 0.8); }
+        /* difficulty cards */
+        .difficulty-options { display: flex; gap: 9px; }
+        .difficulty-btn { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 13px 8px 11px; background: rgba(255, 255, 255, 0.045); border: 1.5px solid rgba(255, 255, 255, 0.14); border-radius: 14px; color: #fff; cursor: pointer; transition: all 0.2s ease; font-family: inherit; }
+        .difficulty-btn:hover { transform: translateY(-2px); }
+        .db-dot { font-size: 19px; line-height: 1; }
+        .db-name { font-size: 12px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; }
+        .db-bars { width: 100%; display: flex; flex-direction: column; gap: 3px; }
+        .db-bars i { display: block; height: 4px; border-radius: 3px; opacity: 0.9; }
+        .db-desc { font-size: 8.5px; color: rgba(255, 255, 255, 0.55); text-align: center; line-height: 1.4; }
+        .difficulty-btn.easy.active { border-color: #10b981; background: rgba(16, 185, 129, 0.14); box-shadow: 0 0 16px rgba(16, 185, 129, 0.35); }
+        .difficulty-btn.normal.active { border-color: #f59e0b; background: rgba(245, 158, 11, 0.14); box-shadow: 0 0 16px rgba(245, 158, 11, 0.35); }
+        .difficulty-btn.hard.active { border-color: #ef4444; background: rgba(239, 68, 68, 0.14); box-shadow: 0 0 16px rgba(239, 68, 68, 0.35); }
+        .db-legend { font-size: 8px; color: rgba(255, 255, 255, 0.4); text-align: center; margin-top: 10px; letter-spacing: 0.5px; }
+        /* graphics cards */
+        .gfx-options { display: flex; gap: 9px; }
+        .gfx-btn { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 13px 8px 11px; background: rgba(255, 255, 255, 0.045); border: 1.5px solid rgba(255, 255, 255, 0.14); border-radius: 14px; color: #fff; cursor: pointer; transition: all 0.2s ease; font-family: inherit; }
+        .gfx-btn:hover { transform: translateY(-2px); border-color: rgba(255, 215, 106, 0.5); }
+        .gb-icon { font-size: 19px; line-height: 1; }
+        .gb-name { font-size: 12px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; }
+        .gb-meter { width: 100%; height: 5px; border-radius: 4px; background: rgba(255, 255, 255, 0.1); overflow: hidden; }
+        .gb-meter i { display: block; height: 100%; border-radius: 4px; background: linear-gradient(90deg, #ffd76a, #ff8800); }
+        .gb-desc { font-size: 8.5px; color: rgba(255, 255, 255, 0.55); text-align: center; line-height: 1.4; }
+        .gfx-btn.active { border-color: #ffd76a; background: rgba(255, 215, 106, 0.12); box-shadow: 0 0 16px rgba(255, 215, 106, 0.3); }
         .controls-guide { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 18px; text-align: left; }
         .ctrl-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 8px 10px; display: flex; align-items: center; gap: 8px; }
         .key-badge { background: #0f172a; color: #00f0ff; border: 1px solid rgba(0, 240, 255, 0.4); border-radius: 6px; padding: 3px 6px; font-size: 10.5px; font-weight: 800; }
         .ctrl-desc { color: #f1f5f9; font-size: 11.5px; font-weight: 600; }
         .btn-stack { display: flex; flex-direction: column; gap: 10px; width: 100%; }
-        .btn-action { background: linear-gradient(135deg, #00f0ff 0%, #7000ff 100%); border: none; color: #fff; font-size: 14px; font-weight: 900; letter-spacing: 0.8px; text-transform: uppercase; padding: 13px 22px; border-radius: 50px; cursor: pointer; box-shadow: 0 8px 24px rgba(0, 240, 255, 0.4); transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; text-align: center; gap: 8px; }
+        .btn-action { background: linear-gradient(135deg, #00f0ff 0%, #7000ff 100%); border: none; color: #fff; font-size: 14px; font-weight: 900; letter-spacing: 0.8px; text-transform: uppercase; padding: 13px 22px; border-radius: 50px; cursor: pointer; box-shadow: 0 8px 24px rgba(0, 240, 255, 0.4); transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; text-align: center; gap: 8px; position: relative; overflow: hidden; }
+        .btn-action::after { content: ''; position: absolute; top: -25%; bottom: -25%; left: 0; width: 34%; background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.38), transparent); transform: translateX(-170%) skewX(-18deg); animation: btnShine 3.8s ease-in-out infinite; pointer-events: none; }
+        @keyframes btnShine { 0%, 55% { transform: translateX(-170%) skewX(-18deg); } 88%, 100% { transform: translateX(470%) skewX(-18deg); } }
+        .btn-action:disabled::after { display: none; }
         .btn-action:hover { transform: scale(1.03); box-shadow: 0 12px 30px rgba(0, 240, 255, 0.6); }
         .btn-action:active { transform: scale(0.98); }
         .btn-rewarded { background: linear-gradient(135deg, #ffd700 0%, #ff8800 100%); color: #000; box-shadow: 0 8px 24px rgba(255, 170, 0, 0.45); }
@@ -145,11 +225,11 @@
         .stat-box { background: rgba(255,255,255,0.04); border-radius: 14px; padding: 10px; border: 1px solid rgba(255,255,255,0.08); }
         .stat-box .title { font-size: 10px; color: #38bdf8; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 3px; }
         .stat-box .val { font-size: 20px; font-weight: 900; color: #fff; }
-        /* ── RGB credit — top-left of the menu, animated rainbow text ── */
-        .credit-rgb { position: absolute; top: 18px; left: 20px; z-index: 5; padding: 9px 18px; border-radius: 50px; background: rgba(4, 8, 18, 0.42); border: 1px solid rgba(255, 255, 255, 0.14); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 8px 26px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08); font-size: 14px; font-weight: 900; letter-spacing: 0.5px; white-space: nowrap; pointer-events: none; }
+        /* ── RGB credit — top-left of the menu (next to the gift button), animated rainbow text ── */
+        .credit-rgb { position: absolute; top: 18px; left: 138px; z-index: 5; padding: 9px 18px; border-radius: 50px; background: rgba(4, 8, 18, 0.42); border: 1px solid rgba(255, 255, 255, 0.14); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 8px 26px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08); font-size: 14px; font-weight: 900; letter-spacing: 0.5px; white-space: nowrap; pointer-events: none; }
         .credit-rgb .rgb-text { background: linear-gradient(90deg, #00f0ff, #7000ff, #ff007f, #00f0ff); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.35)); animation: creditFlow 6s linear infinite; }
         @keyframes creditFlow { 0% { background-position: 200% 50%; } 100% { background-position: 0% 50%; } }
-        @media (max-width: 768px), (orientation: portrait) { .credit-rgb { top: auto; bottom: 6px; left: 50%; transform: translateX(-50%); padding: 3px 10px; font-size: 9.5px; letter-spacing: 1px; } }
+        @media (max-width: 768px), (orientation: portrait) { .credit-rgb { top: auto; bottom: 6px; left: 50%; transform: translateX(-50%); padding: 3px 10px; font-size: 9.5px; letter-spacing: 1px; } .menu-top-btn { top: 10px; width: 42px; height: 40px; font-size: 18px; border-radius: 12px; } #btn-daily-gift { left: 10px; } #btn-help { left: 60px; } .settings-row-hint { font-size: 8.5px; letter-spacing: 1px; } }
         #customize-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: transparent !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; z-index: 25; pointer-events: none; transition: opacity 0.3s ease, visibility 0.3s ease; }
         #customize-modal.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         /* ── v7 Robot Studio — same glass language as the menu Player Hub ── */
@@ -300,6 +380,7 @@
         .boost-chip.active { border-color: #ffd700; background: rgba(255,215,0,0.14); box-shadow: 0 0 12px rgba(255,215,0,0.35); }
         .boost-chip.disabled { opacity: 0.45; cursor: not-allowed; }
         .boost-chip:not(.disabled):hover { transform: translateY(-1px); background: rgba(255,255,255,0.1); }
+        .boost-chip:not(.disabled):active { transform: scale(0.97); }
         /* ── Neon custom scrollbars (v4) ── */
         * { scrollbar-width: thin; scrollbar-color: rgba(0, 240, 255, 0.55) rgba(255, 255, 255, 0.04); }
         ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -307,12 +388,7 @@
         ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, rgba(0,240,255,0.6), rgba(112,0,255,0.6)); border-radius: 8px; }
         ::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, rgba(0,240,255,0.95), rgba(112,0,255,0.95)); }
         ::-webkit-scrollbar-corner { background: transparent; }
-        /* ── Daily Rewards (v4) ── */
-        .daily-selector { margin-bottom: 16px; text-align: left; background: rgba(255, 215, 0, 0.05); border: 1px solid rgba(255, 215, 0, 0.22); border-radius: 16px; padding: 12px; position: relative; overflow: hidden; }
-        .daily-selector .map-selector-label { color: #ffd700; }
-        .daily-selector .map-selector-label span { color: rgba(255,255,255,0.55); }
-        .daily-selector.claimable { border-color: rgba(255, 215, 0, 0.55); animation: dailyGlow 2.4s ease-in-out infinite; }
-        @keyframes dailyGlow { 0%, 100% { box-shadow: 0 0 8px rgba(255,215,0,0.15); } 50% { box-shadow: 0 0 22px rgba(255,215,0,0.4); } }
+        /* ── Daily Rewards (v5 — top-left gift button + window; calendar styles live in .daily-popover) ── */
         .daily-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin: 9px 0 11px; }
         .day-chip { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 6px 2px; text-align: center; position: relative; transition: all 0.25s ease; }
         .day-chip .d-num { font-size: 8px; color: #38bdf8; font-weight: 900; letter-spacing: 0.5px; }
@@ -339,13 +415,11 @@
         .menu-col-center #engine-status { order: 3; }
         .menu-col-right .user-section { order: 4; }
         .menu-col-right .menu-stats { order: 5; }
-        .menu-col-center .map-selector { order: 6; }
-        .menu-col-center .difficulty-selector { order: 7; }
-        .menu-col-center .gfx-selector { order: 8; }
+        .menu-col-center .settings-row { order: 6; }
         .menu-col-right .boost-selector { order: 8; }
-        .menu-col-right .daily-selector { order: 9; }
-        .menu-col-right .controls-guide { order: 10; }
         .menu-col-center .btn-stack { order: 11; }
+        /* ── Smooth entrance for the menu (desktop) ── */
+        @keyframes menuIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
         @media (min-width: 1024px) {
             #start-modal { background: linear-gradient(100deg, rgba(4, 7, 16, 0.95) 0%, rgba(4, 7, 16, 0.87) 36%, rgba(5, 9, 18, 0.55) 66%, rgba(5, 9, 18, 0.36) 100%); backdrop-filter: none; -webkit-backdrop-filter: none; }
             #start-modal .modal-content { width: 100%; height: 100%; max-width: none; max-height: none; box-sizing: border-box; flex-direction: row; align-items: stretch; justify-content: center; gap: clamp(28px, 3.5vw, 64px); padding: 4.5vh 4.5vw; border-radius: 0; border: none; background: transparent; box-shadow: none; overflow: hidden; }
@@ -359,17 +433,17 @@
             #start-modal .subtitle { font-size: 14px; letter-spacing: 4px; text-transform: uppercase; color: rgba(56, 189, 248, 0.85); margin-bottom: 0; }
             #start-modal .subtitle::after { content: ''; display: block; width: 92px; height: 3px; margin-top: 14px; border-radius: 3px; background: linear-gradient(90deg, #00f0ff, #7000ff); box-shadow: 0 0 12px rgba(0, 240, 255, 0.5); }
             #start-modal #engine-status { display: inline-flex; align-self: flex-start; align-items: center; padding: 6px 14px; border-radius: 50px; background: rgba(16, 185, 129, 0.09); border: 1px solid rgba(16, 185, 129, 0.3); color: rgba(255, 255, 255, 0.6); font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; font-weight: 800; margin: 18px 0 34px; }
-            #start-modal .map-selector { margin-bottom: 22px; }
-            #start-modal .map-selector-label, #start-modal .difficulty-selector-label { color: rgba(255, 255, 255, 0.4); font-size: 10px; margin-bottom: 10px; }
-            #start-modal .map-btn, #start-modal .gfx-btn { padding: 14px 10px; font-size: 13px; border-radius: 14px; background: rgba(12, 18, 34, 0.62); border-color: rgba(255, 255, 255, 0.13); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-            #start-modal .map-btn.active { border-color: rgba(0, 240, 255, 0.85); background: linear-gradient(135deg, rgba(0, 240, 255, 0.17), rgba(112, 0, 255, 0.15)); box-shadow: 0 0 0 1px rgba(0, 240, 255, 0.28), 0 10px 28px rgba(0, 240, 255, 0.16); }
-            #start-modal .difficulty-selector { margin-bottom: 30px; }
-            #start-modal .difficulty-btn { padding: 11px; font-size: 12px; border-radius: 12px; background: rgba(12, 18, 34, 0.62); border-color: rgba(255, 255, 255, 0.13); }
-            #start-modal .difficulty-hint { text-align: left; font-size: 10px; }
+            #start-modal .settings-row { margin-bottom: 26px; gap: 11px; }
+            #start-modal .settings-trigger { padding: 11px 13px; border-radius: 15px; background: rgba(12, 18, 34, 0.62); border-color: rgba(255, 255, 255, 0.13); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+            #start-modal .settings-trigger .st-icon { font-size: 17px; }
+            #start-modal .st-cap { font-size: 8.5px; }
+            #start-modal .st-val { font-size: 12.5px; }
             #start-modal .menu-col-center .btn-stack { flex-direction: row; gap: 12px; }
             #start-modal .menu-col-center .btn-stack .btn-action { flex: 1; padding: 16px 14px; font-size: 14px; }
             #start-modal #btn-start { flex: 1.5; font-size: 15.5px; }
             #start-modal #btn-customize { background: rgba(12, 18, 34, 0.7); border: 1px solid rgba(0, 240, 255, 0.32); font-size: 12.5px; }
+            #start-modal .menu-col-center { animation: menuIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both; }
+            #start-modal .menu-col-right { animation: menuIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.09s both; }
             /* ── Player Hub sidebar (right, one unified glass panel) ── */
             .menu-col-right { position: relative; flex: 0 0 clamp(430px, 34vw, 570px); align-self: center; max-height: 100%; overflow-y: auto; background: linear-gradient(168deg, rgba(10, 16, 32, 0.6), rgba(7, 11, 22, 0.46)); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 22px; padding: 22px 24px 16px; box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06); }
             .menu-col-right::before { content: ''; position: absolute; top: -1px; left: 26px; right: 26px; height: 1px; background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.55), transparent); pointer-events: none; }
@@ -386,11 +460,6 @@
             #start-modal .menu-col-right .boost-chip .b-title { font-size: 13px; }
             #start-modal .menu-col-right .boost-chip .b-cost { font-size: 11px; }
             #start-modal .menu-col-right .boost-selector { margin-bottom: 0; }
-            #start-modal .menu-col-right .daily-selector { margin-bottom: 0; background: rgba(255, 215, 0, 0.06); }
-            #start-modal .menu-col-right .controls-guide { margin-top: 0; gap: 7px; margin-bottom: 0; }
-            #start-modal .menu-col-right .ctrl-item { background: rgba(255, 255, 255, 0.045); padding: 7px 8px; gap: 6px; }
-            #start-modal .menu-col-right .key-badge { font-size: 9.5px; padding: 2px 6px; white-space: nowrap; }
-            #start-modal .menu-col-right .ctrl-desc { font-size: 10.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
             .leaderboard-box { max-height: 21vh; }
             /* ── Robot Studio (customizer) — full-screen hero + glass panel, same frame as menu ── */
             #customize-modal { background: linear-gradient(100deg, rgba(4, 7, 16, 0.95) 0%, rgba(4, 7, 16, 0.87) 36%, rgba(5, 9, 18, 0.55) 66%, rgba(5, 9, 18, 0.36) 100%) !important; display: flex; flex-direction: row; align-items: stretch; justify-content: center; gap: clamp(28px, 3.5vw, 64px); padding: 4.5vh 4.5vw; box-sizing: border-box; }
@@ -453,12 +522,20 @@
             .preset-chip { padding: 6px 6px 5px; border-radius: 10px; }
             .preset-name { font-size: 8.2px; }
             .btn-action { font-size: 12px; padding: 10px 14px; }
-            .map-btn, .difficulty-btn, .gfx-btn { font-size: 10px; padding: 8px; }
+            .settings-trigger { padding: 8px 8px; gap: 6px; border-radius: 12px; }
+            .settings-trigger .st-icon { font-size: 13px; }
+            .st-cap { font-size: 7.5px; }
+            .st-val { font-size: 10px; }
+            .settings-popover { width: 94vw; padding: 14px 12px 12px; }
+            .map-options { gap: 8px; }
+            .map-btn .mb-name { font-size: 10px; }
+            .difficulty-options, .gfx-options { flex-direction: column; }
+            .difficulty-btn, .gfx-btn { padding: 11px 10px; }
+            .db-desc, .gb-desc { font-size: 9.5px; }
             .modal-content { padding: 20px 16px; }
             h1.game-title { font-size: 26px; }
             .user-section { padding: 10px; }
             .menu-stat .v { font-size: 13px; }
-            .daily-selector { padding: 10px 8px; }
             .daily-row { gap: 3px; }
             .day-chip { padding: 4px 1px; border-radius: 8px; }
             .day-chip .d-icon { font-size: 11px; }
@@ -519,6 +596,8 @@
     <div id="ad-overlay"><div>Loading Advertisement...</div></div>
 
     <div id="start-modal" class="modal">
+        <button type="button" id="btn-daily-gift" class="menu-top-btn" title="🎁 Daily Rewards — tap to claim!">🎁<span class="gift-dot" id="gift-dot">!</span></button>
+        <button type="button" id="btn-help" class="menu-top-btn" title="🎮 How to play — controls & power-ups">🎮</button>
         <div class="credit-rgb"><span class="rgb-text">MADE BY MATIN</span></div>
         <div class="modal-content">
             <div class="menu-orb orb1"></div>
@@ -532,32 +611,26 @@
             <h1 class="game-title">Cyber Dash</h1>
             <p class="subtitle">Robot Runner Edition</p>
             <div id="engine-status">⏳ Loading 3D engine…</div>
-            <div class="map-selector">
-                <div class="map-selector-label">Select Map</div>
-                <div class="map-options">
-                    <button class="map-btn active" data-map="city">🏙️ Neon City</button>
-                    <button class="map-btn" data-map="desert">🏜️ Desert Oasis</button>
-                    <button class="map-btn" data-map="snow">❄️ Frost Peak</button>
-                    <button class="map-btn" data-map="jungle">🌳 Amazon Jungle</button>
-                </div>
-            </div>
-            <div class="difficulty-selector">
-                <div class="difficulty-selector-label"> Difficulty Level</div>
-                <div class="difficulty-options">
-                    <button class="difficulty-btn easy" data-difficulty="easy">🟢 Easy</button>
-                    <button class="difficulty-btn normal active" data-difficulty="normal"> Normal</button>
-                    <button class="difficulty-btn hard" data-difficulty="hard"> Hard</button>
-                </div>
-                <div class="difficulty-hint" id="difficulty-hint">🟡 Balanced — ramps up every level</div>
-            </div>
-            <div class="gfx-selector">
-                <div class="map-selector-label">🖥️ Graphics</div>
-                <div class="gfx-options">
-                    <button class="gfx-btn active" data-gfx="sharp">✨ Sharp</button>
-                    <button class="gfx-btn" data-gfx="auto">⚖️ Auto</button>
-                    <button class="gfx-btn" data-gfx="fast">⚡ Fast</button>
-                </div>
-                <div class="gfx-hint" id="gfx-hint">✨ Maximum clarity — renders at full retina</div>
+            <div class="settings-row-hint"><span class="hint-hand">👇</span> Tap a card to change it — Map · Level · Graphics</div>
+            <div class="settings-row">
+                <button type="button" class="settings-trigger" id="trigger-map" title="Choose map">
+                    <span class="st-icon">🗺️</span>
+                    <span class="st-txt"><span class="st-cap">Map</span><span class="st-val" id="value-map">Neon City</span></span>
+                    <span class="st-tap">Tap</span>
+                    <span class="st-caret">▾</span>
+                </button>
+                <button type="button" class="settings-trigger" id="trigger-difficulty" title="Difficulty level">
+                    <span class="st-icon">🎯</span>
+                    <span class="st-txt"><span class="st-cap">Level</span><span class="st-val" id="value-difficulty">Normal</span></span>
+                    <span class="st-tap">Tap</span>
+                    <span class="st-caret">▾</span>
+                </button>
+                <button type="button" class="settings-trigger" id="trigger-gfx" title="Graphics quality">
+                    <span class="st-icon">🖥️</span>
+                    <span class="st-txt"><span class="st-cap">GFX</span><span class="st-val" id="value-gfx">Sharp</span></span>
+                    <span class="st-tap">Tap</span>
+                    <span class="st-caret">▾</span>
+                </button>
             </div>
             <div class="btn-stack">
                 <button id="btn-start" class="btn-action" style="width:100%;">🏃 Start Run</button>
@@ -643,21 +716,89 @@
                     <button class="boost-chip" id="boost-shield"><span class="b-title">🛡️ Shield Start</span><span class="b-cost">150 🪙 · 12s shield</span></button>
                 </div>
             </div>
-            <div class="daily-selector" id="daily-box">
-                <div class="map-selector-label">🎁 Daily Rewards <span id="daily-week-label">· Week 1</span></div>
-                <div class="daily-row" id="daily-row"></div>
-                <button id="btn-daily-claim" class="btn-action btn-rewarded daily-claim-btn">🎁 Claim Reward</button>
-                <div class="difficulty-hint" id="daily-hint">💡 Come back every day for 7 days — rewards grow! Miss a day & the streak resets.</div>
             </div>
+        </div>
+
+        <div id="settings-backdrop"></div>
+        <div id="popover-map" class="settings-popover">
+            <div class="pop-head"><span class="pop-title">🗺️ Choose Your Map</span><button type="button" class="pop-close" title="Close">✕</button></div>
+            <div class="map-options">
+                <button type="button" class="map-btn active" data-map="city"><canvas class="map-thumb" data-thumb="city" width="300" height="170"></canvas><span class="mb-name">🏙️ Neon City</span></button>
+                <button type="button" class="map-btn" data-map="desert"><canvas class="map-thumb" data-thumb="desert" width="300" height="170"></canvas><span class="mb-name">🏜️ Desert Oasis</span></button>
+                <button type="button" class="map-btn" data-map="snow"><canvas class="map-thumb" data-thumb="snow" width="300" height="170"></canvas><span class="mb-name">❄️ Frost Peak</span></button>
+                <button type="button" class="map-btn" data-map="jungle"><canvas class="map-thumb" data-thumb="jungle" width="300" height="170"></canvas><span class="mb-name">🌳 Amazon Jungle</span></button>
+            </div>
+            <div class="db-legend">Tap a world to preview & select — applied instantly</div>
+        </div>
+        <div id="popover-difficulty" class="settings-popover">
+            <div class="pop-head"><span class="pop-title">🎯 Difficulty Level</span><button type="button" class="pop-close" title="Close">✕</button></div>
+            <div class="difficulty-options">
+                <button type="button" class="difficulty-btn easy" data-difficulty="easy">
+                    <span class="db-dot">🟢</span><span class="db-name">Easy</span>
+                    <span class="db-bars"><i style="background:#10b981;width:35%"></i><i style="background:#34d399;width:15%"></i><i style="background:#6ee7b7;width:25%"></i></span>
+                    <span class="db-desc">Relaxed pace · gentle ramp</span>
+                </button>
+                <button type="button" class="difficulty-btn normal active" data-difficulty="normal">
+                    <span class="db-dot">🟡</span><span class="db-name">Normal</span>
+                    <span class="db-bars"><i style="background:#f59e0b;width:60%"></i><i style="background:#fbbf24;width:45%"></i><i style="background:#fcd34d;width:55%"></i></span>
+                    <span class="db-desc">Balanced · ramps every level</span>
+                </button>
+                <button type="button" class="difficulty-btn hard" data-difficulty="hard">
+                    <span class="db-dot">🔴</span><span class="db-name">Hard</span>
+                    <span class="db-bars"><i style="background:#ef4444;width:90%"></i><i style="background:#f87171;width:80%"></i><i style="background:#fca5a5;width:92%"></i></span>
+                    <span class="db-desc">Brutal · past human limits</span>
+                </button>
+            </div>
+            <div class="db-legend">Bars = Speed · Traffic · Ramp intensity</div>
+            <div class="difficulty-hint" id="difficulty-hint">🟡 Balanced — ramps up every level</div>
+        </div>
+        <div id="popover-gfx" class="settings-popover">
+            <div class="pop-head"><span class="pop-title">🖥️ Graphics Quality</span><button type="button" class="pop-close" title="Close">✕</button></div>
+            <div class="gfx-options">
+                <button type="button" class="gfx-btn active" data-gfx="sharp">
+                    <span class="gb-icon">✨</span><span class="gb-name">Sharp</span>
+                    <span class="gb-meter"><i style="width:100%"></i></span>
+                    <span class="gb-desc">Full retina clarity — sheds pixels only if FPS struggles</span>
+                </button>
+                <button type="button" class="gfx-btn" data-gfx="auto">
+                    <span class="gb-icon">⚖️</span><span class="gb-name">Auto</span>
+                    <span class="gb-meter"><i style="width:66%"></i></span>
+                    <span class="gb-desc">Targets 60fps while staying as sharp as possible</span>
+                </button>
+                <button type="button" class="gfx-btn" data-gfx="fast">
+                    <span class="gb-icon">⚡</span><span class="gb-name">Fast</span>
+                    <span class="gb-meter"><i style="width:34%"></i></span>
+                    <span class="gb-desc">Maximum FPS · lighter image for weaker phones</span>
+                </button>
+            </div>
+            <div class="gfx-hint" id="gfx-hint">✨ Maximum clarity — renders at full retina</div>
+        </div>
+        <div id="popover-daily" class="settings-popover daily-popover">
+            <div class="pop-head"><span class="pop-title">🎁 Daily Rewards <span id="daily-week-label" class="dp-week">· Week 1</span></span><button type="button" class="pop-close" title="Close">✕</button></div>
+            <div class="dp-streak" id="daily-streak">🔥 Streak: 0 / 7 days</div>
+            <div class="daily-row" id="daily-row"></div>
+            <button id="btn-daily-claim" class="btn-action btn-rewarded daily-claim-btn">🎁 Claim Reward</button>
+            <div class="difficulty-hint" id="daily-hint">💡 Come back every day for 7 days — rewards grow! Miss a day & the streak resets.</div>
+        </div>
+        <div id="popover-help" class="settings-popover help-popover">
+            <div class="pop-head"><span class="pop-title">🎮 How To Play</span><button type="button" class="pop-close" title="Close">✕</button></div>
             <div class="controls-guide">
                 <div class="ctrl-item"><span class="key-badge">A / D / ← →</span><span class="ctrl-desc">Switch Lane</span></div>
                 <div class="ctrl-item"><span class="key-badge">W / SPACE / ↑</span><span class="ctrl-desc">Jump Over</span></div>
                 <div class="ctrl-item"><span class="key-badge">S / ↓</span><span class="ctrl-desc">Slide Under</span></div>
                 <div class="ctrl-item"><span class="key-badge">P / ESC</span><span class="ctrl-desc">Pause Game</span></div>
                 <div class="ctrl-item"><span class="key-badge">SWIPE</span><span class="ctrl-desc">Touch Gestures</span></div>
-                <div class="ctrl-item"><span class="key-badge">PICKUPS</span><span class="ctrl-desc">🧲 🛡️ ✨ Power-ups</span></div>
+                <div class="ctrl-item"><span class="key-badge">GOAL</span><span class="ctrl-desc"> Dodge · Collect · Survive</span></div>
             </div>
+            <div class="help-sub">⚡ Power-ups on the track</div>
+            <div class="help-pu-grid">
+                <div class="help-pu"><span class="hp-ico">🧲</span><span class="hp-txt"><b>Magnet</b> — pulls nearby coins to you for 8s</span></div>
+                <div class="help-pu"><span class="hp-ico">✨</span><span class="hp-txt"><b>2× Score</b> — doubles every point for 10s</span></div>
+                <div class="help-pu"><span class="hp-ico">🛡️</span><span class="hp-txt"><b>Shield</b> — saves you from one crash</span></div>
+                <div class="help-pu"><span class="hp-ico">👻</span><span class="hp-txt"><b>Ghost</b> — run straight through obstacles for 5.5s</span></div>
+                <div class="help-pu"><span class="hp-ico">👟</span><span class="hp-txt"><b>Mega Jump</b> — 9s of super-high jumps</span></div>
             </div>
+            <div class="db-legend">🔥 Chain combos for big multipliers · spend coins on boosts & bots</div>
         </div>
     </div>
 
@@ -1339,15 +1480,19 @@
         render() {
             const row = document.getElementById('daily-row');
             const btn = document.getElementById('btn-daily-claim');
-            const box = document.getElementById('daily-box');
+            const gift = document.getElementById('btn-daily-gift');
             const weekLbl = document.getElementById('daily-week-label');
+            const streakEl = document.getElementById('daily-streak');
             if (!row || !btn) return;
             const claimable = this.isClaimable();
             const pending = this.pendingDay();
             const claimedUpto = claimable ? pending - 1 : this.state.streak;
             const dispWeek = (claimable && this.state.streak === 7 && pending === 1) ? this.state.cycles + 2 : this.state.cycles + 1;
-            if (box) box.classList.toggle('claimable', claimable);
+            if (gift) gift.classList.toggle('has-reward', claimable);
             if (weekLbl) weekLbl.textContent = '· Week ' + dispWeek;
+            if (streakEl) streakEl.textContent = claimable && this.state.streak === 7 && pending === 1
+                ? '🏆 Week complete! A fresh week is waiting'
+                : '🔥 Streak: ' + Math.min(this.state.streak, 7) + ' / 7 days';
             row.innerHTML = this.REWARDS.map(r => {
                 const isClaimed = r.day <= claimedUpto;
                 const isToday = claimable && r.day === pending;
@@ -1379,6 +1524,24 @@
     window.DailyRewards = DailyRewards;
     DailyRewards.load();
     DailyRewards.render();
+    /* ── Top-left icon buttons (🎁 gift · 🎮 help) open popover windows ── */
+    function openTopPopover(popId) {
+        sound.init();
+        const pop = document.getElementById(popId);
+        if (!pop) return;
+        const wasOpen = pop.classList.contains('open');
+        document.querySelectorAll('.settings-popover.open').forEach(p => p.classList.remove('open'));
+        document.querySelectorAll('.settings-trigger.open').forEach(t => t.classList.remove('open'));
+        const bd = document.getElementById('settings-backdrop');
+        if (!wasOpen) {
+            pop.classList.add('open');
+            if (bd) bd.classList.add('open');
+            sound.playClick();
+        }
+    }
+    window.__openTopPopover = openTopPopover;
+    bindBtn('btn-daily-gift', () => openTopPopover('popover-daily'));
+    bindBtn('btn-help', () => openTopPopover('popover-help'));
     bindBtn('btn-daily-claim', () => { sound.init(); DailyRewards.claim(); });
 
     class SoundFX {
@@ -1807,7 +1970,8 @@
         constructor() {
             this.state = STATE.MENU;
             this.previousState = STATE.MENU;
-            this.selectedMap = 'city';
+            this.selectedMap = Store.get('subway_dash_map', 'city');
+            if (!THEMES[this.selectedMap]) this.selectedMap = 'city';
             const savedDiff = Store.get('subway_dash_difficulty', 'normal');
             this.selectedDifficulty = DIFFICULTY_CONFIG[savedDiff] ? savedDiff : 'normal';
             this.score = 0;
@@ -2153,6 +2317,7 @@
             this.maxSpeed = config.maxSpeed;
             this.speedAccel = config.speedAccel;
             if (this.difficultyHint) this.difficultyHint.textContent = config.hint;
+            this.updateSettingTriggers();
         }
 
         async initCrazyGamesSDK() {
@@ -2205,6 +2370,8 @@
         applyMapTheme(mapType) {
             if (!THEMES[mapType]) mapType = 'city';
             this.selectedMap = mapType;
+            try { Store.set('subway_dash_map', mapType); } catch (e) {}
+            this.updateSettingTriggers();
             const t = THEMES[mapType];
             this.scene.background = new THREE.Color(t.bg);
             this.scene.fog = new THREE.FogExp2(t.fog, t.fogD);
@@ -4350,6 +4517,7 @@
                     this.applyMapTheme(btn.dataset.map);
                     this.createEnvironment();
                     this._envMap = this.selectedMap;   // world was rebuilt for this map
+                    this.closeSettingsPopovers();
                 });
             });
             document.querySelectorAll('.difficulty-btn').forEach(btn => {
@@ -4358,6 +4526,7 @@
                     btn.classList.add('active');
                     this.saveDifficulty(btn.dataset.difficulty);
                     sound.playClick();
+                    this.closeSettingsPopovers();
                 });
             });
             // Task 23: graphics mode selector
@@ -4370,8 +4539,10 @@
                     sound.playClick();
                     this.applyGfxMode(btn.dataset.gfx);
                     this.updateGfxHint();
+                    this.closeSettingsPopovers();
                 });
             });
+            this.setupSettingsPopovers();
             on('boost-headstart', () => this.toggleBoost('boostHeadStart', BOOST_COST_HS, 'Head Start'));
             on('boost-shield', () => this.toggleBoost('boostShield', BOOST_COST_SHIELD, 'Shield Start'));
             on('btn-start', () => { sound.init(); this.startGame(); });
@@ -4576,6 +4747,7 @@
             if (this._lastStartAt && _startMs - this._lastStartAt < 350) return;   // BUG FIX: Space keydown + native button click double-fired startGame
             this._lastStartAt = _startMs;
             this.blurUI();
+            this.closeSettingsPopovers();
             this.clearCountdown();
             this.pauseModal.classList.add('hidden');
             this.clearEntities();
@@ -4885,6 +5057,7 @@
         }
         applyGfxMode(mode, silent) {
             this.gfxMode = mode;
+            this.updateSettingTriggers();
             try { Store.set('cyberdash_gfx', mode); } catch (e) {}
             const gc = this.gfxCaps(mode);
             this.prCap = gc.cap; this.prMin = gc.min; this.prEmerg = gc.emerg;
@@ -4904,6 +5077,166 @@
                 fast: '⚡ Maximum FPS — lighter image for weaker phones'
             };
             el.textContent = hints[this.gfxMode] || hints.sharp;
+        }
+        // ── Settings popovers: one-line row opens preview windows ──
+        setupSettingsPopovers() {
+            const backdrop = document.getElementById('settings-backdrop');
+            // sync active states with the actual saved selections (map card default in HTML is city)
+            document.querySelectorAll('.map-btn').forEach(b => b.classList.toggle('active', b.dataset.map === this.selectedMap));
+            document.querySelectorAll('.difficulty-btn').forEach(b => b.classList.toggle('active', b.dataset.difficulty === this.selectedDifficulty));
+            const order = [['trigger-map', 'popover-map'], ['trigger-difficulty', 'popover-difficulty'], ['trigger-gfx', 'popover-gfx']];
+            order.forEach(([trigId, popId]) => {
+                const trig = document.getElementById(trigId);
+                if (!trig) return;
+                trig.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const pop = document.getElementById(popId);
+                    const wasOpen = pop && pop.classList.contains('open');
+                    this.closeSettingsPopovers();
+                    if (!wasOpen && pop) {
+                        pop.classList.add('open');
+                        trig.classList.add('open');
+                        if (backdrop) backdrop.classList.add('open');
+                        sound.playClick();
+                        if (popId === 'popover-map') this.drawMapThumbs();
+                    }
+                });
+            });
+            document.querySelectorAll('.pop-close').forEach(b => b.addEventListener('click', () => this.closeSettingsPopovers()));
+            if (backdrop) backdrop.addEventListener('click', () => this.closeSettingsPopovers());
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && document.querySelector('.settings-popover.open')) { e.stopPropagation(); this.closeSettingsPopovers(); }
+            });
+            this.updateSettingTriggers();
+            this.drawMapThumbs();
+        }
+        closeSettingsPopovers() {
+            document.querySelectorAll('.settings-popover.open').forEach(p => p.classList.remove('open'));
+            document.querySelectorAll('.settings-trigger.open').forEach(t => t.classList.remove('open'));
+            const bd = document.getElementById('settings-backdrop');
+            if (bd) bd.classList.remove('open');
+        }
+        updateSettingTriggers() {
+            const mapNames = { city: 'Neon City', desert: 'Desert Oasis', snow: 'Frost Peak', jungle: 'Amazon Jungle' };
+            const vm = document.getElementById('value-map');
+            if (vm) vm.textContent = mapNames[this.selectedMap] || 'Neon City';
+            const vd = document.getElementById('value-difficulty');
+            if (vd) { const d = this.selectedDifficulty || 'normal'; vd.textContent = d.charAt(0).toUpperCase() + d.slice(1); }
+            const vg = document.getElementById('value-gfx');
+            if (vg) { const g = this.gfxMode || 'sharp'; vg.textContent = g.charAt(0).toUpperCase() + g.slice(1); }
+        }
+        drawMapThumbs() {
+            document.querySelectorAll('canvas.map-thumb').forEach(cv => {
+                if (cv.dataset.drawn) return;
+                cv.dataset.drawn = '1';
+                this.drawMapPreview(cv, cv.dataset.thumb);
+            });
+        }
+        drawMapPreview(cv, type) {
+            const ctx = cv.getContext('2d');
+            if (!ctx) return;
+            const W = cv.width, H = cv.height, hz = Math.round(H * 0.54);
+            let s = 7;
+            const R = () => (s = (s * 16807) % 2147483647) / 2147483647;
+            const SKY = { city: ['#050914', '#14285c'], desert: ['#ff9d45', '#ffe3a1'], snow: ['#7db4dd', '#dcedf9'], jungle: ['#071c10', '#1d4a2c'] };
+            const GROUND = { city: '#0d1524', desert: '#e8b566', snow: '#e3ecf4', jungle: '#10281a' };
+            const ROAD = { city: '#1d2740', desert: '#e3bd6d', snow: '#aebfd0', jungle: '#28422f' };
+            const sky = ctx.createLinearGradient(0, 0, 0, hz);
+            sky.addColorStop(0, (SKY[type] || SKY.city)[0]);
+            sky.addColorStop(1, (SKY[type] || SKY.city)[1]);
+            ctx.fillStyle = sky; ctx.fillRect(0, 0, W, hz);
+            ctx.fillStyle = GROUND[type] || GROUND.city; ctx.fillRect(0, hz, W, H - hz);
+            // road in perspective
+            ctx.fillStyle = ROAD[type] || ROAD.city;
+            ctx.beginPath();
+            ctx.moveTo(W / 2 - 7, hz); ctx.lineTo(W / 2 + 7, hz);
+            ctx.lineTo(W + 34, H); ctx.lineTo(-34, H); ctx.closePath(); ctx.fill();
+            // lane lines
+            ctx.strokeStyle = type === 'desert' ? 'rgba(120,90,30,.65)' : (type === 'jungle' ? 'rgba(150,220,140,.5)' : (type === 'snow' ? 'rgba(255,255,255,.8)' : 'rgba(0,240,255,.65)'));
+            ctx.lineWidth = 2.5;
+            [-1, 1].forEach(sd => {
+                ctx.beginPath();
+                ctx.moveTo(W / 2 + sd * 8, hz);
+                ctx.lineTo(W / 2 + sd * (W * 0.5 + 2), H);
+                ctx.stroke();
+            });
+            // dashed center line
+            ctx.setLineDash([10, 12]);
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = 'rgba(255,255,255,.55)';
+            ctx.beginPath(); ctx.moveTo(W / 2, hz); ctx.lineTo(W / 2, H); ctx.stroke();
+            ctx.setLineDash([]);
+            if (type === 'city') {
+                for (let x = -4; x < W;) {
+                    const bw = 16 + R() * 24, bh = 20 + R() * (hz - 40);
+                    ctx.fillStyle = R() > 0.5 ? '#0a1226' : '#0e1936';
+                    ctx.fillRect(x, hz - bh, bw, bh);
+                    for (let wy = hz - bh + 5; wy < hz - 4; wy += 6) {
+                        for (let wx = x + 3; wx < x + bw - 4; wx += 5) {
+                            if (R() > 0.42) {
+                                ctx.fillStyle = ['rgba(0,240,255,.95)', 'rgba(255,0,127,.9)', 'rgba(255,214,110,.95)'][Math.floor(R() * 3)];
+                                ctx.fillRect(wx, wy, 2.2, 3);
+                            }
+                        }
+                    }
+                    x += bw + 3 + R() * 7;
+                }
+                const ng = ctx.createLinearGradient(0, hz - 14, 0, hz + 3);
+                ng.addColorStop(0, 'rgba(0,240,255,0)'); ng.addColorStop(0.55, 'rgba(0,240,255,.55)'); ng.addColorStop(1, 'rgba(0,240,255,0)');
+                ctx.fillStyle = ng; ctx.fillRect(0, hz - 14, W, 17);
+                const ng2 = ctx.createLinearGradient(0, hz - 8, 0, hz + 6);
+                ng2.addColorStop(0, 'rgba(255,0,127,0)'); ng2.addColorStop(0.5, 'rgba(255,0,127,.4)'); ng2.addColorStop(1, 'rgba(255,0,127,0)');
+                ctx.fillStyle = ng2; ctx.fillRect(0, hz - 8, W, 14);
+            } else if (type === 'desert') {
+                ctx.fillStyle = 'rgba(255,225,150,.4)';
+                ctx.beginPath(); ctx.arc(W * 0.7, hz - 40, 34, 0, 7); ctx.fill();
+                ctx.fillStyle = '#fff4c8';
+                ctx.beginPath(); ctx.arc(W * 0.7, hz - 40, 21, 0, 7); ctx.fill();
+                ctx.fillStyle = 'rgba(205,150,74,.55)';
+                ctx.beginPath(); ctx.moveTo(0, hz);
+                for (let x = 0; x <= W; x += 10) ctx.lineTo(x, hz - 6 - Math.sin(x / 34) * 7 - R() * 2);
+                ctx.lineTo(W, hz + 3); ctx.lineTo(0, hz + 3); ctx.closePath(); ctx.fill();
+                ctx.fillStyle = '#3f7d46';
+                const cactus = (cx, ch) => {
+                    ctx.fillRect(cx, hz - ch, 5, ch);
+                    ctx.fillRect(cx - 6, hz - ch + 7, 6, 3);
+                    ctx.fillRect(cx - 6, hz - ch + 7, 2.4, 8);
+                    ctx.fillRect(cx + 5, hz - ch + 10, 6, 3);
+                    ctx.fillRect(cx + 9, hz - ch + 10, 2.4, 6);
+                };
+                cactus(W * 0.13, 24); cactus(W * 0.9, 17);
+            } else if (type === 'snow') {
+                const peak = (px, pw, ph, col) => {
+                    ctx.fillStyle = col;
+                    ctx.beginPath(); ctx.moveTo(px - pw, hz); ctx.lineTo(px, hz - ph); ctx.lineTo(px + pw, hz); ctx.closePath(); ctx.fill();
+                };
+                peak(W * 0.16, 74, 56, '#f2f8ff'); peak(W * 0.52, 92, 76, '#e6f0fa'); peak(W * 0.9, 62, 48, '#f2f8ff');
+                ctx.fillStyle = 'rgba(140,170,200,.45)';
+                ctx.beginPath(); ctx.moveTo(W * 0.52, hz - 76); ctx.lineTo(W * 0.52 + 92, hz); ctx.lineTo(W * 0.52, hz); ctx.closePath(); ctx.fill();
+                ctx.fillStyle = 'rgba(255,255,255,.9)';
+                for (let i = 0; i < 30; i++) { ctx.beginPath(); ctx.arc(R() * W, R() * hz, R() * 1.7 + 0.4, 0, 7); ctx.fill(); }
+                ctx.fillStyle = 'rgba(255,255,255,.75)';
+                for (let i = 0; i < 10; i++) { ctx.beginPath(); ctx.arc(R() * W, hz + R() * (H - hz), R() * 1.4 + 0.3, 0, 7); ctx.fill(); }
+            } else if (type === 'jungle') {
+                ctx.fillStyle = 'rgba(6,26,13,.92)';
+                const blob = (bx, by, br) => { ctx.beginPath(); ctx.arc(bx, by, br, 0, 7); ctx.fill(); };
+                blob(8, 10, 28); blob(46, 2, 32); blob(88, 12, 24); blob(126, 0, 20);
+                blob(W - 6, 8, 30); blob(W - 46, 0, 28); blob(W - 88, 12, 22);
+                ctx.fillStyle = '#0d2415';
+                const tree = (tx, th) => {
+                    ctx.fillRect(tx, hz - th, 4, th);
+                    ctx.beginPath(); ctx.arc(tx + 2, hz - th - 2, 13, 0, 7); ctx.fill();
+                };
+                tree(W * 0.15, 26); tree(W * 0.86, 30); tree(W * 0.32, 15);
+                for (let i = 0; i < 16; i++) {
+                    ctx.fillStyle = 'rgba(' + (170 + Math.floor(R() * 60)) + ',255,' + (90 + Math.floor(R() * 90)) + ',' + (0.3 + R() * 0.55).toFixed(2) + ')';
+                    ctx.beginPath(); ctx.arc(R() * W, hz - 10 + R() * (H - hz + 10), R() * 1.9 + 0.5, 0, 7); ctx.fill();
+                }
+            }
+            // vignette
+            const vg2 = ctx.createLinearGradient(0, H * 0.55, 0, H);
+            vg2.addColorStop(0, 'rgba(0,0,0,0)'); vg2.addColorStop(1, 'rgba(0,0,0,.3)');
+            ctx.fillStyle = vg2; ctx.fillRect(0, 0, W, H);
         }
         applyPixelRatio(pr) {
             this.renderer.setPixelRatio(pr);
